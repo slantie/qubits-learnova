@@ -311,7 +311,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                     {!started && (
                         <div className="absolute inset-0 z-10 cursor-pointer group" onClick={handleStart}>
                             {poster ? (
-                                <img src={poster} alt={title ?? ''} className="w-full h-full object-cover" draggable={false} />
+                                <img src={poster} alt={title ?? ''} className="w-full h-full object-contain" draggable={false} />
                             ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800" />
                             )}
@@ -335,7 +335,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                         poster={poster}
                         playsInline
                         onClick={togglePlay}
-                        className={cn('w-full h-full block', !started && 'invisible')}
+                        className={cn('w-full h-full block object-contain', !started && 'invisible')}
                     />
 
                     {/* ── Click-to-play center icon ──────────────────────────── */}
