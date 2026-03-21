@@ -54,7 +54,7 @@ router.get('/', authenticate, async (req: Request, res: Response) => {
     if (def.key === 'achievement:on-fire') return { ...base, progress: { current: completedCount, required: 5 } };
     if (def.key === 'achievement:scholar') return { ...base, progress: { current: completedCount, required: 10 } };
     if (def.key === 'achievement:collector') return { ...base, progress: { current: completedCount, required: 25 } };
-    if (def.key === 'achievement:quiz-master') return { ...base, progress: { current: Math.min(perfectQuizCount, 1), required: 1 } };
+    if (def.key === 'achievement:quiz-master') return { ...base, progress: { current: perfectQuizCount, required: 1 } };
     if (def.key === 'achievement:perfect-run') return { ...base, progress: { current: perfectQuizCount, required: 3 } };
     if (def.key === 'achievement:certified') return { ...base, progress: { current: certCount, required: 1 } };
     if (def.key === 'achievement:multi-cert') return { ...base, progress: { current: certCount, required: 3 } };

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Learnova Badge System</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8f9fa;
+    color: #1a1a2e;
+    padding: 32px 24px 60px;
+    min-height: 100vh;
+  }
+
+  h1 { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .meta { font-size: 13px; color: #666; margin-bottom: 32px; }
+
+  /* Theme toggle */
+  .theme-bar {
+    display: flex; gap: 8px; margin-bottom: 32px; align-items: center;
+  }
+  .theme-btn {
+    padding: 6px 14px; border-radius: 20px; border: 1.5px solid #d1d5db;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    background: white; color: #374151;
+  }
+  .theme-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+
+  /* Section */
+  .section { margin-bottom: 48px; }
+  .section-header {
+    display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px;
+    padding-bottom: 10px; border-bottom: 1.5px solid #e5e7eb;
+  }
+  .section-title { font-size: 14px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #374151; }
+  .section-desc { font-size: 12px; color: #9ca3af; }
+
+  /* Badge grid */
+  .badge-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+
+  /* ── THE BADGE COMPONENT ── */
+  .gh-badge {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: default; transition: transform 0.2s ease;
+    width: 88px;
+  }
+  .gh-badge:hover { transform: translateY(-3px); }
+
+  /* Outer ring — conic gradient for metallic look */
+  .gh-ring {
+    width: 80px; height: 80px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 4px;
+    position: relative;
+    transition: filter 0.2s;
+  }
+
+  /* Inner dark circle */
+  .gh-inner {
+    width: 100%; height: 100%; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 38% 35%, #1c2333, #0d1117);
+    overflow: hidden;
+    position: relative;
+  }
+  .gh-inner::before {
+    content: '';
+    position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 60%);
+  }
+  .gh-inner svg { width: 38px; height: 38px; position: relative; z-index: 1; }
+
+  .gh-name {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; color: #4b5563; text-align: center;
+    line-height: 1.3;
+  }
+  .gh-trigger {
+    font-size: 9px; color: #9ca3af; text-align: center;
+    line-height: 1.4; margin-top: -4px;
+  }
+
+  /* Locked state */
+  .gh-badge.locked .gh-ring { opacity: 0.35; filter: grayscale(0.8); }
+  .gh-badge.locked .gh-name { color: #9ca3af; }
+  .gh-badge.locked .gh-trigger { color: #c4c9d1; }
+
+  /* ── RING COLOUR TOKENS ── */
+  /* Tier rings */
+  .ring-t1 { background: conic-gradient(from 180deg, #cd7f32 0%, #e8a96d 25%, #f5c885 50%, #e8a96d 75%, #a0522d 100%); filter: drop-shadow(0 2px 6px rgba(205,127,50,0.30)); }
+  .ring-t2 { background: conic-gradient(from 180deg, #94a3b8 0%, #cbd5e1 30%, #f1f5f9 50%, #cbd5e1 70%, #64748b 100%); filter: drop-shadow(0 2px 6px rgba(148,163,184,0.30)); }
+  .ring-t3 { background: conic-gradient(from 180deg, #d97706 0%, #fbbf24 30%, #fef3c7 50%, #fbbf24 70%, #b45309 100%); filter: drop-shadow(0 2px 8px rgba(217,119,6,0.32)); }
+  .ring-t4 { background: conic-gradient(from 180deg, #059669 0%, #34d399 30%, #d1fae5 50%, #34d399 70%, #047857 100%); filter: drop-shadow(0 2px 8px rgba(5,150,105,0.30)); }
+  .ring-t5 { background: conic-gradient(from 180deg, #7c3aed 0%, #a78bfa 30%, #ede9fe 50%, #a78bfa 70%, #5b21b6 100%); filter: drop-shadow(0 2px 10px rgba(124,58,237,0.32)); }
+  .ring-t6 { background: conic-gradient(from 180deg, #0284c7 0%, #38bdf8 30%, #e0f2fe 50%, #38bdf8 70%, #0369a1 100%); filter: drop-shadow(0 2px 12px rgba(2,132,199,0.35)); }
+
+  /* Achievement rings */
+  .ring-first   { background: conic-gradient(from 180deg, #ea580c 0%, #fb923c 30%, #ffedd5 50%, #fb923c 70%, #c2410c 100%); filter: drop-shadow(0 2px 8px rgba(234,88,12,0.30)); }
+  .ring-fire    { background: conic-gradient(from 180deg, #dc2626 0%, #f87171 30%, #fee2e2 50%, #f87171 70%, #b91c1c 100%); filter: drop-shadow(0 2px 8px rgba(220,38,38,0.30)); }
+  .ring-scholar { background: conic-gradient(from 180deg, #9333ea 0%, #c084fc 30%, #f3e8ff 50%, #c084fc 70%, #7e22ce 100%); filter: drop-shadow(0 2px 8px rgba(147,51,234,0.30)); }
+  .ring-collect { background: conic-gradient(from 180deg, #0f766e 0%, #2dd4bf 30%, #ccfbf1 50%, #2dd4bf 70%, #115e59 100%); filter: drop-shadow(0 2px 8px rgba(15,118,110,0.30)); }
+  .ring-quiz    { background: conic-gradient(from 180deg, #db2777 0%, #f472b6 30%, #fdf2f8 50%, #f472b6 70%, #be185d 100%); filter: drop-shadow(0 2px 8px rgba(219,39,119,0.30)); }
+  .ring-perfect { background: conic-gradient(from 180deg, #b45309 0%, #fcd34d 30%, #fefce8 50%, #fcd34d 70%, #92400e 100%); filter: drop-shadow(0 2px 8px rgba(180,83,9,0.30)); }
+  .ring-speed   { background: conic-gradient(from 180deg, #0891b2 0%, #67e8f9 30%, #ecfeff 50%, #67e8f9 70%, #0e7490 100%); filter: drop-shadow(0 2px 8px rgba(8,145,178,0.30)); }
+  .ring-cert    { background: conic-gradient(from 180deg, #d97706 0%, #fde68a 30%, #fef9c3 50%, #fde68a 70%, #b45309 100%); filter: drop-shadow(0 2px 10px rgba(217,119,6,0.35)); }
+  .ring-multicert { background: conic-gradient(from 180deg, #4338ca 0%, #818cf8 30%, #e0e7ff 50%, #818cf8 70%, #3730a3 100%); filter: drop-shadow(0 2px 10px rgba(67,56,202,0.32)); }
+  .ring-early   { background: conic-gradient(from 180deg, #0d9488 0%, #5eead4 30%, #f0fdfa 50%, #5eead4 70%, #0f766e 100%); filter: drop-shadow(0 2px 8px rgba(13,148,136,0.30)); }
+  .ring-dedic   { background: conic-gradient(from 180deg, #16a34a 0%, #86efac 30%, #dcfce7 50%, #86efac 70%, #15803d 100%); filter: drop-shadow(0 2px 8px rgba(22,163,74,0.30)); }
+  .ring-review  { background: conic-gradient(from 180deg, #c026d3 0%, #e879f9 30%, #fdf4ff 50%, #e879f9 70%, #a21caf 100%); filter: drop-shadow(0 2px 8px rgba(192,38,211,0.30)); }
+
+  /* ── DARK MODE ── */
+  body.dark {
+    background: #0d1117;
+    color: #e6edf3;
+  }
+  body.dark .section-title { color: #c9d1d9; }
+  body.dark .section-header { border-color: #21262d; }
+  body.dark .gh-name { color: #8b949e; }
+  body.dark .gh-trigger { color: #6e7681; }
+  body.dark .meta { color: #8b949e; }
+  body.dark .theme-btn { background: #161b22; border-color: #30363d; color: #c9d1d9; }
+  body.dark .theme-btn.active { background: #e6edf3; color: #0d1117; border-color: #e6edf3; }
+
+  /* In dark mode, boost glow slightly */
+  body.dark .ring-t1 { filter: drop-shadow(0 0 10px rgba(205,127,50,0.50)); }
+  body.dark .ring-t2 { filter: drop-shadow(0 0 10px rgba(148,163,184,0.45)); }
+  body.dark .ring-t3 { filter: drop-shadow(0 0 12px rgba(217,119,6,0.55)); }
+  body.dark .ring-t4 { filter: drop-shadow(0 0 12px rgba(5,150,105,0.55)); }
+  body.dark .ring-t5 { filter: drop-shadow(0 0 14px rgba(124,58,237,0.60)); }
+  body.dark .ring-t6 { filter: drop-shadow(0 0 16px rgba(2,132,199,0.65)); }
+  body.dark .ring-first   { filter: drop-shadow(0 0 12px rgba(234,88,12,0.55)); }
+  body.dark .ring-fire    { filter: drop-shadow(0 0 12px rgba(220,38,38,0.55)); }
+  body.dark .ring-scholar { filter: drop-shadow(0 0 12px rgba(147,51,234,0.55)); }
+  body.dark .ring-collect { filter: drop-shadow(0 0 12px rgba(15,118,110,0.55)); }
+  body.dark .ring-quiz    { filter: drop-shadow(0 0 12px rgba(219,39,119,0.55)); }
+  body.dark .ring-perfect { filter: drop-shadow(0 0 12px rgba(180,83,9,0.55)); }
+  body.dark .ring-speed   { filter: drop-shadow(0 0 12px rgba(8,145,178,0.55)); }
+  body.dark .ring-cert    { filter: drop-shadow(0 0 14px rgba(217,119,6,0.60)); }
+  body.dark .ring-multicert { filter: drop-shadow(0 0 14px rgba(67,56,202,0.60)); }
+  body.dark .ring-early   { filter: drop-shadow(0 0 12px rgba(13,148,136,0.55)); }
+  body.dark .ring-dedic   { filter: drop-shadow(0 0 12px rgba(22,163,74,0.55)); }
+  body.dark .ring-review  { filter: drop-shadow(0 0 12px rgba(192,38,211,0.55)); }
+</style>
+</head>
+<body>
+
+<div class="theme-bar">
+  <button class="theme-btn active" onclick="setTheme('light')">☀ Light UI</button>
+  <button class="theme-btn" onclick="setTheme('dark')">🌙 Dark UI</button>
+  <span style="font-size:11px;color:#9ca3af;margin-left:8px;">Toggle to preview both modes</span>
+</div>
+
+<h1>Learnova Badge System</h1>
+<p class="meta">GitHub-style circular badges — metallic conic ring, dark inner field, SVG art. Glow adapts: subtle on light UI, rich on dark UI.</p>
+
+<!-- ── TIER BADGES ── -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">🏅 Point-Tier Badges</span>
+    <span class="section-desc">Auto-awarded as total points accumulate</span>
+  </div>
+  <div class="badge-grid">
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-t1"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M19 30 V20" stroke="#86efac" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="19" cy="18" rx="7" ry="5" fill="#22c55e" opacity="0.9"/>
+          <ellipse cx="15.5" cy="21" rx="5" ry="3.5" fill="#16a34a" opacity="0.8" transform="rotate(-15 15.5 21)"/>
+          <ellipse cx="22" cy="22" rx="4" ry="3" fill="#15803d" opacity="0.7" transform="rotate(15 22 22)"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Newbie</div>
+      <div class="gh-trigger">20 pts</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-t2"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <circle cx="19" cy="19" r="10" stroke="#94a3b8" stroke-width="1.2" opacity="0.5"/>
+          <circle cx="19" cy="19" r="2" fill="#e2e8f0"/>
+          <path d="M19 10 L21 17 L19 19 L17 17Z" fill="#f1f5f9"/>
+          <path d="M19 28 L17 21 L19 19 L21 21Z" fill="#64748b"/>
+          <path d="M28 19 L21 21 L19 19 L21 17Z" fill="#f1f5f9"/>
+          <path d="M10 19 L17 17 L19 19 L17 21Z" fill="#64748b"/>
+          <circle cx="28" cy="12" r="1.5" fill="#cbd5e1" opacity="0.8"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Explorer</div>
+      <div class="gh-trigger">40 pts</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-t3"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M19 9 L21.5 15.8 L29 16.3 L23.5 21 L25.3 28.5 L19 24.5 L12.7 28.5 L14.5 21 L9 16.3 L16.5 15.8Z" fill="#fbbf24" stroke="#f59e0b" stroke-width="0.4"/>
+          <path d="M19 12 L21 17.5 L27 18 L22.5 21.5 L24 27.5 L19 24 L14 27.5 L15.5 21.5 L11 18 L17 17.5Z" fill="#fef3c7" opacity="0.6"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Achiever</div>
+      <div class="gh-trigger">60 pts</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-t4"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <circle cx="19" cy="19" r="9" stroke="#34d399" stroke-width="1.2" opacity="0.35"/>
+          <circle cx="19" cy="19" r="5.5" stroke="#34d399" stroke-width="1.2" opacity="0.65"/>
+          <circle cx="19" cy="19" r="2.5" fill="#10b981"/>
+          <line x1="25" y1="13" x2="20.5" y2="18" stroke="#6ee7b7" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M24 12 L27 12.5 L27.5 15.5 L25 13Z" fill="#6ee7b7"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Specialist</div>
+      <div class="gh-trigger">80 pts</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-t5"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M19 9 L27 16 L19 29 L11 16Z" fill="#a78bfa" opacity="0.75"/>
+          <path d="M19 9 L27 16 L19 19Z" fill="#ddd6fe" opacity="0.9"/>
+          <path d="M19 9 L11 16 L19 19Z" fill="#c4b5fd" opacity="0.7"/>
+          <path d="M11 16 L19 19 L19 29Z" fill="#6d28d9" opacity="0.8"/>
+          <path d="M27 16 L19 29 L19 19Z" fill="#5b21b6" opacity="0.9"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Expert</div>
+      <div class="gh-trigger">100 pts</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-t6"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M9 26 L9 19 L13.5 23.5 L19 14 L24.5 23.5 L29 19 L29 26Z" fill="#38bdf8" opacity="0.85"/>
+          <path d="M9 26 L29 26" stroke="#7dd3fc" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="9" cy="19" r="2" fill="#e0f2fe"/>
+          <circle cx="19" cy="14" r="2.5" fill="#bae6fd"/>
+          <circle cx="29" cy="19" r="2" fill="#e0f2fe"/>
+          <!-- sparkles -->
+          <path d="M15 10 L15.4 11.6 L17 12 L15.4 12.4 L15 14 L14.6 12.4 L13 12 L14.6 11.6Z" fill="#e0f2fe" opacity="0.8"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Master</div>
+      <div class="gh-trigger">120 pts</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── COURSE MILESTONE ── -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">📚 Course Milestones</span>
+    <span class="section-desc">Awarded by number of courses completed</span>
+  </div>
+  <div class="badge-grid">
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-first"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <rect x="12" y="10" width="14" height="18" rx="2" stroke="#fed7aa" stroke-width="1.4" fill="none" opacity="0.55"/>
+          <line x1="19" y1="10" x2="19" y2="28" stroke="#fed7aa" stroke-width="0.8" opacity="0.35"/>
+          <circle cx="21.5" cy="19" r="1.2" fill="#fb923c"/>
+          <path d="M24 19 L18 19 M21 16.5 L18 19 L21 21.5" stroke="#fb923c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">First Step</div>
+      <div class="gh-trigger">1 course done</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-fire"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M19 30C13 30 10 25 10 21 10 17 13 15 14 12 15 16 16 17 17 16 17 13 19 10 20 8 23 12 26 16 26 21 26 25 23 30 19 30Z" fill="#f97316" opacity="0.9"/>
+          <path d="M19 30C15 30 13 26 13 23 13 20 15 19 16 17 16 20 17 21 18 20 18 18 19 16 20 15 22 18 23 21 23 23 23 26 21 30 19 30Z" fill="#fbbf24" opacity="0.9"/>
+          <path d="M19 30C17 30 16 27.5 16 26 16 24 17.5 23.5 18 22.5 18 24 19 24.5 19 24 19.5 23 20 22 20.5 21.5 21.5 23 21.5 24.5 21.5 26 21.5 28.5 20 30 19 30Z" fill="#fef3c7" opacity="0.8"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">On Fire</div>
+      <div class="gh-trigger">5 courses done</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-scholar"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M19 12 L31 18 L19 24 L7 18Z" fill="#c084fc" opacity="0.85"/>
+          <path d="M12 20.5 L12 28C12 28 15 31 19 31 23 31 26 28 26 28 L26 20.5" stroke="#a855f7" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <line x1="31" y1="18" x2="31" y2="25" stroke="#a855f7" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="31" cy="26" r="1.5" fill="#e9d5ff"/>
+          <circle cx="19" cy="12" r="1.5" fill="#f3e8ff"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Scholar</div>
+      <div class="gh-trigger">10 courses done</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-collect"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <!-- Stack of books -->
+          <rect x="9" y="24" width="20" height="5" rx="1" fill="#2dd4bf" opacity="0.9"/>
+          <rect x="10" y="19" width="18" height="5" rx="1" fill="#5eead4" opacity="0.75"/>
+          <rect x="11" y="14" width="16" height="5" rx="1" fill="#99f6e4" opacity="0.6"/>
+          <!-- Spine lines -->
+          <line x1="12" y1="24" x2="12" y2="29" stroke="#0d9488" stroke-width="1" opacity="0.6"/>
+          <line x1="13" y1="19" x2="13" y2="24" stroke="#0d9488" stroke-width="1" opacity="0.5"/>
+          <line x1="14" y1="14" x2="14" y2="19" stroke="#0d9488" stroke-width="1" opacity="0.4"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Collector</div>
+      <div class="gh-trigger">25 courses done</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── QUIZ EXCELLENCE ── -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">🧠 Quiz Excellence</span>
+    <span class="section-desc">Awarded for outstanding quiz performance</span>
+  </div>
+  <div class="badge-grid">
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-quiz"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <circle cx="19" cy="19" r="9" stroke="#f9a8d4" stroke-width="1.2" opacity="0.45"/>
+          <path d="M13 19 L17.5 23.5 L26 14" stroke="#ec4899" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M29 11 L29.4 12.6 L31 13 L29.4 13.4 L29 15 L28.6 13.4 L27 13 L28.6 12.6Z" fill="#fbcfe8" opacity="0.9"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Quiz Master</div>
+      <div class="gh-trigger">100% on any quiz</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-perfect"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <!-- Triple star -->
+          <path d="M19 8 L20.2 12 L24.4 12 L21.1 14.5 L22.3 18.5 L19 16 L15.7 18.5 L16.9 14.5 L13.6 12 L17.8 12Z" fill="#fcd34d" opacity="0.9"/>
+          <path d="M10 21 L10.8 23.5 L13.5 23.5 L11.3 25 L12.1 27.5 L10 26 L7.9 27.5 L8.7 25 L6.5 23.5 L9.2 23.5Z" fill="#fcd34d" opacity="0.6"/>
+          <path d="M28 21 L28.8 23.5 L31.5 23.5 L29.3 25 L30.1 27.5 L28 26 L25.9 27.5 L26.7 25 L24.5 23.5 L27.2 23.5Z" fill="#fcd34d" opacity="0.6"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Perfect Run</div>
+      <div class="gh-trigger">100% on 3 quizzes</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── SPEED ── -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">⚡ Speed Learner</span>
+    <span class="section-desc">Awarded for completing courses quickly</span>
+  </div>
+  <div class="badge-grid">
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-speed"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M22 9 L14 20 L19 20 L16 31 L24 18 L19 18Z" fill="#67e8f9" stroke="#06b6d4" stroke-width="0.5"/>
+          <line x1="8" y1="16" x2="12" y2="16" stroke="#a5f3fc" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+          <line x1="7" y1="20" x2="11" y2="20" stroke="#a5f3fc" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <line x1="8" y1="24" x2="12" y2="24" stroke="#a5f3fc" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Speed Learner</div>
+      <div class="gh-trigger">Course in 24h</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── CERTIFICATION ── -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">🎓 Certification</span>
+    <span class="section-desc">Awarded for earning certificates</span>
+  </div>
+  <div class="badge-grid">
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-cert"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <rect x="10" y="10" width="18" height="14" rx="2" fill="none" stroke="#fde68a" stroke-width="1.4" opacity="0.65"/>
+          <line x1="14" y1="15" x2="24" y2="15" stroke="#fde68a" stroke-width="1" opacity="0.55" stroke-linecap="round"/>
+          <line x1="14" y1="18" x2="22" y2="18" stroke="#fde68a" stroke-width="1" opacity="0.4" stroke-linecap="round"/>
+          <circle cx="19" cy="27.5" r="3.5" fill="#f59e0b" opacity="0.9"/>
+          <path d="M16 27.5 L13 31.5 L19 29.5 L25 31.5 L22 27.5" fill="#b45309" opacity="0.8"/>
+          <circle cx="19" cy="27.5" r="1.8" fill="#fef9c3"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Certified</div>
+      <div class="gh-trigger">1st certificate</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-multicert"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <!-- Three overlapping certs -->
+          <rect x="14" y="8" width="14" height="10" rx="1.5" fill="none" stroke="#818cf8" stroke-width="1.2" opacity="0.45"/>
+          <rect x="11" y="13" width="14" height="10" rx="1.5" fill="none" stroke="#818cf8" stroke-width="1.2" opacity="0.65"/>
+          <rect x="8" y="18" width="14" height="10" rx="1.5" fill="#3730a3" stroke="#818cf8" stroke-width="1.2" opacity="0.85"/>
+          <path d="M11 23 L13.5 25.5 L20 19" stroke="#a5b4fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Multi-Cert</div>
+      <div class="gh-trigger">3 certificates</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── DEDICATION ── -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-title">💪 Dedication</span>
+    <span class="section-desc">Awarded for consistent learning behaviour</span>
+  </div>
+  <div class="badge-grid">
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-early"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <!-- Sun rising -->
+          <path d="M8 22 Q19 10 30 22" stroke="#5eead4" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <circle cx="19" cy="20" r="5" fill="#2dd4bf" opacity="0.85"/>
+          <line x1="19" y1="9" x2="19" y2="11.5" stroke="#5eead4" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="10.5" y1="12.5" x2="12.3" y2="14.2" stroke="#5eead4" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="27.5" y1="12.5" x2="25.7" y2="14.2" stroke="#5eead4" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="7" y1="20" x2="9.5" y2="20" stroke="#5eead4" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="28.5" y1="20" x2="31" y2="20" stroke="#5eead4" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Early Bird</div>
+      <div class="gh-trigger">1st to enroll</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-dedic"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <!-- Calendar with checkmark -->
+          <rect x="9" y="11" width="20" height="18" rx="2" fill="none" stroke="#86efac" stroke-width="1.4" opacity="0.6"/>
+          <line x1="9" y1="16" x2="29" y2="16" stroke="#86efac" stroke-width="1" opacity="0.5"/>
+          <line x1="14" y1="9" x2="14" y2="13" stroke="#86efac" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+          <line x1="24" y1="9" x2="24" y2="13" stroke="#86efac" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+          <path d="M13 22.5 L17 26.5 L25 19" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Dedicated</div>
+      <div class="gh-trigger">7-day streak</div>
+    </div>
+
+    <div class="gh-badge">
+      <div class="gh-ring ring-review"><div class="gh-inner">
+        <svg viewBox="0 0 38 38" fill="none">
+          <!-- Speech bubble with star -->
+          <path d="M8 12 Q8 9 11 9 L27 9 Q30 9 30 12 L30 22 Q30 25 27 25 L21 25 L17 30 L17 25 L11 25 Q8 25 8 22Z" fill="#9333ea" opacity="0.3" stroke="#c084fc" stroke-width="1.2"/>
+          <path d="M19 13 L20 16 L23.2 16 L20.6 17.9 L21.6 21 L19 19.1 L16.4 21 L17.4 17.9 L14.8 16 L18 16Z" fill="#e879f9" opacity="0.9"/>
+        </svg>
+      </div></div>
+      <div class="gh-name">Reviewer</div>
+      <div class="gh-trigger">Leave 5 reviews</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Summary -->
+<div style="background:#f1f5f9;border-radius:12px;padding:18px 20px;font-size:12px;color:#64748b;line-height:1.8;border:1px solid #e2e8f0;">
+  <strong style="color:#374151;display:block;margin-bottom:6px;">Full badge inventory — 18 badges across 7 categories</strong>
+  <b>Tier (6):</b> Newbie · Explorer · Achiever · Specialist · Expert · Master<br/>
+  <b>Course Milestones (4):</b> First Step · On Fire · Scholar · Collector<br/>
+  <b>Quiz Excellence (2):</b> Quiz Master · Perfect Run<br/>
+  <b>Speed (1):</b> Speed Learner<br/>
+  <b>Certification (2):</b> Certified · Multi-Cert<br/>
+  <b>Dedication (3):</b> Early Bird · Dedicated · Reviewer
+</div>
+
+<script>
+function setTheme(t) {
+  document.body.className = t === 'dark' ? 'dark' : '';
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

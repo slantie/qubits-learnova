@@ -1,0 +1,99 @@
+<h2>Badge Visual Style</h2>
+<p class="subtitle">Which shape and aesthetic feels right for Learnova's badges?</p>
+
+<style>
+  .badge-showcase { display: flex; flex-direction: column; gap: 32px; margin-top: 8px; }
+  .style-row { display: flex; align-items: center; gap: 24px; padding: 20px 24px; border: 2px solid var(--border, #e2e8f0); border-radius: 16px; cursor: pointer; transition: all 0.2s; background: var(--card, #fff); }
+  .style-row:hover { border-color: #6366f1; background: #f8f7ff; }
+  .style-row.picked { border-color: #6366f1; background: #f0f0ff; box-shadow: 0 0 0 3px #6366f140; }
+  .style-label { flex: 1; }
+  .style-label h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; }
+  .style-label p { margin: 0; font-size: 13px; color: #888; }
+  .badge-samples { display: flex; gap: 12px; align-items: center; flex-shrink: 0; }
+
+  /* === Style A: Hexagonal (AWS / Credly) === */
+  .hex-badge { position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; }
+  .hex { width: 64px; height: 72px; position: relative; display: flex; align-items: center; justify-content: center; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+  .hex span { font-size: 22px; }
+  .hex-label { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+  .hex-bronze { background: linear-gradient(145deg, #cd7f32, #e8a96d); }
+  .hex-silver { background: linear-gradient(145deg, #94a3b8, #cbd5e1); }
+  .hex-gold { background: linear-gradient(145deg, #f59e0b, #fde68a); }
+  .hex-emerald { background: linear-gradient(145deg, #10b981, #6ee7b7); }
+  .hex-violet { background: linear-gradient(145deg, #7c3aed, #c4b5fd); }
+  .hex-diamond { background: linear-gradient(145deg, #0ea5e9, #7dd3fc); }
+
+  /* === Style B: Circular Shield (Udemy style) === */
+  .circle-badge { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .circle { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .circle-label { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #666; }
+  .circ-newbie { background: linear-gradient(135deg, #f97316, #fb923c); }
+  .circ-explorer { background: linear-gradient(135deg, #eab308, #fde047); }
+  .circ-achiever { background: linear-gradient(135deg, #22c55e, #86efac); }
+  .circ-specialist { background: linear-gradient(135deg, #3b82f6, #93c5fd); }
+  .circ-expert { background: linear-gradient(135deg, #8b5cf6, #c4b5fd); }
+  .circ-master { background: linear-gradient(135deg, #ec4899, #f9a8d4); }
+
+  /* === Style C: Ribbon / Certificate (Formal style) === */
+  .ribbon-badge { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .shield { width: 56px; height: 68px; position: relative; display: flex; align-items: center; justify-content: center; clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%); font-size: 22px; }
+  .shield-label { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #666; }
+  .shield-1 { background: linear-gradient(160deg, #0f172a, #1e3a5f); }
+  .shield-2 { background: linear-gradient(160deg, #1d4ed8, #3b82f6); }
+  .shield-3 { background: linear-gradient(160deg, #065f46, #059669); }
+  .shield-4 { background: linear-gradient(160deg, #7c2d12, #dc2626); }
+  .shield-5 { background: linear-gradient(160deg, #581c87, #9333ea); }
+  .shield-6 { background: linear-gradient(160deg, #92400e, #d97706); }
+</style>
+
+<div class="badge-showcase">
+
+  <!-- Style A -->
+  <div class="style-row" onclick="this.classList.toggle('picked'); document.querySelectorAll('[data-sel]').forEach(e=>e.remove()); var s=document.createElement('div'); s.dataset.sel='1'; s.style='display:none'; s.dataset.choice='hexagonal'; s.className='option selected'; document.body.appendChild(s); if(window.recordSelection) window.recordSelection('hexagonal', 'Style A — Hexagonal (AWS / Credly)');">
+    <div class="style-label">
+      <h3>A — Hexagonal</h3>
+      <p>Used by AWS Certifications & Credly. Premium, professional feel. Strong visual identity. Each tier gets a distinct gradient.</p>
+    </div>
+    <div class="badge-samples">
+      <div class="hex-badge"><div class="hex hex-bronze"><span>🌱</span></div><div class="hex-label" style="color:#cd7f32">Newbie</div></div>
+      <div class="hex-badge"><div class="hex hex-silver"><span>🔍</span></div><div class="hex-label" style="color:#64748b">Explorer</div></div>
+      <div class="hex-badge"><div class="hex hex-gold"><span>⭐</span></div><div class="hex-label" style="color:#b45309">Achiever</div></div>
+      <div class="hex-badge"><div class="hex hex-emerald"><span>🎯</span></div><div class="hex-label" style="color:#065f46">Specialist</div></div>
+      <div class="hex-badge"><div class="hex hex-violet"><span>💎</span></div><div class="hex-label" style="color:#5b21b6">Expert</div></div>
+      <div class="hex-badge"><div class="hex hex-diamond"><span>👑</span></div><div class="hex-label" style="color:#0369a1">Master</div></div>
+    </div>
+  </div>
+
+  <!-- Style B -->
+  <div class="style-row" onclick="this.classList.toggle('picked'); document.querySelectorAll('[data-sel]').forEach(e=>e.remove()); var s=document.createElement('div'); s.dataset.sel='1'; s.style='display:none'; s.dataset.choice='circular'; s.className='option selected'; document.body.appendChild(s); if(window.recordSelection) window.recordSelection('circular', 'Style B — Circular (Udemy style)');">
+    <div class="style-label">
+      <h3>B — Circular</h3>
+      <p>Used by Udemy & LinkedIn Learning. Friendly, colorful, approachable. Each badge pops with a distinct gradient color.</p>
+    </div>
+    <div class="badge-samples">
+      <div class="circle-badge"><div class="circle circ-newbie"><span>🌱</span></div><div class="circle-label">Newbie</div></div>
+      <div class="circle-badge"><div class="circle circ-explorer"><span>🔍</span></div><div class="circle-label">Explorer</div></div>
+      <div class="circle-badge"><div class="circle circ-achiever"><span>⭐</span></div><div class="circle-label">Achiever</div></div>
+      <div class="circle-badge"><div class="circle circ-specialist"><span>🎯</span></div><div class="circle-label">Specialist</div></div>
+      <div class="circle-badge"><div class="circle circ-expert"><span>💎</span></div><div class="circle-label">Expert</div></div>
+      <div class="circle-badge"><div class="circle circ-master"><span>👑</span></div><div class="circle-label">Master</div></div>
+    </div>
+  </div>
+
+  <!-- Style C -->
+  <div class="style-row" onclick="this.classList.toggle('picked'); document.querySelectorAll('[data-sel]').forEach(e=>e.remove()); var s=document.createElement('div'); s.dataset.sel='1'; s.style='display:none'; s.dataset.choice='shield'; s.className='option selected'; document.body.appendChild(s); if(window.recordSelection) window.recordSelection('shield', 'Style C — Shield (Formal / Certification style)');">
+    <div class="style-label">
+      <h3>C — Shield</h3>
+      <p>Classic certification feel — like CompTIA or government badges. Authoritative, formal. Best for professional / corporate learning platforms.</p>
+    </div>
+    <div class="badge-samples">
+      <div class="ribbon-badge"><div class="shield shield-1"><span>🌱</span></div><div class="shield-label">Newbie</div></div>
+      <div class="ribbon-badge"><div class="shield shield-2"><span>🔍</span></div><div class="shield-label">Explorer</div></div>
+      <div class="ribbon-badge"><div class="shield shield-3"><span>⭐</span></div><div class="shield-label">Achiever</div></div>
+      <div class="ribbon-badge"><div class="shield shield-4"><span>🎯</span></div><div class="shield-label">Specialist</div></div>
+      <div class="ribbon-badge"><div class="shield shield-5"><span>💎</span></div><div class="shield-label">Expert</div></div>
+      <div class="ribbon-badge"><div class="shield shield-6"><span>👑</span></div><div class="shield-label">Master</div></div>
+    </div>
+  </div>
+
+</div>
