@@ -5,6 +5,7 @@ import type {
   CourseProgress,
   ReviewsResponse,
   UserProfile,
+  PublicProfile,
 } from '@/types';
 
 // ─── Course Discovery ─────────────────────────────────────────────────────────
@@ -67,6 +68,10 @@ export const deleteReview = async (courseId: number) => {
 
 export const fetchProfile = async (): Promise<UserProfile> => {
   return api.get('/learner/profile');
+};
+
+export const fetchPublicProfile = async (userId: number): Promise<PublicProfile> => {
+  return api.get(`/learner/users/${userId}/profile`);
 };
 
 // ─── Payment ──────────────────────────────────────────────────────────────────

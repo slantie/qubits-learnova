@@ -172,7 +172,16 @@ export interface EarnedBadge {
 }
 
 export interface UserProfile {
-  user: { id: number; name: string | null; email: string };
+  user: { id: number; name: string | null; email: string; createdAt?: string };
+  totalPoints: number;
+  currentBadge: string | null;
+  enrollmentCount: number;
+  completedCount: number;
+  badges: EarnedBadge[];
+}
+
+export interface PublicProfile {
+  user: { id: number; name: string | null; createdAt: string };
   totalPoints: number;
   currentBadge: string | null;
   enrollmentCount: number;

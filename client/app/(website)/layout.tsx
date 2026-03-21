@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
 import {
     LogOut, LayoutDashboard, Trophy,
-    GraduationCap, ChevronDown, Star,
+    GraduationCap, ChevronDown, Star, User,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -64,6 +64,14 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                         )}
                     </div>
 
+                    <Link
+                        href="/profile"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-muted transition-colors"
+                    >
+                        <User className="size-4 text-muted-foreground" />
+                        My Profile
+                    </Link>
                     {(role === 'ADMIN' || role === 'INSTRUCTOR') && (
                         <Link
                             href="/backoffice"
