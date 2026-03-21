@@ -115,12 +115,12 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
               {course.instructor?.name && `by ${course.instructor.name}`}
             </span>
             <span className={cn(
-              'text-xs font-medium px-3 py-1.5 rounded-md',
+              'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-normal shadow-xs',
               getCtaVariant() === 'default'
-                ? 'bg-primary text-primary-foreground'
-                : 'border border-border text-foreground',
-              course.accessRule === 'ON_PAYMENT' && !enrollment && 'text-amber-600 border-amber-300',
-              enrollment?.status === 'COMPLETED' && 'text-emerald-600 border-emerald-300',
+                ? 'bg-primary text-primary-foreground border-primary/20'
+                : 'border-border text-foreground bg-muted',
+              course.accessRule === 'ON_PAYMENT' && !enrollment && 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50',
+              enrollment?.status === 'COMPLETED' && 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-400 dark:border-green-800/50',
             )}>
               {getCtaLabel()}
             </span>

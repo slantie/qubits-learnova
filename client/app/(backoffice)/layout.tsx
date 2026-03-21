@@ -44,7 +44,7 @@ function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
             <Icon className={cn('size-4 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground')} />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
-                <span className="text-[10px] font-normal px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">
+                <span className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-normal text-muted-foreground shadow-xs">
                     {item.badge}
                 </span>
             )}

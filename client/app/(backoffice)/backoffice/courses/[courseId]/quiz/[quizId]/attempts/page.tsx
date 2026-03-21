@@ -48,7 +48,7 @@ function ScoreBadge({ pct }: { pct: number }) {
     pct >= 50 ? 'text-amber-700 bg-amber-50 border-amber-200' :
                 'text-red-700 bg-red-50 border-red-200';
   return (
-    <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border', color)}>
+    <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-normal shadow-xs', color)}>
       {pct}%
     </span>
   );
