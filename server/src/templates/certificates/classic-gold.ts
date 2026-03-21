@@ -8,6 +8,7 @@ export function render(data: {
   certificateId: string;
   points: number;
   verifyUrl: string;
+  logoUrl: string;
 }): string {
   return `<!DOCTYPE html>
 <html>
@@ -26,7 +27,7 @@ export function render(data: {
 
   <!-- Header -->
   <div style="text-align:center;margin-bottom:10px;">
-    <div style="font-size:11px;letter-spacing:6px;text-transform:uppercase;color:#c9a84c;font-weight:bold;">Learnova Academy</div>
+    <img src="${data.logoUrl}" alt="Learnova" style="height:36px;object-fit:contain;" />
   </div>
 
   <!-- Divider -->

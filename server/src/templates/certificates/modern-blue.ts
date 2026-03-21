@@ -8,6 +8,7 @@ export function render(data: {
   certificateId: string;
   points: number;
   verifyUrl: string;
+  logoUrl: string;
 }): string {
   return `<!DOCTYPE html>
 <html>
@@ -22,7 +23,7 @@ export function render(data: {
   <div style="background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);padding:40px 50px;position:relative;overflow:hidden;">
     <div style="position:absolute;top:-30px;right:-30px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
     <div style="position:absolute;bottom:-50px;left:50px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.03);"></div>
-    <p style="margin:0 0 4px;font-size:12px;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,0.7);font-weight:600;">Learnova</p>
+    <img src="${data.logoUrl}" alt="Learnova" style="height:32px;object-fit:contain;filter:brightness(0) invert(1);margin-bottom:12px;display:block;" />
     <h1 style="margin:0;font-size:32px;color:#ffffff;font-weight:300;letter-spacing:1px;">Certificate of Completion</h1>
   </div>
 

@@ -11,6 +11,7 @@ export interface CertificateData {
   certificateId: string;
   points: number;
   verifyUrl: string;
+  logoUrl: string;
 }
 
 interface Template {

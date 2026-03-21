@@ -2,9 +2,21 @@ import prisma from '../../lib/prisma';
 import { sendMail } from '../../lib/mailer';
 import { AppError } from '../../config/AppError';
 import { templates, renderCertificate, type CertificateData } from '../../templates/certificates';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const CLIENT_URL = process.env.CLIENT_URL ?? 'http://localhost:3000';
 const API_BASE = process.env.API_BASE_URL ?? `http://localhost:${process.env.PORT ?? 4000}/api`;
+
+// Embed logo as base64 so it renders in sandboxed iframes and cross-origin contexts
+let LOGO_DATA_URI = '';
+try {
+  const logoPath = path.join(__dirname, '..', '..', '..', '..', 'client', 'public', 'learnova.png');
+  const buf = fs.readFileSync(logoPath);
+  LOGO_DATA_URI = `data:image/png;base64,${buf.toString('base64')}`;
+} catch {
+  // logo file not found — templates will render without it
+}
 
 function verifyUrl(uid: string) {
   return `${CLIENT_URL}/verify/${uid}`;
@@ -25,6 +37,7 @@ export const previewTemplate = (templateKey: string) => {
     certificateId: 'PREVIEW-000',
     points: 24,
     verifyUrl: verifyUrl('PREVIEW-000'),
+    logoUrl: LOGO_DATA_URI,
   };
   return renderCertificate(templateKey, sampleData);
 };
@@ -151,6 +164,7 @@ export const renderCertificateHtml = async (uid: string) => {
     certificateId: cert.uid,
     points: cert.pointsEarned,
     verifyUrl: verifyUrl(cert.uid),
+    logoUrl: LOGO_DATA_URI,
   };
   return renderCertificate(cert.templateKey, data);
 };
