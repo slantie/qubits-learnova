@@ -1,38 +1,76 @@
+/**
+ * Button — Academic Minimal variant
+ *
+ * Design decisions:
+ *   - One primary action per screen: solid indigo fill
+ *   - Secondary actions: outline or ghost — never compete with primary CTA
+ *   - Destructive: always red, isolated visually
+ *   - All heights target 44px touch target minimum on mobile
+ *   - Focus rings always visible — outline: none is banned
+ *   - Transitions: 150ms ease for opacity/transform only (purposeful motion)
+ *
+ * Note on ButtonAnchor:
+ *   @base-ui/react/button does not support Radix-style asChild.
+ *   For <a>-wrapped CTAs use the ButtonAnchor export instead, which applies
+ *   identical visual styles to a native <a> element.
+ */
 "use client"
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+export const buttonVariants = cva(
+  // Base: shared across all variants
+  [
+    "inline-flex shrink-0 items-center justify-center gap-2",
+    "rounded-md font-medium text-sm whitespace-nowrap",
+    "border border-transparent",
+    "transition-all duration-150 ease-out",
+    // Focus ring — never suppressed
+    "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    // Disabled
+    "disabled:pointer-events-none disabled:opacity-40",
+    // Icon sizing
+    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  ],
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+        // Primary: indigo fill — use once per screen as the dominant CTA
+        default:
+          "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 active:scale-[0.98]",
+
+        // Secondary: subtle background — second-tier actions
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-[0.98]",
+
+        // Outline: bordered, transparent fill — tertiary controls
+        outline:
+          "border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground active:scale-[0.98]",
+
+        // Ghost: invisible until hover — used in toolbars, nav
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "text-foreground hover:bg-accent hover:text-accent-foreground active:scale-[0.98]",
+
+        // Link: text-only, indigo color, underlines on hover
+        link:
+          "text-primary underline-offset-4 hover:underline p-0 h-auto",
+
+        // Destructive: red — always requires confirmation before action
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 focus-visible:ring-destructive active:scale-[0.98]",
       },
       size: {
-        default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-        icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
-        "icon-lg": "size-9",
+        // All height values target 44px touch target on mobile via padding
+        sm:       "h-8 px-3 text-xs rounded-md gap-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        default:  "h-10 px-4",
+        lg:       "h-11 px-6 text-base rounded-md",
+        // Icon-only buttons — always pair with aria-label or tooltip
+        icon:     "size-10 rounded-md",
+        "icon-sm": "size-8 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
       },
     },
     defaultVariants: {
@@ -42,12 +80,15 @@ const buttonVariants = cva(
   }
 )
 
+type ButtonVariantProps = VariantProps<typeof buttonVariants>
+
+/* ── Button: wraps @base-ui/react ButtonPrimitive ─────────────────────────── */
 function Button({
   className,
   variant = "default",
   size = "default",
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonPrimitive.Props & ButtonVariantProps) {
   return (
     <ButtonPrimitive
       data-slot="button"
@@ -57,4 +98,31 @@ function Button({
   )
 }
 
-export { Button, buttonVariants }
+/* ── ButtonAnchor: identical styles applied to a native <a> element ───────── */
+// Use this when the CTA navigates to a URL (internal or external link).
+// Semantically correct: <a> for navigation, <button> for actions.
+type ButtonAnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & ButtonVariantProps
+
+function ButtonAnchor({
+  className,
+  variant = "default",
+  size = "default",
+  children,
+  ...props
+}: ButtonAnchorProps) {
+  return (
+    <a
+      data-slot="button"
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        // Anchors need cursor-pointer since they are not buttons
+        "cursor-pointer",
+      )}
+      {...props}
+    >
+      {children}
+    </a>
+  )
+}
+
+export { Button, ButtonAnchor }
