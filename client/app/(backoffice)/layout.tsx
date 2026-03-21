@@ -107,8 +107,8 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                 <div className="flex items-center gap-2.5 px-4 h-16 border-b border-sidebar-border shrink-0">
                     <Image src="/learnova.svg" alt="Learnova" width={36} height={36} className="size-9 object-contain shrink-0" />
                     <div>
-                        <p className="text-sm font-normal text-sidebar-foreground leading-none">Learnova</p>
-                        <p className="text-[10px] text-sidebar-foreground/60 mt-0.5 capitalize">
+                        <p className="text-sm font-normal text-foreground leading-none">Learnova</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 capitalize">
                             {role?.toLowerCase()} panel
                         </p>
                     </div>
