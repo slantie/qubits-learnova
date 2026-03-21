@@ -52,7 +52,7 @@ ButtonAnchor.displayName = "ButtonAnchor"
 function ProgressBar({ value, size, label, className }: any) {
   return (
     <div className={cn("w-full bg-muted rounded-full overflow-hidden h-2", className)}>
-      <div className="bg-primary h-full transition-all" style={{ width: `${value}%` }} />
+      <div className="am-progress-bar-fill" style={{ width: `${value}%` }} />
     </div>
   )
 }
@@ -237,7 +237,7 @@ function Hero() {
           </div>
 
           {/* Body copy — 18px, weight 400, max 520px for reading comfort */}
-          <p className="text-[18px] leading-[1.7] text-muted-foreground max-w-[520px]">
+          <p className="text-[18px] leading-[1.7] text-muted-foreground max-w-130">
             Learnova understands your curriculum, tracks your learning progress,
             and surfaces insights from your Odoo data — all in a focused,
             distraction-free environment built for deep work.
@@ -336,11 +336,11 @@ function LearningCard() {
       <hr className="am-divider" />
 
       {/* Module list — completion states are visually distinct */}
-      <div className="space-y-4" role="list" aria-label="Course modules">
+      <ul className="space-y-4" aria-label="Course modules">
         {modules.map((mod) => (
           <ModuleRow key={mod.title} {...mod} />
         ))}
-      </div>
+      </ul>
 
       {/* Resume CTA — contextual, adjacent to content */}
       <Button className="w-full" size="default">
@@ -383,8 +383,7 @@ function ModuleRow({ title, progress, status, lessons }: ModuleRowProps) {
   const isCompleted = status === "complete"
 
   return (
-    <div
-      role="listitem"
+    <li
       className={cn("space-y-2", isCompleted && "am-completed")}
     >
       <div className="flex items-center gap-3">
@@ -414,7 +413,7 @@ function ModuleRow({ title, progress, status, lessons }: ModuleRowProps) {
           className="ml-7"
         />
       )}
-    </div>
+    </li>
   )
 }
 
@@ -481,15 +480,14 @@ function Features() {
         </div>
 
         {/* Grid — 4 columns desktop, 2 tablet, 1 mobile */}
-        <div
+        <ul
           className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          role="list"
           aria-label="Platform features"
         >
           {FEATURES.map((feature) => (
             <FeatureCard key={feature.title} {...feature} />
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   )
@@ -505,8 +503,7 @@ interface FeatureCardProps {
 
 function FeatureCard({ icon: Icon, title, body, stat, statLabel }: FeatureCardProps) {
   return (
-    <div
-      role="listitem"
+    <li
       className="am-card p-6 space-y-5 group"
     >
       {/* Icon — indigo, 36x36 container, consistent sizing */}
@@ -514,7 +511,7 @@ function FeatureCard({ icon: Icon, title, body, stat, statLabel }: FeatureCardPr
         className="size-9 flex items-center justify-center rounded-md bg-primary/10 text-primary"
         aria-hidden
       >
-        <Icon className="size-[18px]" strokeWidth={2} />
+        <Icon className="size-4.5" strokeWidth={2} />
       </div>
 
       {/* Stat — prominent number, weight 700, 24px */}
@@ -528,7 +525,7 @@ function FeatureCard({ icon: Icon, title, body, stat, statLabel }: FeatureCardPr
         <h3 className="text-[15px] font-medium text-foreground leading-snug">{title}</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
       </div>
-    </div>
+    </li>
   )
 }
 
@@ -799,7 +796,7 @@ function CTABanner() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <ButtonAnchor size="lg" href="/signup">
-              <Zap className="size-4 ml-[-4px]" />
+              <Zap className="size-4 -ml-1" />
               Start for free
             </ButtonAnchor>
             <ButtonAnchor
@@ -809,7 +806,7 @@ function CTABanner() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Github className="size-4 ml-[-4px]" />
+              <Github className="size-4 -ml-1" />
               Star on GitHub
             </ButtonAnchor>
           </div>

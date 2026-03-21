@@ -7,6 +7,7 @@
  *   error   (red)    = blocked / failed
  *   info    (blue)   = informational
  *   neutral (slate)  = tags / labels without semantic meaning
+ *   primary (teal)   = brand accent
  *
  * Usage:
  *   <Badge variant="success">Complete</Badge>
@@ -26,24 +27,15 @@ interface BadgeProps {
 const variantClasses: Record<BadgeVariant, string> = {
   success: "am-badge am-badge-success",
   warning: "am-badge am-badge-warning",
-  error:   "am-badge am-badge-error",
-  info:    "am-badge am-badge-info",
+  error: "am-badge am-badge-error",
+  info: "am-badge am-badge-info",
   neutral: "am-badge am-badge-neutral",
-  primary: "am-badge",
-}
-
-// Teal primary badge — uses alpha of the teal #007067 accent
-const primaryStyle = {
-  background: "rgb(0 112 103 / 0.1)",
-  color: "var(--primary)",
+  primary: "am-badge am-badge-primary",
 }
 
 export function Badge({ variant = "neutral", children, className }: BadgeProps) {
   return (
-    <span
-      className={cn(variantClasses[variant], className)}
-      style={variant === "primary" ? primaryStyle : undefined}
-    >
+    <span className={cn(variantClasses[variant], className)}>
       {children}
     </span>
   )

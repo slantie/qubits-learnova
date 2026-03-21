@@ -182,9 +182,11 @@ export function KanbanBoardLiveRegion({
   ref,
   ...props
 }: ComponentProps<'div'> & KanbanBoardLiveRegionProps) {
+  // aria-live value must be a static string — wrap with conditional rendering instead
+  if (ariaLiveType === 'off') return null;
   return (
     <div
-      aria-live={ariaLiveType}
+      aria-live={ariaLiveType === 'assertive' ? 'assertive' : 'polite'}
       aria-atomic
       className={cn(
         'clip-[rect(0_0_0_0)] clip-path-[inset(100%)] fixed top-0 left-0 -m-px h-px w-px overflow-hidden border-0 p-0 whitespace-nowrap',
@@ -423,7 +425,7 @@ export function KanbanBoard({
   return (
     <div
       className={cn(
-        'flex h-full flex-grow items-start gap-x-2 overflow-x-auto py-1',
+        'flex h-full grow items-start gap-x-2 overflow-x-auto py-1',
         className,
       )}
       ref={ref}
@@ -443,7 +445,7 @@ export function KanbanBoardExtraMargin({
 }: ComponentProps<'div'>) {
   return (
     <div
-      className={cn('h-1 w-8 flex-shrink-0', className)}
+      className={cn('h-1 w-8 shrink-0', className)}
       ref={ref}
       {...props}
     />
@@ -593,7 +595,7 @@ export function KanbanBoardColumnList({
 }: ComponentProps<'ul'>) {
   return (
     <ul
-      className={cn('min-h-0.5 flex-grow overflow-y-auto', className)}
+      className={cn('min-h-0.5 grow overflow-y-auto', className)}
       ref={ref}
       {...props}
     />

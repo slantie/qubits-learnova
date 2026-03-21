@@ -54,6 +54,8 @@ model User {
   role         Role     @default(LEARNER)
   totalPoints  Int      @default(0)
   currentBadge String?
+  otpHash      String?
+  otpExpiry    DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
