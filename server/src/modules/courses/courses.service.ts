@@ -196,16 +196,24 @@ export const getCourseView = async (courseId: number, userId: number, role: stri
     throw new AppError(403, 'Course not available', 'FORBIDDEN');
   }
 
-  // Check enrollment (learners must be enrolled)
+  let completedLessonIds: number[] = [];
+
   if (role === 'LEARNER') {
     const enrollment = await prisma.enrollment.findUnique({
       where: { userId_courseId: { userId, courseId } },
+      include: {
+        lessonProgresses: {
+          where: { isCompleted: true },
+          select: { lessonId: true },
+        },
+      },
     });
     if (!enrollment) throw new AppError(403, 'You are not enrolled in this course', 'NOT_ENROLLED');
+    completedLessonIds = enrollment.lessonProgresses.map(lp => lp.lessonId);
   }
 
   const { instructor, ...rest } = course;
-  return { ...rest, instructorName: instructor.name };
+  return { ...rest, instructorName: instructor.name, completedLessonIds };
 };
 
 // ─── Learner-facing: single lesson view ────────────────────────────────────────
@@ -236,6 +244,97 @@ export const getLessonView = async (
   }
 
   return lesson;
+};
+
+// ─── Mark lesson complete ─────────────────────────────────────────────────────
+
+export const markLessonComplete = async (
+  courseId: number,
+  lessonId: number,
+  userId: number,
+) => {
+  const enrollment = await prisma.enrollment.findUnique({
+    where: { userId_courseId: { userId, courseId } },
+  });
+  if (!enrollment) throw new AppError(403, 'Not enrolled', 'NOT_ENROLLED');
+
+  const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
+  if (!lesson || lesson.courseId !== courseId) {
+    throw new AppError(404, 'Lesson not found', 'LESSON_NOT_FOUND');
+  }
+
+  const progress = await prisma.lessonProgress.upsert({
+    where: { enrollmentId_lessonId: { enrollmentId: enrollment.id, lessonId } },
+    create: {
+      enrollmentId: enrollment.id,
+      lessonId,
+      userId,
+      isCompleted: true,
+      completedAt: new Date(),
+    },
+    update: {
+      isCompleted: true,
+      completedAt: new Date(),
+    },
+  });
+
+  if (!enrollment.startedAt) {
+    await prisma.enrollment.update({
+      where: { id: enrollment.id },
+      data: { startedAt: new Date(), status: 'IN_PROGRESS' },
+    });
+  } else if (enrollment.status === 'NOT_STARTED') {
+    await prisma.enrollment.update({
+      where: { id: enrollment.id },
+      data: { status: 'IN_PROGRESS' },
+    });
+  }
+
+  const totalLessons = await prisma.lesson.count({ where: { courseId } });
+  const completedCount = await prisma.lessonProgress.count({
+    where: { enrollmentId: enrollment.id, isCompleted: true },
+  });
+
+  if (completedCount >= totalLessons) {
+    await prisma.enrollment.update({
+      where: { id: enrollment.id },
+      data: { status: 'COMPLETED', completedAt: new Date() },
+    });
+  }
+
+  return { progress, completedCount, totalLessons };
+};
+
+// ─── Mark lesson incomplete ───────────────────────────────────────────────────
+
+export const markLessonIncomplete = async (
+  courseId: number,
+  lessonId: number,
+  userId: number,
+) => {
+  const enrollment = await prisma.enrollment.findUnique({
+    where: { userId_courseId: { userId, courseId } },
+  });
+  if (!enrollment) throw new AppError(403, 'Not enrolled', 'NOT_ENROLLED');
+
+  await prisma.lessonProgress.updateMany({
+    where: { enrollmentId: enrollment.id, lessonId },
+    data: { isCompleted: false, completedAt: null },
+  });
+
+  if (enrollment.status === 'COMPLETED') {
+    await prisma.enrollment.update({
+      where: { id: enrollment.id },
+      data: { status: 'IN_PROGRESS', completedAt: null },
+    });
+  }
+
+  const totalLessons = await prisma.lesson.count({ where: { courseId } });
+  const completedCount = await prisma.lessonProgress.count({
+    where: { enrollmentId: enrollment.id, isCompleted: true },
+  });
+
+  return { completedCount, totalLessons };
 };
 
 // ─── Add attendees ─────────────────────────────────────────────────────────────

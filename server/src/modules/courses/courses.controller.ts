@@ -110,6 +110,28 @@ export const getLessonView = async (req: Request, res: Response, next: NextFunct
   } catch (err) { next(err); }
 };
 
+export const markLessonComplete = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await coursesService.markLessonComplete(
+      Number(req.params.id),
+      Number(req.params.lessonId),
+      req.user.id,
+    );
+    res.json(result);
+  } catch (err) { next(err); }
+};
+
+export const markLessonIncomplete = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await coursesService.markLessonIncomplete(
+      Number(req.params.id),
+      Number(req.params.lessonId),
+      req.user.id,
+    );
+    res.json(result);
+  } catch (err) { next(err); }
+};
+
 export const addAttendees = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await coursesService.addAttendees(

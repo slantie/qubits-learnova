@@ -11,7 +11,8 @@ import { formatDuration } from '@/lib/formatDuration';
 import {
     Play, FileText, Image as ImageIcon, ClipboardList,
     Clock, BookOpen, ChevronLeft, Loader2,
-    Link2, FileDown, AlertCircle, X, ChevronRight, Download, Trophy,
+    Link2, FileDown, AlertCircle, X, ChevronRight, Download,
+    CheckCircle, Circle, Trophy, ArrowRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LessonType } from '@/types';
@@ -71,6 +72,7 @@ interface CourseView {
     tags: string[];
     instructorName: string;
     lessons: LessonMeta[];
+    completedLessonIds: number[];
 }
 
 function LessonIcon({ type }: { type: LessonType }) {
@@ -99,10 +101,18 @@ function LessonContent({
     lesson,
     course,
     onNavigate,
+    completedIds,
+    onMarkComplete,
+    onMarkIncomplete,
+    marking,
 }: {
     lesson: LessonDetail;
     course: CourseView;
     onNavigate: (id: number) => void;
+    completedIds: Set<number>;
+    onMarkComplete: (lessonId: number) => Promise<void>;
+    onMarkIncomplete: (lessonId: number) => Promise<void>;
+    marking: boolean;
 }) {
     const [activeTab, setActiveTab] = useState<ContentTab>('description');
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -143,6 +153,7 @@ function LessonContent({
     const idx = course.lessons.findIndex(l => l.id === lesson.id);
     const prev = course.lessons[idx - 1];
     const next = course.lessons[idx + 1];
+    const isCompleted = completedIds.has(lesson.id);
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 flex flex-col gap-6">
@@ -293,26 +304,65 @@ function LessonContent({
                 </>
             )}
 
-            {/* Navigation */}
-            <div className="flex items-center justify-between pt-4 border-t">
-                {prev ? (
-                    <button
-                        onClick={() => onNavigate(prev.id)}
-                        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                        <ChevronLeft className="size-4" />
-                        <span className="hidden sm:inline">Previous:</span> {prev.title}
-                    </button>
-                ) : <div />}
-                {next && (
-                    <button
-                        onClick={() => onNavigate(next.id)}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline ml-auto"
-                    >
-                        Next: {next.title}
-                        <ChevronLeft className="size-4 rotate-180" />
-                    </button>
-                )}
+            {/* Mark Complete & Navigation */}
+            <div className="flex flex-col gap-4 pt-4 border-t">
+                {/* Mark complete / incomplete */}
+                <div className="flex items-center gap-3">
+                    {isCompleted ? (
+                        <>
+                            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                                <CheckCircle className="size-5" />
+                                <span className="text-sm font-medium">Lesson completed</span>
+                            </div>
+                            <button
+                                onClick={() => onMarkIncomplete(lesson.id)}
+                                disabled={marking}
+                                className="text-xs text-muted-foreground hover:text-foreground underline ml-2 disabled:opacity-50"
+                            >
+                                Undo
+                            </button>
+                        </>
+                    ) : (
+                        <Button
+                            onClick={async () => {
+                                await onMarkComplete(lesson.id);
+                                if (next) onNavigate(next.id);
+                            }}
+                            disabled={marking}
+                            className="gap-2"
+                        >
+                            {marking ? (
+                                <Loader2 className="size-4 animate-spin" />
+                            ) : (
+                                <CheckCircle className="size-4" />
+                            )}
+                            {next ? 'Complete & Continue' : 'Mark as Complete'}
+                            {next && <ArrowRight className="size-4" />}
+                        </Button>
+                    )}
+                </div>
+
+                {/* Prev / Next navigation */}
+                <div className="flex items-center justify-between">
+                    {prev ? (
+                        <button
+                            onClick={() => onNavigate(prev.id)}
+                            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            <ChevronLeft className="size-4" />
+                            <span className="hidden sm:inline">Previous:</span> {prev.title}
+                        </button>
+                    ) : <div />}
+                    {next && (
+                        <button
+                            onClick={() => onNavigate(next.id)}
+                            className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline ml-auto"
+                        >
+                            Next: {next.title}
+                            <ChevronLeft className="size-4 rotate-180" />
+                        </button>
+                    )}
+                </div>
             </div>
 
             {/* ── Image Lightbox ──────────────────────────────────────────── */}
@@ -394,7 +444,8 @@ export default function CourseViewPage() {
     const [lesson, setLesson] = useState<LessonDetail | null>(null);
     const [lessonLoading, setLessonLoading] = useState(false);
 
-    const [quizzes, setQuizzes] = useState<QuizMeta[]>([]);
+    const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
+    const [marking, setMarking] = useState(false);
 
     // Load course
     useEffect(() => {
@@ -406,14 +457,38 @@ export default function CourseViewPage() {
             .then(([courseData, quizData]) => {
                 const c: CourseView = courseData.course ?? courseData;
                 setCourse(c);
-                setQuizzes(Array.isArray(quizData) ? quizData : (quizData.quizzes ?? []));
-                // Auto-select first lesson
-                if (c.lessons.length > 0) setActiveLessonId(c.lessons[0].id);
+                setCompletedIds(new Set(c.completedLessonIds ?? []));
+                if (c.lessons.length > 0) {
+                    const firstIncomplete = c.lessons.find(l => !(c.completedLessonIds ?? []).includes(l.id));
+                    setActiveLessonId(firstIncomplete?.id ?? c.lessons[0].id);
+                }
             })
             .catch((err) => {
                 setCourseError(err?.data?.message ?? 'Failed to load course');
             })
             .finally(() => setCourseLoading(false));
+    }, [courseId]);
+
+    const handleMarkComplete = useCallback(async (lessonId: number) => {
+        setMarking(true);
+        try {
+            await api.post(`/courses/${courseId}/lessons/${lessonId}/complete`, {});
+            setCompletedIds(prev => new Set([...prev, lessonId]));
+        } catch { /* toast could go here */ }
+        finally { setMarking(false); }
+    }, [courseId]);
+
+    const handleMarkIncomplete = useCallback(async (lessonId: number) => {
+        setMarking(true);
+        try {
+            await api.delete(`/courses/${courseId}/lessons/${lessonId}/complete`);
+            setCompletedIds(prev => {
+                const next = new Set(prev);
+                next.delete(lessonId);
+                return next;
+            });
+        } catch { /* toast could go here */ }
+        finally { setMarking(false); }
     }, [courseId]);
 
     // Load lesson detail when active lesson changes
@@ -448,6 +523,9 @@ export default function CourseViewPage() {
     }
 
     const totalDuration = course.lessons.reduce((s, l) => s + (l.duration ?? 0), 0);
+    const progressPct = course.lessons.length > 0
+        ? Math.round((completedIds.size / course.lessons.length) * 100)
+        : 0;
 
     return (
         <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)]">
@@ -479,6 +557,33 @@ export default function CourseViewPage() {
                             </span>
                         )}
                     </div>
+
+                    {/* Progress bar */}
+                    {course.lessons.length > 0 && (
+                        <div className="mt-4">
+                            <div className="flex items-center justify-between text-xs mb-1.5">
+                                <span className="text-muted-foreground">Progress</span>
+                                <span className="font-medium tabular-nums">
+                                    {completedIds.size}/{course.lessons.length}
+                                </span>
+                            </div>
+                            <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                <div
+                                    className={cn(
+                                        'h-full rounded-full transition-all duration-500',
+                                        progressPct >= 100 ? 'bg-green-500' : 'bg-primary',
+                                    )}
+                                    style={{ width: `${progressPct}%` }}
+                                />
+                            </div>
+                            {progressPct >= 100 && (
+                                <div className="flex items-center gap-1.5 mt-2 text-xs text-green-600 dark:text-green-400 font-medium">
+                                    <Trophy className="size-3.5" />
+                                    Course completed!
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Lesson list */}
@@ -486,6 +591,7 @@ export default function CourseViewPage() {
                     {course.lessons.map((l, index) => {
                         const isActive = l.id === activeLessonId;
                         const isProcessing = l.type === 'VIDEO' && l.videoStatus === 'PROCESSING';
+                        const isDone = completedIds.has(l.id);
                         return (
                             <button
                                 key={l.id}
@@ -501,13 +607,17 @@ export default function CourseViewPage() {
                             >
                                 <span className={cn(
                                     'mt-0.5 shrink-0',
-                                    isActive ? 'text-primary' : 'text-muted-foreground',
+                                    isDone ? 'text-green-500' : isActive ? 'text-primary' : 'text-muted-foreground',
                                 )}>
-                                    <LessonIcon type={l.type} />
+                                    {isDone ? <CheckCircle className="size-4" /> : <Circle className="size-4" />}
                                 </span>
                                 <span className="flex-1 min-w-0">
                                     <span className="flex items-center gap-1.5">
-                                        <span className={cn('truncate font-medium', isActive && 'text-primary')}>
+                                        <span className={cn(
+                                            'truncate font-medium',
+                                            isDone && !isActive && 'text-muted-foreground line-through decoration-1',
+                                            isActive && 'text-primary',
+                                        )}>
                                             {index + 1}. {l.title}
                                         </span>
                                     </span>
@@ -574,6 +684,10 @@ export default function CourseViewPage() {
                         lesson={lesson}
                         course={course}
                         onNavigate={setActiveLessonId}
+                        completedIds={completedIds}
+                        onMarkComplete={handleMarkComplete}
+                        onMarkIncomplete={handleMarkIncomplete}
+                        marking={marking}
                     />
                 )}
 

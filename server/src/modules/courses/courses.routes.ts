@@ -20,6 +20,8 @@ const adminOrInstructor = [authenticate, authorize('ADMIN', 'INSTRUCTOR')] as co
 router.get('/public', ctrl.listPublic);
 router.get('/:id/view', authenticate, ctrl.getView);
 router.get('/:id/lessons/:lessonId/view', authenticate, ctrl.getLessonView);
+router.post('/:id/lessons/:lessonId/complete', authenticate, ctrl.markLessonComplete);
+router.delete('/:id/lessons/:lessonId/complete', authenticate, ctrl.markLessonIncomplete);
 
 // ─── Dashboard (A1) ───────────────────────────────────────────────────────────
 router.get(
