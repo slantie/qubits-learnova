@@ -6,7 +6,7 @@ import { UserProfile, BadgeStatusItem } from '@/types';
 import { fetchProfile } from '@/lib/api/learner';
 import { fetchBadges } from '@/lib/api/badges';
 import { useAuth } from '@/hooks/useAuth';
-import { BadgesGrid } from '@/components/badges/BadgesGrid';
+import { BadgeIcon } from '@/components/badges/BadgeIcon';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Trophy, BookOpen, CheckCircle2, CalendarDays, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -151,11 +151,15 @@ export default function ProfilePage() {
             {earnedCount} of {badgeList.length} earned
           </span>
         </div>
-        {badgeList.length > 0 ? (
-          <BadgesGrid badges={badgeList} />
+        {badgeList.filter(b => b.earned).length > 0 ? (
+          <div className="flex flex-wrap gap-4">
+            {badgeList.filter(b => b.earned).map(b => (
+              <BadgeIcon key={b.key} badgeKey={b.key} size="md" showLabel />
+            ))}
+          </div>
         ) : (
           <p className="text-sm text-muted-foreground text-center py-6">
-            No badge data yet. Complete courses to earn badges!
+            No badges earned yet. Complete courses to earn your first badge!
           </p>
         )}
       </div>
