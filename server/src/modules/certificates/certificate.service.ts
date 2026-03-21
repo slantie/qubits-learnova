@@ -102,6 +102,7 @@ export const issueCertificate = async (
     certificateId: cert.uid,
     points: totalPoints,
     verifyUrl: verifyUrl(cert.uid),
+    logoUrl: LOGO_DATA_URI,
   };
 
   renderCertificate(templateKey, certData);
