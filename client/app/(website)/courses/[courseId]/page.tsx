@@ -446,6 +446,7 @@ export default function CourseViewPage() {
 
     const [completedIds, setCompletedIds] = useState<Set<number>>(new Set());
     const [marking, setMarking] = useState(false);
+    const [quizzes, setQuizzes] = useState<{ id: number; title: string; rewards?: { attempt1Points?: number } }[]>([]);
 
     // Load course
     useEffect(() => {
@@ -458,6 +459,7 @@ export default function CourseViewPage() {
                 const c: CourseView = courseData.course ?? courseData;
                 setCourse(c);
                 setCompletedIds(new Set(c.completedLessonIds ?? []));
+                setQuizzes(quizData?.quizzes ?? quizData ?? []);
                 if (c.lessons.length > 0) {
                     const firstIncomplete = c.lessons.find(l => !(c.completedLessonIds ?? []).includes(l.id));
                     setActiveLessonId(firstIncomplete?.id ?? c.lessons[0].id);
