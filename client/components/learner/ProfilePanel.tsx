@@ -5,7 +5,9 @@ import { UserProfile } from '@/types';
 import { fetchProfile } from '@/lib/api/learner';
 import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trophy, Award, BookOpen, CheckCircle2 } from 'lucide-react';
+import { Trophy, BookOpen, CheckCircle2 } from 'lucide-react';
+import { BadgesGrid } from '@/components/badges/BadgesGrid';
+import { EarnedBadge } from '@/types';
 
 export function ProfilePanel() {
   const { user } = useAuth();
@@ -88,14 +90,22 @@ export function ProfilePanel() {
           </div>
         </div>
 
-        {/* Badge */}
-        {profile.currentBadge && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
-            <Award className="size-5 text-primary shrink-0" />
-            <div>
-              <p className="text-xs font-medium text-primary">Current Badge</p>
-              <p className="text-sm font-semibold">{profile.currentBadge}</p>
-            </div>
+        {/* Badges */}
+        {profile.badges && profile.badges.length > 0 && (
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+            <p className="text-xs font-medium text-primary mb-2">Badges Earned</p>
+            <BadgesGrid
+              badges={profile.badges.map((b: EarnedBadge) => ({
+                key: b.badgeKey,
+                name: b.badgeKey,
+                category: 'TIER' as const,
+                description: '',
+                trigger: '',
+                earned: true,
+                earnedAt: b.earnedAt,
+              }))}
+              compact
+            />
           </div>
         )}
       </div>
