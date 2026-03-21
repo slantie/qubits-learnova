@@ -31,8 +31,9 @@ export function BadgesGrid({ badges, compact = false }: BadgesGridProps) {
     const shown = earned.slice(0, 8);
     const extra = earned.length - shown.length;
     return (
-      <div
-        className="flex flex-wrap gap-2 cursor-pointer"
+      <button
+        type="button"
+        className="flex flex-wrap gap-2 cursor-pointer text-left"
         onClick={() => router.push('/badges')}
         title="View all badges"
       >
@@ -47,7 +48,7 @@ export function BadgesGrid({ badges, compact = false }: BadgesGridProps) {
         {earned.length === 0 && (
           <p className="text-xs text-muted-foreground">No badges earned yet</p>
         )}
-      </div>
+      </button>
     );
   }
 
@@ -71,7 +72,7 @@ export function BadgesGrid({ badges, compact = false }: BadgesGridProps) {
                       <div className="h-1 w-full rounded-full bg-muted overflow-hidden">
                         <div
                           className="h-full rounded-full bg-primary transition-all"
-                          style={{ width: `${Math.min(100, Math.round((b.progress.current / b.progress.required) * 100))}%` }}
+                          style={{ width: `${b.progress.required > 0 ? Math.min(100, Math.round((b.progress.current / b.progress.required) * 100)) : 0}%` }}
                         />
                       </div>
                       <p className="text-[9px] text-muted-foreground text-center leading-tight">

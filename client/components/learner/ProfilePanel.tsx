@@ -1,18 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { UserProfile } from '@/types';
+import { UserProfile, BadgeStatusItem } from '@/types';
 import { fetchProfile } from '@/lib/api/learner';
+import { fetchBadges } from '@/lib/api/badges';
 import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Trophy, BookOpen, CheckCircle2 } from 'lucide-react';
 import { BadgesGrid } from '@/components/badges/BadgesGrid';
-import { EarnedBadge } from '@/types';
 
 export function ProfilePanel() {
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [badgeList, setBadgeList] = useState<BadgeStatusItem[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -20,6 +21,13 @@ export function ProfilePanel() {
       .then(setProfile)
       .catch(() => setProfile(null))
       .finally(() => setLoading(false));
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchBadges()
+      .then(data => setBadgeList(data.badges.filter(b => b.earned)))
+      .catch(() => setBadgeList([]));
   }, [user]);
 
   if (loading) {
@@ -91,21 +99,10 @@ export function ProfilePanel() {
         </div>
 
         {/* Badges */}
-        {profile.badges && profile.badges.length > 0 && (
+        {badgeList.length > 0 && (
           <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
             <p className="text-xs font-medium text-primary mb-2">Badges Earned</p>
-            <BadgesGrid
-              badges={profile.badges.map((b: EarnedBadge) => ({
-                key: b.badgeKey,
-                name: b.badgeKey,
-                category: 'TIER' as const,
-                description: '',
-                trigger: '',
-                earned: true,
-                earnedAt: b.earnedAt,
-              }))}
-              compact
-            />
+            <BadgesGrid badges={badgeList} compact />
           </div>
         )}
       </div>

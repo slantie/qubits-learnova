@@ -671,7 +671,12 @@ export function BadgeIcon({
   const visual = BADGE_VISUALS[badgeKey];
   const dim = SIZE_MAP[size];
 
-  if (!visual) return null;
+  if (!visual) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`[BadgeIcon] Unknown badgeKey: "${badgeKey}"`);
+    }
+    return null;
+  }
 
   const name =
     badgeKey
