@@ -7,9 +7,9 @@ import {
 import Hls from 'hls.js';
 import { cn } from '@/lib/utils';
 import {
-    Play, Pause, Volume2, VolumeX, Maximize, Minimize,
-    Settings, SkipForward, SkipBack,
-} from 'lucide-react';
+    Play, Pause, SpeakerHigh, SpeakerX, ArrowsOut, ArrowsIn,
+    GearSix, SkipForward, SkipBack,
+} from '@phosphor-icons/react';
 
 interface QualityLevel {
     index: number;
@@ -327,7 +327,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                             <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors" />
                             {title && (
                                 <div className="absolute bottom-0 left-0 right-0 px-5 pb-14 bg-gradient-to-t from-black/80 to-transparent pt-10">
-                                    <p className="text-white font-semibold text-base leading-snug line-clamp-2 drop-shadow">{title}</p>
+                                    <p className="text-white font-normal text-base leading-snug line-clamp-2 drop-shadow">{title}</p>
                                 </div>
                             )}
                             <div className="absolute inset-0 flex items-center justify-center">
@@ -448,7 +448,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                                         onClick={() => { const v = videoRef.current; if (v) { v.muted = !v.muted; setMuted(v.muted); } }}
                                         className="p-1.5 hover:bg-white/10 rounded-md transition-colors"
                                     >
-                                        {muted || volume === 0 ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                                        {muted || volume === 0 ? <SpeakerX className="size-4" /> : <SpeakerHigh className="size-4" />}
                                     </button>
                                     <input
                                         type="range" min="0" max="1" step="0.05" value={muted ? 0 : volume}
@@ -474,7 +474,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                                                 onClick={() => setSettingsOpen(o => !o)}
                                                 className="p-1.5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1"
                                             >
-                                                <Settings className={cn('size-4 transition-transform', settingsOpen && 'rotate-45')} />
+                                                <GearSix className={cn('size-4 transition-transform', settingsOpen && 'rotate-45')} />
                                                 <span className="text-[10px] font-medium">
                                                     {currentLevel === -1
                                                         ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
@@ -483,12 +483,12 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                                             </button>
                                             {settingsOpen && (
                                                 <div className="absolute bottom-full right-0 mb-2 bg-black/95 backdrop-blur-md rounded-lg border border-white/10 p-1.5 min-w-[140px] flex flex-col gap-0.5 shadow-2xl">
-                                                    <p className="px-2.5 pt-1 pb-0.5 text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Quality</p>
+                                                    <p className="px-2.5 pt-1 pb-0.5 text-[10px] text-gray-500 uppercase tracking-wider font-normal">Quality</p>
                                                     <button
                                                         onClick={() => onQualityChange(-1)}
                                                         className={cn(
                                                             'flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-md text-xs transition-colors',
-                                                            currentLevel === -1 ? 'bg-white/10 text-white font-semibold' : 'text-gray-300 hover:bg-white/5',
+                                                            currentLevel === -1 ? 'bg-white/10 text-white font-normal' : 'text-gray-300 hover:bg-white/5',
                                                         )}
                                                     >
                                                         Auto
@@ -500,7 +500,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                                                             onClick={() => onQualityChange(level.index)}
                                                             className={cn(
                                                                 'flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-md text-xs transition-colors',
-                                                                currentLevel === level.index ? 'bg-white/10 text-white font-semibold' : 'text-gray-300 hover:bg-white/5',
+                                                                currentLevel === level.index ? 'bg-white/10 text-white font-normal' : 'text-gray-300 hover:bg-white/5',
                                                             )}
                                                         >
                                                             {level.height}p
@@ -514,7 +514,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
 
                                     {/* Fullscreen */}
                                     <button onClick={toggleFullscreen} className="p-1.5 hover:bg-white/10 rounded-md transition-colors">
-                                        {isFullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
+                                        {isFullscreen ? <ArrowsIn className="size-4" /> : <ArrowsOut className="size-4" />}
                                     </button>
                                 </div>
                             </div>

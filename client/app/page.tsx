@@ -376,7 +376,7 @@ function LearningCard() {
             <CircleProgress value={overallProgress} size={52} strokeWidth={5} />
             {/* Percentage label centered in ring */}
             <span
-              className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground"
+              className="absolute inset-0 flex items-center justify-center text-xs font-normal text-foreground"
               aria-hidden
             >
               {overallProgress}%
@@ -418,12 +418,7 @@ function ModuleRow({ title, progress, status, lessons }: ModuleRowProps) {
   const statusConfig = {
     complete: {
       badge: <Badge variant="success">Complete</Badge>,
-      icon: (
-        <CheckCircle2
-          className="size-4 shrink-0 text-green-600 dark:text-green-500"
-          aria-hidden
-        />
-      ),
+      icon: <CheckCircle2 className="size-4 text-primary shrink-0" aria-hidden />,
     },
     "in-progress": {
       badge: <Badge variant="warning">In progress</Badge>,
@@ -585,12 +580,8 @@ function FeatureCard({
 
       {/* Stat — prominent number, weight 700, 24px */}
       <div>
-        <p className="text-2xl font-semibold tracking-tight text-foreground">
-          {stat}
-        </p>
-        <p className="mt-0.5 text-xs font-medium text-muted-foreground">
-          {statLabel}
-        </p>
+        <p className="text-2xl font-normal text-foreground tracking-tight">{stat}</p>
+        <p className="text-xs text-muted-foreground font-medium mt-0.5">{statLabel}</p>
       </div>
 
       {/* Title + body */}
@@ -639,7 +630,7 @@ function ProgressDemo() {
               {[
                 {
                   icon: CheckCircle2,
-                  color: "text-green-600 dark:text-green-500",
+                  color: "text-primary",
                   title: "Completion states",
                   desc: "Done items are muted — remaining work stands out immediately.",
                 },
@@ -718,11 +709,9 @@ function WeeklyProgressCard() {
           { value: "3", label: "Modules done" },
           { value: "47", label: "Problems solved" },
         ].map(({ value, label }) => (
-          <div key={label} className="rounded-md bg-muted/50 p-3 text-center">
-            <p className="text-lg font-semibold text-foreground">{value}</p>
-            <p className="mt-0.5 text-xs leading-tight text-muted-foreground">
-              {label}
-            </p>
+          <div key={label} className="text-center p-3 bg-muted/50 rounded-md">
+            <p className="text-lg font-normal text-foreground">{value}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
           </div>
         ))}
       </div>
@@ -737,9 +726,7 @@ function WeeklyProgressCard() {
               <p className="text-sm font-medium text-foreground">{name}</p>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">{hours}h</span>
-                <span className="text-xs font-semibold text-foreground">
-                  {progress}%
-                </span>
+                <span className="text-xs font-normal text-foreground">{progress}%</span>
               </div>
             </div>
             <ProgressBar
@@ -791,7 +778,7 @@ function Stats() {
               role="listitem"
               className="space-y-1 text-center md:text-left"
             >
-              <p className="text-3xl font-semibold tracking-tight text-foreground">
+              <p className="text-3xl font-normal text-foreground tracking-tight">
                 {value}
               </p>
               <p className="text-sm font-medium text-foreground">{label}</p>

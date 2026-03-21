@@ -8,7 +8,7 @@ import { StarRating } from '@/components/learner/StarRating';
 import { ReviewForm } from '@/components/learner/ReviewForm';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageSquarePlus, Pencil, Trash2 } from 'lucide-react';
+import { ChatCircle, Pencil, Trash } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface ReviewsTabProps {
@@ -116,13 +116,13 @@ export function ReviewsTab({ courseId, isEnrolled }: ReviewsTabProps) {
               </>
             ) : (
               <>
-                <MessageSquarePlus className="size-3.5 mr-1.5" /> Write a Review
+                <ChatCircle className="size-3.5 mr-1.5" /> Write a Review
               </>
             )}
           </Button>
           {isEditing && (
             <Button size="sm" variant="ghost" onClick={handleDelete} className="text-destructive hover:text-destructive">
-              <Trash2 className="size-3.5 mr-1.5" /> Delete
+              <Trash className="size-3.5 mr-1.5" /> Delete
             </Button>
           )}
         </div>
@@ -186,7 +186,7 @@ function ReviewCard({ review, isOwn }: { review: ReviewData; isOwn: boolean }) {
 
   return (
     <div className={`flex gap-3 p-4 rounded-lg border ${isOwn ? 'bg-primary/5 border-primary/15' : 'bg-card'}`}>
-      <div className="size-9 rounded-full bg-muted flex items-center justify-center text-xs font-semibold shrink-0">
+      <div className="size-9 rounded-full bg-muted flex items-center justify-center text-xs font-normal shrink-0">
         {initials}
       </div>
       <div className="flex-1 min-w-0">

@@ -10,7 +10,7 @@ import { ProfilePanel } from '@/components/learner/ProfilePanel';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { DotsLoader } from '@/components/ui/dots-loader';
-import { Search, GraduationCap, BookOpen } from 'lucide-react';
+import { MagnifyingGlass, GraduationCap, BookOpen } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -71,7 +71,7 @@ export default function MyCoursesPage() {
 
           {/* Search */}
           <div className="relative mb-6 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
               className="pl-10"
               placeholder="Search your courses..."

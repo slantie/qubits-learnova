@@ -1,6 +1,7 @@
 import prisma from '../../lib/prisma';
 import { AppError } from '../../config/AppError';
 import type { SubmitReviewInput, UpdateReviewInput } from './learner.schema';
+import { evaluate as evaluateBadges } from '../badges/badge.service';
 
 // ─── List published courses ───────────────────────────────────────────────────
 
@@ -187,11 +188,19 @@ export const enrollInCourse = async (userId: number, courseId: number) => {
     throw new AppError(403, 'Enrollment by invitation only', 'INVITATION_ONLY');
   }
 
+  const existing = await prisma.enrollment.findUnique({
+    where: { userId_courseId: { userId, courseId } },
+  });
+
   const enrollment = await prisma.enrollment.upsert({
     where: { userId_courseId: { userId, courseId } },
     create: { userId, courseId },
     update: {},
   });
+
+  if (!existing) {
+    evaluateBadges(userId, { courseId }).catch(() => {});
+  }
 
   return enrollment;
 };
@@ -285,6 +294,8 @@ export const markLessonComplete = async (userId: number, courseId: number, lesso
     });
   }
 
+  evaluateBadges(userId, { courseId }).catch(() => {});
+
   return {
     completedLessonIds: (await prisma.lessonProgress.findMany({
       where: { enrollmentId: enrollment.id, isCompleted: true },
@@ -361,11 +372,19 @@ export const submitReview = async (userId: number, courseId: number, data: Submi
     throw new AppError(403, 'You must be enrolled to review this course', 'NOT_ENROLLED');
   }
 
+  const existingReview = await prisma.review.findUnique({
+    where: { userId_courseId: { userId, courseId } },
+  });
+
   const review = await prisma.review.upsert({
     where: { userId_courseId: { userId, courseId } },
     create: { userId, courseId, rating: data.rating, reviewText: data.reviewText },
     update: { rating: data.rating, reviewText: data.reviewText },
   });
+
+  if (!existingReview) {
+    evaluateBadges(userId).catch(() => {});
+  }
 
   return review;
 };
@@ -416,6 +435,12 @@ export const getProfile = async (userId: number) => {
     where: { userId, status: 'COMPLETED' },
   });
 
+  const earnedBadges = await prisma.userBadge.findMany({
+    where: { userId },
+    select: { badgeKey: true, earnedAt: true },
+    orderBy: { earnedAt: 'asc' },
+  });
+
   return {
     user: {
       id: user.id,
@@ -426,6 +451,43 @@ export const getProfile = async (userId: number) => {
     currentBadge: user.currentBadge,
     enrollmentCount,
     completedCount,
+    badges: earnedBadges.map(b => ({ badgeKey: b.badgeKey, earnedAt: b.earnedAt.toISOString() })),
+  };
+};
+
+// ─── Public Profile ───────────────────────────────────────────────────────────
+
+export const getPublicProfile = async (userId: number) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, totalPoints: true, currentBadge: true, createdAt: true },
+  });
+  if (!user) {
+    throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
+  }
+
+  const enrollmentCount = await prisma.enrollment.count({ where: { userId } });
+  const completedCount = await prisma.enrollment.count({
+    where: { userId, status: 'COMPLETED' },
+  });
+
+  const earnedBadges = await prisma.userBadge.findMany({
+    where: { userId },
+    select: { badgeKey: true, earnedAt: true },
+    orderBy: { earnedAt: 'asc' },
+  });
+
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      createdAt: user.createdAt.toISOString(),
+    },
+    totalPoints: user.totalPoints,
+    currentBadge: user.currentBadge,
+    enrollmentCount,
+    completedCount,
+    badges: earnedBadges.map(b => ({ badgeKey: b.badgeKey, earnedAt: b.earnedAt.toISOString() })),
   };
 };
 

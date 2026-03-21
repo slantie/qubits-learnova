@@ -6,9 +6,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
 import {
-    LogOut, LayoutDashboard, Trophy,
-    GraduationCap, ChevronDown, Star,
-} from 'lucide-react';
+    SignOut, SquaresFour, Trophy,
+    GraduationCap, CaretDown, Star, User,
+} from '@phosphor-icons/react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { CoursesDropdown } from '@/components/learner/CoursesDropdown';
@@ -48,7 +48,7 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                         {user.totalPoints}
                     </span>
                 )}
-                <ChevronDown className={cn('size-3.5 text-muted-foreground transition-transform', open && 'rotate-180')} />
+                <CaretDown className={cn('size-3.5 text-muted-foreground transition-transform', open && 'rotate-180')} />
             </button>
 
             {open && (
@@ -64,13 +64,21 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                         )}
                     </div>
 
+                    <Link
+                        href="/profile"
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-muted transition-colors"
+                    >
+                        <User className="size-4 text-muted-foreground" />
+                        My Profile
+                    </Link>
                     {(role === 'ADMIN' || role === 'INSTRUCTOR') && (
                         <Link
                             href="/backoffice"
                             onClick={() => setOpen(false)}
                             className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-muted transition-colors"
                         >
-                            <LayoutDashboard className="size-4 text-muted-foreground" />
+                            <SquaresFour className="size-4 text-muted-foreground" />
                             Backoffice
                         </Link>
                     )}
@@ -97,7 +105,7 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                             onClick={() => { setOpen(false); onLogout(); }}
                             className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
                         >
-                            <LogOut className="size-4" />
+                            <SignOut className="size-4" />
                             Log out
                         </button>
                     </div>
@@ -125,7 +133,7 @@ export default function WebsiteLayout({ children }: { children: ReactNode }) {
                 <div className="flex items-center gap-4">
                     <Link href="/" className="flex items-center gap-2 shrink-0">
                         <Image src="/learnova.svg" alt="Learnova" width={36} height={36} className="size-9 object-contain" />
-                        <span className="font-semibold text-base">Learnova</span>
+                        <span className="font-normal text-base">Learnova</span>
                     </Link>
 
                     {/* Nav links */}
@@ -191,7 +199,7 @@ export default function WebsiteLayout({ children }: { children: ReactNode }) {
                 <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         <Image src="/learnova.svg" alt="Learnova" width={24} height={24} className="size-6 object-contain" />
-                        <span className="text-sm font-medium">Learnova</span>
+                        <span className="text-sm font-normal">Learnova</span>
                     </div>
                     <p className="text-xs text-muted-foreground">
                         &copy; {new Date().getFullYear()} Learnova by Qubits. Built at Hackathon 2026.

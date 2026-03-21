@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Trash2, Plus, Check } from 'lucide-react';
+import { Trash, Plus, Check } from '@phosphor-icons/react';
 
 interface Question {
   id: number;
@@ -122,10 +122,10 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
     <div className="flex flex-col gap-6 max-w-2xl w-full">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
-        <h2 className="text-lg font-semibold text-foreground">Question</h2>
+        <h2 className="text-lg text-foreground">Question</h2>
         <div className="flex items-center gap-3">
           {saved && (
-            <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
+            <span className="flex items-center gap-1 text-xs text-primary font-medium">
               <Check className="w-3.5 h-3.5" />
               Saved
             </span>
@@ -135,7 +135,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
             disabled={deleting}
             className="flex items-center gap-1.5 text-xs text-destructive hover:text-destructive/80 border border-destructive/30 hover:border-destructive/60 rounded-md px-2 py-1.5 transition-colors disabled:opacity-50"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash className="w-3.5 h-3.5" />
             {deleting ? 'Deleting…' : 'Delete question'}
           </button>
         </div>
@@ -166,7 +166,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
                 type="checkbox"
                 checked={correctOptions.includes(idx)}
                 onChange={() => handleCorrectToggle(idx)}
-                className="w-4 h-4 accent-green-600 cursor-pointer"
+                className="w-4 h-4 accent-primary cursor-pointer"
               />
               <span className="text-xs text-muted-foreground sr-only">Correct</span>
             </label>
@@ -187,7 +187,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
 
             {/* Correct label */}
             {correctOptions.includes(idx) && (
-              <span className="text-xs text-green-600 font-medium shrink-0">Correct</span>
+              <span className="text-xs text-primary font-medium shrink-0">Correct</span>
             )}
 
             {/* Delete option */}
@@ -197,7 +197,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
                 className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded"
                 title="Remove option"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash className="w-3.5 h-3.5" />
               </button>
             )}
           </div>

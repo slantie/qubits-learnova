@@ -27,6 +27,9 @@ router.post('/courses/:courseId/reviews', authenticate, validate(submitReviewSch
 router.patch('/courses/:courseId/reviews', authenticate, validate(updateReviewSchema), ctrl.updateReview);
 router.delete('/courses/:courseId/reviews', authenticate, ctrl.deleteReview);
 
+// ─── Public Profile (no auth) ────────────────────────────────────────────────
+router.get('/users/:userId/profile', ctrl.getPublicProfile);
+
 // ─── Profile (auth required) ─────────────────────────────────────────────────
 router.get('/profile', authenticate, ctrl.getProfile);
 

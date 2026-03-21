@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Trophy, Star, Medal, Crown } from 'lucide-react';
+import { Trophy, Star, Medal, Crown } from '@phosphor-icons/react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -19,7 +19,7 @@ function RankBadge({ rank }: { rank: number }) {
     if (rank === 1) return <Crown className="size-5 text-amber-400" />;
     if (rank === 2) return <Medal className="size-5 text-slate-400" />;
     if (rank === 3) return <Medal className="size-5 text-amber-600" />;
-    return <span className="text-sm font-semibold text-muted-foreground tabular-nums w-5 text-center">{rank}</span>;
+    return <span className="text-sm font-normal text-muted-foreground tabular-nums w-5 text-center">{rank}</span>;
 }
 
 function SkeletonRow() {
@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
                     <Trophy className="size-7 text-amber-500" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-semibold">Leaderboard</h1>
+                    <h1 className="text-2xl ">Leaderboard</h1>
                     <p className="text-sm text-muted-foreground mt-1">Top learners ranked by points earned</p>
                 </div>
             </div>
@@ -95,7 +95,7 @@ export default function LeaderboardPage() {
                                     'bg-orange-100 dark:bg-orange-900/20',
                                 )}>
                                     <RankBadge rank={order} />
-                                    <span className="text-xs font-semibold text-amber-600 flex items-center gap-0.5">
+                                    <span className="text-xs font-normal text-amber-600 flex items-center gap-0.5">
                                         <Star className="size-3 fill-amber-400 text-amber-400" />
                                         {entry.totalPoints}
                                     </span>
@@ -150,7 +150,7 @@ export default function LeaderboardPage() {
                                 </div>
                                 <div className="flex items-center gap-1 shrink-0">
                                     <Star className="size-3.5 fill-amber-400 text-amber-400" />
-                                    <span className="text-sm font-semibold tabular-nums">{entry.totalPoints}</span>
+                                    <span className="text-sm font-normal tabular-nums">{entry.totalPoints}</span>
                                 </div>
                             </div>
                         );

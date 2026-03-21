@@ -89,13 +89,13 @@ export function KanbanView({ courses, onRefresh }: { courses: Course[]; onRefres
                     <KanbanBoardColumnHeader className="px-0">
                         <h2 className="font-medium text-lg flex items-center justify-between w-full">
                             Drafts
-                            <span className="bg-muted text-muted-foreground px-2 py-1 rounded-full text-xs font-semibold">
+                            <span className="bg-muted text-muted-foreground px-2 py-1 rounded-full text-xs font-normal">
                                 {drafts.length}
                             </span>
                         </h2>
                     </KanbanBoardColumnHeader>
 
-                    <KanbanBoardColumnList className="p-4 gap-4 flex flex-col bg-muted/30 rounded-xl min-h-[500px]">
+                    <KanbanBoardColumnList className="p-3 gap-2 flex flex-col bg-muted/30 rounded-xl min-h-[200px]">
                         {drafts.length === 0 ? (
                             <div className="text-center text-muted-foreground py-10 text-sm">
                                 No drafts — drag a published course here to unpublish it.
@@ -115,13 +115,13 @@ export function KanbanView({ courses, onRefresh }: { courses: Course[]; onRefres
                     <KanbanBoardColumnHeader className="px-0">
                         <h2 className="font-medium text-lg flex items-center justify-between w-full">
                             Published
-                            <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-semibold">
+                            <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs font-normal">
                                 {published.length}
                             </span>
                         </h2>
                     </KanbanBoardColumnHeader>
 
-                    <KanbanBoardColumnList className="p-4 gap-4 flex flex-col bg-muted/30 rounded-xl min-h-[500px]">
+                    <KanbanBoardColumnList className="p-3 gap-2 flex flex-col bg-muted/30 rounded-xl min-h-[200px]">
                         {published.length === 0 ? (
                             <div className="text-center text-muted-foreground py-10 text-sm">
                                 Drag a draft here to publish it. Make sure to set a Website URL first.

@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { PageLoader } from '@/components/ui/page-loader';
 import Image from 'next/image';
 import {
-    LogOut, BookOpen, BarChart3, LayoutDashboard,
-    Users, Settings, ChevronRight, GraduationCap,
-} from 'lucide-react';
+    SignOut, BookOpen, ChartBar, SquaresFour,
+    Users, GearSix, CaretRight, GraduationCap,
+} from '@phosphor-icons/react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -23,11 +23,11 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-    { href: '/backoffice', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/backoffice', label: 'Dashboard', icon: SquaresFour },
     { href: '/backoffice/courses', label: 'Courses', icon: BookOpen },
-    { href: '/backoffice/reporting', label: 'Reporting', icon: BarChart3, adminOnly: true },
+    { href: '/backoffice/reporting', label: 'Reporting', icon: ChartBar, adminOnly: true },
     { href: '/backoffice/users', label: 'Users', icon: Users, adminOnly: true, badge: 'Soon' },
-    { href: '/backoffice/settings', label: 'Settings', icon: Settings, adminOnly: true, badge: 'Soon' },
+    { href: '/backoffice/settings', label: 'Settings', icon: GearSix, adminOnly: true, badge: 'Soon' },
 ];
 
 function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
@@ -36,7 +36,7 @@ function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
         <Link
             href={item.href}
             className={cn(
-                'group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all',
+                'group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-normal transition-all',
                 isActive
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -45,11 +45,11 @@ function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
             <Icon className={cn('size-4 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground')} />
             <span className="flex-1">{item.label}</span>
             {item.badge && (
-                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">
+                <span className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-normal text-muted-foreground shadow-xs">
                     {item.badge}
                 </span>
             )}
-            {isActive && <ChevronRight className="size-3 text-primary" />}
+            {isActive && <CaretRight className="size-3 text-primary" />}
         </Link>
     );
 }
@@ -96,8 +96,8 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                 <div className="flex items-center gap-2.5 px-4 h-16 border-b border-sidebar-border shrink-0">
                     <Image src="/learnova.svg" alt="Learnova" width={36} height={36} className="size-9 object-contain shrink-0" />
                     <div>
-                        <p className="text-sm font-semibold text-sidebar-foreground leading-none">Learnova</p>
-                        <p className="text-[10px] text-sidebar-foreground/60 mt-0.5 capitalize">
+                        <p className="text-sm font-normal text-foreground leading-none">Learnova</p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5 capitalize">
                             {role?.toLowerCase()} panel
                         </p>
                     </div>
@@ -113,12 +113,12 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                     })}
 
                     <div className="mt-4 pt-4 border-t border-sidebar-border">
-                        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40 mb-2">
+                        <p className="px-3 text-[10px] font-normal uppercase tracking-widest text-sidebar-foreground/40 mb-2">
                             Learner View
                         </p>
                         <Link
                             href="/courses"
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-normal text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
                         >
                             <GraduationCap className="size-4 shrink-0" />
                             View as Learner
@@ -133,7 +133,7 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                             {initials}
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">{user.name || 'User'}</p>
+                            <p className="text-sm font-normal truncate">{user.name || 'User'}</p>
                             <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                         </div>
                         <button
@@ -142,7 +142,7 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                             className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded"
                             title="Log out"
                         >
-                            <LogOut className="size-4" />
+                            <SignOut className="size-4" />
                         </button>
                     </div>
                 </div>
@@ -154,10 +154,10 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                 <header className="md:hidden h-14 border-b bg-background flex items-center px-4 justify-between shrink-0">
                     <div className="flex items-center gap-2">
                         <Image src="/learnova.svg" alt="Learnova" width={32} height={32} className="size-8 object-contain" />
-                        <span className="font-semibold text-sm">Learnova</span>
+                        <span className="font-normal text-sm">Learnova</span>
                     </div>
                     <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
-                        <LogOut className="size-4" />
+                        <SignOut className="size-4" />
                     </Button>
                 </header>
 

@@ -94,6 +94,16 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
   } catch (err) { next(err); }
 };
 
+// ─── Public Profile ───────────────────────────────────────────────────────────
+
+export const getPublicProfile = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = parseInt(req.params.userId as string, 10);
+    const profile = await learnerService.getPublicProfile(userId);
+    res.json(profile);
+  } catch (err) { next(err); }
+};
+
 // ─── Payment ──────────────────────────────────────────────────────────────────
 
 export const mockPayment = async (req: Request, res: Response, next: NextFunction) => {

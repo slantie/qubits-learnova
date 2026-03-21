@@ -7,7 +7,7 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { QuestionEditor } from '@/components/backoffice/quiz-builder/QuestionEditor';
 import { RewardsPanel } from '@/components/backoffice/quiz-builder/RewardsPanel';
-import { ArrowLeft, Plus, Trophy, FileQuestion, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Plus, Trophy, Question, ChartBar } from '@phosphor-icons/react';
 import { DotsLoader } from '@/components/ui/dots-loader';
 
 interface Question {
@@ -207,14 +207,14 @@ export default function QuizBuilderPage() {
               <Trophy className="w-3.5 h-3.5" />
               Rewards
               {quiz.rewards && (
-                <span className="ml-auto text-xs text-green-600 font-medium">Set</span>
+                <span className="ml-auto text-xs text-primary font-medium">Set</span>
               )}
             </Button>
             <Link
               href={`/backoffice/courses/${courseId}/quiz/${quizId}/attempts`}
               className="w-full inline-flex items-center gap-1.5 text-sm border rounded-md px-3 py-1.5 hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground"
             >
-              <BarChart3 className="w-3.5 h-3.5" />
+              <ChartBar className="w-3.5 h-3.5" />
               View Attempts
             </Link>
           </div>
@@ -224,7 +224,7 @@ export default function QuizBuilderPage() {
         <main className="flex-1 overflow-y-auto">
           {quiz.questions.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
-              <FileQuestion className="w-12 h-12 opacity-30" />
+              <Question className="w-12 h-12 opacity-30" />
               <p className="text-lg font-medium">No questions yet</p>
               <p className="text-sm">Add your first question to get started.</p>
               <Button onClick={handleAddQuestion}>

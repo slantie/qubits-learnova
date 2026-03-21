@@ -9,9 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import {
-    ArrowLeft, Trophy, CheckCircle2, XCircle,
-    RotateCcw, Clock, Loader2, ClipboardList, AlertCircle,
-} from 'lucide-react';
+    ArrowLeft, Trophy, CheckCircle, XCircle,
+    ArrowCounterClockwise, Clock, CircleNotch, ClipboardText, Warning,
+} from '@phosphor-icons/react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -218,7 +218,7 @@ export default function LearnerQuizPage() {
     if (pageState === 'loading') {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader2 className="size-7 animate-spin text-primary" />
+                <CircleNotch className="size-7 animate-spin text-primary" />
             </div>
         );
     }
@@ -226,7 +226,7 @@ export default function LearnerQuizPage() {
     if (pageState === 'error' || !quiz) {
         return (
             <div className="flex flex-col items-center gap-4 py-24 text-center">
-                <AlertCircle className="size-10 text-muted-foreground" />
+                <Warning className="size-10 text-muted-foreground" />
                 <p className="text-lg font-medium">{error ?? 'Quiz not found'}</p>
                 <Link href={`/courses/${courseId}`}>
                     <Button variant="outline" size="sm">Back to course</Button>
@@ -251,10 +251,10 @@ export default function LearnerQuizPage() {
                         <ArrowLeft className="size-3.5" />
                         Back to course
                     </Link>
-                    <h1 className="text-2xl font-semibold">{quiz.title}</h1>
+                    <h1 className="text-2xl ">{quiz.title}</h1>
                     <div className="flex items-center gap-2 flex-wrap mt-1">
                         <Badge variant="neutral">
-                            <ClipboardList className="size-3 mr-1" />
+                            <ClipboardText className="size-3 mr-1" />
                             {quiz.questions.length} question{quiz.questions.length !== 1 ? 's' : ''}
                         </Badge>
                         {pastAttempts.length > 0 && (
@@ -283,7 +283,7 @@ export default function LearnerQuizPage() {
                         </div>
                         <div className="flex flex-col gap-3 flex-1">
                             <div>
-                                <p className="text-xl font-semibold">
+                                <p className="text-xl font-normal">
                                     {result.scorePercentage >= 80
                                         ? 'Great job!'
                                         : result.scorePercentage >= 50
@@ -297,7 +297,7 @@ export default function LearnerQuizPage() {
 
                             <div className="flex items-center gap-2 flex-wrap">
                                 {result.pointsEarned > 0 && (
-                                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+                                    <span className="inline-flex items-center gap-1.5 text-sm font-normal text-primary bg-primary/10 px-3 py-1 rounded-full">
                                         <Trophy className="size-3.5" />
                                         +{result.pointsEarned} points earned
                                     </span>
@@ -319,7 +319,7 @@ export default function LearnerQuizPage() {
                     )}
 
                     <Button onClick={handleRetry} variant="outline" className="self-start">
-                        <RotateCcw className="size-4 mr-2" />
+                        <ArrowCounterClockwise className="size-4 mr-2" />
                         Try Again
                     </Button>
                 </div>
@@ -345,7 +345,7 @@ export default function LearnerQuizPage() {
                         >
                             {/* Question header */}
                             <div className="flex items-start gap-3">
-                                <span className="shrink-0 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground">
+                                <span className="shrink-0 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-normal text-muted-foreground">
                                     {qIdx + 1}
                                 </span>
                                 <p className="text-sm font-medium leading-relaxed pt-0.5 flex-1">{q.text}</p>
@@ -358,7 +358,7 @@ export default function LearnerQuizPage() {
                                         sel.length === correct.length &&
                                         sel.every((v, i) => v === correct[i]);
                                     return isCorrect
-                                        ? <CheckCircle2 className="size-5 text-green-500 shrink-0" />
+                                        ? <CheckCircle className="size-5 text-primary shrink-0" />
                                         : <XCircle className="size-5 text-destructive shrink-0" />;
                                 })()}
                             </div>
@@ -373,7 +373,7 @@ export default function LearnerQuizPage() {
                                     let optClass = '';
                                     if (isResult) {
                                         if (isCorrectOpt) {
-                                            optClass = 'border-green-400 bg-green-50/50 dark:bg-green-950/20';
+                                            optClass = 'border-primary/50 bg-primary/5 dark:bg-primary/10';
                                         } else if (isSelected && !isCorrectOpt) {
                                             optClass = 'border-destructive/50 bg-destructive/5';
                                         }
@@ -398,7 +398,7 @@ export default function LearnerQuizPage() {
                                             <div className={cn(
                                                 'size-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors',
                                                 isSelected && !isResult ? 'bg-primary border-primary' : 'border-muted-foreground/40',
-                                                isResult && isCorrectOpt ? 'bg-green-500 border-green-500' : '',
+                                                isResult && isCorrectOpt ? 'bg-primary border-primary' : '',
                                                 isResult && isSelected && !isCorrectOpt ? 'bg-destructive border-destructive' : '',
                                             )}>
                                                 {(isSelected || (isResult && isCorrectOpt)) && (
@@ -409,7 +409,7 @@ export default function LearnerQuizPage() {
                                             </div>
                                             <span className="text-sm flex-1">{opt}</span>
                                             {isResult && isCorrectOpt && (
-                                                <span className="text-xs font-medium text-green-600 shrink-0">Correct</span>
+                                                <span className="text-xs font-medium text-primary shrink-0">Correct</span>
                                             )}
                                         </label>
                                     );
@@ -425,7 +425,7 @@ export default function LearnerQuizPage() {
                 <div className="flex flex-col gap-3 sticky bottom-4">
                     {validationError && (
                         <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-4 py-2.5 rounded-lg border border-destructive/20">
-                            <AlertCircle className="size-4 shrink-0" />
+                            <Warning className="size-4 shrink-0" />
                             {validationError}
                         </div>
                     )}
@@ -451,7 +451,7 @@ export default function LearnerQuizPage() {
             {/* ── SUBMITTING ─────────────────────────────────────────────────── */}
             {pageState === 'submitting' && (
                 <div className="flex items-center justify-center gap-3 py-8 text-muted-foreground">
-                    <Loader2 className="size-5 animate-spin" />
+                    <CircleNotch className="size-5 animate-spin" />
                     <span className="text-sm">Submitting your answers…</span>
                 </div>
             )}
@@ -459,7 +459,7 @@ export default function LearnerQuizPage() {
             {/* ── ATTEMPT HISTORY ────────────────────────────────────────────── */}
             {pastAttempts.length > 0 && (
                 <div className="flex flex-col gap-3">
-                    <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                    <h2 className="text-sm text-muted-foreground uppercase tracking-wide">
                         Attempt History
                     </h2>
                     <div className="rounded-xl border overflow-hidden">
@@ -478,7 +478,7 @@ export default function LearnerQuizPage() {
                                             #{a.attemptNumber}
                                         </td>
                                         <td className="px-4 py-2.5">
-                                            <span className="inline-flex items-center gap-1 text-primary font-semibold">
+                                            <span className="inline-flex items-center gap-1 text-primary font-normal">
                                                 <Trophy className="size-3.5" />
                                                 {a.pointsEarned} pts
                                             </span>

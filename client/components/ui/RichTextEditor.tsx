@@ -14,11 +14,11 @@ import { TableHeader } from '@tiptap/extension-table-header';
 import { common, createLowlight } from 'lowlight';
 import { cn } from '@/lib/utils';
 import {
-    Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
-    List, ListOrdered, Quote, Minus, Undo2, Redo2,
-    Link as LinkIcon, Image as ImageIcon, AlignLeft, AlignCenter, AlignRight,
-    Table as TableIcon, Pilcrow,
-} from 'lucide-react';
+    TextB, TextItalic, TextStrikethrough, Code, TextHOne, TextHTwo, TextHThree,
+    ListBullets, ListNumbers, Quotes, Minus, ArrowCounterClockwise, ArrowClockwise,
+    Link as LinkIcon, Image as ImageIcon, TextAlignLeft, TextAlignCenter, TextAlignRight,
+    Table as TableIcon, Paragraph,
+} from '@phosphor-icons/react';
 
 const lowlight = createLowlight(common);
 
@@ -89,13 +89,13 @@ function Toolbar({ editor }: { editor: Editor }) {
     return (
         <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b bg-muted/30">
             <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold">
-                <Bold className={s} />
+                <TextB className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} title="Italic">
-                <Italic className={s} />
+                <TextItalic className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} title="Strikethrough">
-                <Strikethrough className={s} />
+                <TextStrikethrough className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().toggleCode().run()} active={editor.isActive('code')} title="Inline code">
                 <Code className={s} />
@@ -104,28 +104,28 @@ function Toolbar({ editor }: { editor: Editor }) {
             <ToolbarDivider />
 
             <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} active={editor.isActive('heading', { level: 1 })} title="Heading 1">
-                <Heading1 className={s} />
+                <TextHOne className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive('heading', { level: 2 })} title="Heading 2">
-                <Heading2 className={s} />
+                <TextHTwo className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive('heading', { level: 3 })} title="Heading 3">
-                <Heading3 className={s} />
+                <TextHThree className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().setParagraph().run()} active={editor.isActive('paragraph')} title="Paragraph">
-                <Pilcrow className={s} />
+                <Paragraph className={s} />
             </ToolbarButton>
 
             <ToolbarDivider />
 
             <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} title="Bullet list">
-                <List className={s} />
+                <ListBullets className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} title="Ordered list">
-                <ListOrdered className={s} />
+                <ListNumbers className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} title="Blockquote">
-                <Quote className={s} />
+                <Quotes className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Horizontal rule">
                 <Minus className={s} />
@@ -134,13 +134,13 @@ function Toolbar({ editor }: { editor: Editor }) {
             <ToolbarDivider />
 
             <ToolbarButton onClick={() => editor.chain().focus().setTextAlign('left').run()} active={editor.isActive({ textAlign: 'left' })} title="Align left">
-                <AlignLeft className={s} />
+                <TextAlignLeft className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().setTextAlign('center').run()} active={editor.isActive({ textAlign: 'center' })} title="Align center">
-                <AlignCenter className={s} />
+                <TextAlignCenter className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().setTextAlign('right').run()} active={editor.isActive({ textAlign: 'right' })} title="Align right">
-                <AlignRight className={s} />
+                <TextAlignRight className={s} />
             </ToolbarButton>
 
             <ToolbarDivider />
@@ -158,10 +158,10 @@ function Toolbar({ editor }: { editor: Editor }) {
             <ToolbarDivider />
 
             <ToolbarButton onClick={() => editor.chain().focus().undo().run()} disabled={!editor.can().undo()} title="Undo">
-                <Undo2 className={s} />
+                <ArrowCounterClockwise className={s} />
             </ToolbarButton>
             <ToolbarButton onClick={() => editor.chain().focus().redo().run()} disabled={!editor.can().redo()} title="Redo">
-                <Redo2 className={s} />
+                <ArrowClockwise className={s} />
             </ToolbarButton>
         </div>
     );

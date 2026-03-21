@@ -18,12 +18,12 @@ import { AddAttendeesModal } from '@/components/backoffice/course-form/AddAttend
 import { ContactAttendeesModal } from '@/components/backoffice/course-form/ContactAttendeesModal';
 import {
     ArrowLeft,
-    ExternalLink,
+    ArrowSquareOut,
     UserPlus,
-    Mail,
+    Envelope,
     Upload,
-    ImageOff,
-} from 'lucide-react';
+    ImageBroken,
+} from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { CourseDetail, Visibility, AccessRule } from '@/types';
 
@@ -229,7 +229,7 @@ export default function CourseEditPage() {
                         </Button>
                     </Link>
                     <div className="flex items-center gap-2">
-                        <h1 className="text-2xl font-semibold tracking-tight truncate max-w-xs sm:max-w-sm">
+                        <h1 className="text-2xl tracking-tight truncate max-w-xs sm:max-w-sm">
                             {course.title}
                         </h1>
                         <Badge variant={course.isPublished ? 'success' : 'neutral'}>
@@ -256,7 +256,7 @@ export default function CourseEditPage() {
                         size="sm"
                         onClick={() => window.open(`/courses/${courseId}`, '_blank')}
                     >
-                        <ExternalLink className="size-4 mr-1.5" />
+                        <ArrowSquareOut className="size-4 mr-1.5" />
                         Preview
                     </Button>
 
@@ -274,7 +274,7 @@ export default function CourseEditPage() {
                         size="sm"
                         onClick={() => setContactModalOpen(true)}
                     >
-                        <Mail className="size-4 mr-1.5" />
+                        <Envelope className="size-4 mr-1.5" />
                         Contact Attendees
                     </Button>
                 </div>
@@ -293,7 +293,7 @@ export default function CourseEditPage() {
                             <img src={course.coverImage} alt="Cover" className="w-full h-full object-cover" />
                         ) : (
                             <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                                <ImageOff className="size-8 opacity-40" />
+                                <ImageBroken className="size-8 opacity-40" />
                                 <span className="text-xs">No cover</span>
                             </div>
                         )}
@@ -408,7 +408,7 @@ export default function CourseEditPage() {
                     <div className="flex flex-col gap-6 rounded-xl border bg-card p-6">
                         {/* Visibility */}
                         <div className="flex flex-col gap-3">
-                            <p className="text-sm font-semibold">Visibility</p>
+                            <p className="text-sm font-normal">Visibility</p>
                             <div className="flex flex-col gap-2">
                                 {([
                                     { value: 'EVERYONE', label: 'Everyone', desc: 'Visible to all visitors' },
@@ -441,7 +441,7 @@ export default function CourseEditPage() {
 
                         {/* Access Rule */}
                         <div className="flex flex-col gap-3">
-                            <p className="text-sm font-semibold">Access Rule</p>
+                            <p className="text-sm font-normal">Access Rule</p>
                             <div className="flex flex-col gap-2">
                                 {([
                                     { value: 'OPEN', label: 'Open', desc: 'Anyone can enroll freely' },

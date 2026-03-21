@@ -30,13 +30,13 @@ function formatDate(d: string | null | undefined): string {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    NOT_STARTED: { label: 'Not Started', cls: 'bg-muted text-muted-foreground' },
-    IN_PROGRESS:  { label: 'In Progress', cls: 'bg-primary/10 text-primary'  },
-    COMPLETED:    { label: 'Completed',   cls: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
+    NOT_STARTED: { label: 'Not Started', cls: 'bg-muted text-muted-foreground border-border' },
+    IN_PROGRESS:  { label: 'In Progress', cls: 'bg-primary/10 text-primary border-primary/20'  },
+    COMPLETED:    { label: 'Completed',   cls: 'bg-primary/15 text-primary border-primary/25 dark:bg-primary/25 dark:text-primary dark:border-primary/35' },
   };
-  const { label, cls } = map[status] ?? { label: status, cls: 'bg-muted text-muted-foreground' };
+  const { label, cls } = map[status] ?? { label: status, cls: 'bg-muted text-muted-foreground border-border' };
   return (
-    <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}>
+    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-normal shadow-xs whitespace-nowrap ${cls}`}>
       {label}
     </span>
   );
@@ -136,14 +136,14 @@ export default function ReportingPage() {
 
   return (
     <div className="px-6 py-8 space-y-6">
-      <h1 className="text-2xl font-semibold">Reporting</h1>
+      <h1 className="text-2xl ">Reporting</h1>
 
       {/* Course filter pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => handleCourseClick(undefined)}
-          className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+          className={`rounded-full border px-4 py-1.5 text-sm font-normal transition-colors ${
             selectedCourse === undefined
               ? 'bg-primary text-primary-foreground border-primary'
               : 'bg-card text-foreground border-border hover:border-primary hover:text-primary'
@@ -156,7 +156,7 @@ export default function ReportingPage() {
             type="button"
             key={course.id}
             onClick={() => handleCourseClick(course.id)}
-            className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-full border px-4 py-1.5 text-sm font-normal transition-colors ${
               selectedCourse === course.id
                 ? 'bg-primary text-primary-foreground border-primary'
                 : 'bg-card text-foreground border-border hover:border-primary hover:text-primary'
@@ -236,13 +236,13 @@ export default function ReportingPage() {
           <table className="w-full text-sm text-left">
             <thead>
               <tr className="bg-muted/30 border-b border-border">
-                <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-12">
+                <th className="px-4 py-3 text-xs font-normal text-muted-foreground uppercase tracking-wide w-12">
                   Sr. No.
                 </th>
                 {visibleColumns.map((col) => (
                   <th
                     key={col.key}
-                    className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap"
+                    className="px-4 py-3 text-xs font-normal text-muted-foreground uppercase tracking-wide whitespace-nowrap"
                   >
                     {col.label}
                   </th>
@@ -329,8 +329,8 @@ export default function ReportingPage() {
               Prev
             </button>
             <p className="text-sm text-muted-foreground">
-              Page <span className="font-semibold text-foreground">{page}</span> of{' '}
-              <span className="font-semibold text-foreground">{totalPages}</span>
+              Page <span className="font-normal text-foreground">{page}</span> of{' '}
+              <span className="font-normal text-foreground">{totalPages}</span>
             </p>
             <button
               type="button"

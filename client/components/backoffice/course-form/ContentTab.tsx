@@ -9,11 +9,11 @@ import {
     DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
 import {
-    Play, FileText, Image as ImageIcon, ClipboardList, MoreVertical,
-    Plus, GripVertical, ChevronDown, ChevronRight, Lock, Unlock,
-    FileAudio, Link2, Code2, CheckSquare, BarChart2, MessageSquare,
-    Pencil, Trash2, FolderPlus, FilePlus, AlertCircle,
-} from 'lucide-react';
+    Play, FileText, Image as ImageIcon, ClipboardText, DotsThreeVertical,
+    Plus, DotsSixVertical, CaretDown, CaretRight, Lock, LockOpen,
+    FileAudio, Link as Link2Icon, Code, CheckSquare, ChartBar as ChartBar3, Chat,
+    PencilSimple, Trash, FolderPlus, FilePlus, Warning,
+} from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { BlockEditorModal } from './BlockEditorModal';
@@ -41,12 +41,12 @@ const BLOCK_TYPES: { type: LessonType; label: string; icon: React.ElementType; d
     { type: 'PDF',          label: 'PDF',             icon: FileText,      desc: 'Upload a PDF document' },
     { type: 'IMAGE',        label: 'Image',           icon: ImageIcon,     desc: 'Display an image' },
     { type: 'AUDIO',        label: 'Audio',           icon: FileAudio,     desc: 'Audio lesson or podcast' },
-    { type: 'LINK_BLOCK',   label: 'Link',            icon: Link2,         desc: 'External resource link' },
-    { type: 'IFRAME',       label: 'Embed / iFrame',  icon: Code2,         desc: 'Embed any URL or tool' },
-    { type: 'QUIZ_BLOCK',   label: 'Quiz Block',      icon: ClipboardList, desc: 'Attach an existing quiz' },
+    { type: 'LINK_BLOCK',   label: 'Link',            icon: Link2Icon,     desc: 'External resource link' },
+    { type: 'IFRAME',       label: 'Embed / iFrame',  icon: Code,          desc: 'Embed any URL or tool' },
+    { type: 'QUIZ_BLOCK',   label: 'Quiz Block',      icon: ClipboardText, desc: 'Attach an existing quiz' },
     { type: 'ASSIGNMENT',   label: 'Assignment',      icon: CheckSquare,   desc: 'Checklist assignment' },
-    { type: 'SURVEY',       label: 'Survey / Poll',   icon: BarChart2,     desc: 'Gather learner feedback' },
-    { type: 'FEEDBACK_GATE',label: 'Feedback Gate',   icon: MessageSquare, desc: 'Gate progress behind feedback' },
+    { type: 'SURVEY',       label: 'Survey / Poll',   icon: ChartBar3,     desc: 'Gather learner feedback' },
+    { type: 'FEEDBACK_GATE',label: 'Feedback Gate',   icon: Chat,          desc: 'Gate progress behind feedback' },
 ];
 
 function blockIcon(type: LessonType) {
@@ -267,7 +267,7 @@ export function ContentTab({ courseId }: ContentTabProps) {
             {orphans.length > 0 && (
                 <div className="rounded-xl border border-dashed border-muted-foreground/30 bg-muted/20 p-3 flex flex-col gap-2">
                     <p className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                        <AlertCircle className="size-3.5" /> Unsectioned blocks
+                        <Warning className="size-3.5" /> Unsectioned blocks
                     </p>
                     <LessonList
                         lessons={orphans}
@@ -305,7 +305,7 @@ export function ContentTab({ courseId }: ContentTabProps) {
                     >
                         {/* Section header */}
                         <div className="flex items-center gap-2 px-3 py-2.5 border-b">
-                            <GripVertical className="size-4 text-muted-foreground/40 shrink-0 cursor-grab" />
+                            <DotsSixVertical className="size-4 text-muted-foreground/40 shrink-0 cursor-grab" />
 
                             <button
                                 type="button"
@@ -313,8 +313,8 @@ export function ContentTab({ courseId }: ContentTabProps) {
                                 className="text-muted-foreground hover:text-foreground"
                             >
                                 {isCollapsed
-                                    ? <ChevronRight className="size-4" />
-                                    : <ChevronDown className="size-4" />}
+                                    ? <CaretRight className="size-4" />
+                                    : <CaretDown className="size-4" />}
                             </button>
 
                             {isRenamingThis ? (
@@ -349,20 +349,20 @@ export function ContentTab({ courseId }: ContentTabProps) {
                                     section.isLocked ? 'text-amber-500' : 'text-muted-foreground/40 hover:text-muted-foreground',
                                 )}
                             >
-                                {section.isLocked ? <Lock className="size-4" /> : <Unlock className="size-4" />}
+                                {section.isLocked ? <Lock className="size-4" /> : <LockOpen className="size-4" />}
                             </button>
 
                             {/* Section menu */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="shrink-0 inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                                    <MoreVertical className="size-4" />
+                                    <DotsThreeVertical className="size-4" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => { setRenamingId(section.id); setRenameValue(section.title); }}>
-                                        <Pencil className="size-3.5 mr-2" /> Rename
+                                        <PencilSimple className="size-3.5 mr-2" /> Rename
                                     </DropdownMenuItem>
                                     <DropdownMenuItem variant="destructive" onClick={() => deleteSection(section.id)}>
-                                        <Trash2 className="size-3.5 mr-2" /> Delete Section
+                                        <Trash className="size-3.5 mr-2" /> Delete Section
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -463,7 +463,7 @@ function LessonList({
                             isDragOver && 'ring-2 ring-primary/30 border-primary/40',
                         )}
                     >
-                        <GripVertical className="size-3.5 text-muted-foreground/30 shrink-0" />
+                        <DotsSixVertical className="size-3.5 text-muted-foreground/30 shrink-0" />
                         <div className="size-6 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
                             <Icon className="size-3.5 text-primary" />
                         </div>
@@ -479,14 +479,14 @@ function LessonList({
                         )}
                         <DropdownMenu>
                             <DropdownMenuTrigger className="shrink-0 p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                                <MoreVertical className="size-3.5" />
+                                <DotsThreeVertical className="size-3.5" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem onClick={() => onEdit(lesson)}>
-                                    <Pencil className="size-3.5 mr-2" /> Edit
+                                    <PencilSimple className="size-3.5 mr-2" /> Edit
                                 </DropdownMenuItem>
                                 <DropdownMenuItem variant="destructive" onClick={() => onDelete(lesson)}>
-                                    <Trash2 className="size-3.5 mr-2" /> Delete
+                                    <Trash className="size-3.5 mr-2" /> Delete
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

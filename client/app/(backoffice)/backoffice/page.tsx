@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { api } from '@/lib/api';
 import {
-    BookOpen, Users, BarChart3, ArrowRight,
-    TrendingUp, GraduationCap, ClipboardList, Plus,
-} from 'lucide-react';
+    BookOpen, Users, ChartBar, ArrowRight,
+    TrendUp, GraduationCap, ClipboardText, Plus,
+} from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -39,7 +39,7 @@ function StatCard({
                 <Icon className="size-5" />
             </div>
             <div>
-                <p className="text-2xl font-semibold tabular-nums">{value}</p>
+                <p className="text-2xl font-normal tabular-nums">{value}</p>
                 <p className="text-sm font-medium mt-0.5">{label}</p>
                 {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
             </div>
@@ -115,13 +115,13 @@ export default function BackofficeDashboard() {
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="text-sm text-muted-foreground">{greeting()},</p>
-                    <h1 className="text-2xl font-semibold mt-0.5">{firstName}</h1>
+                    <h1 className="text-2xl mt-0.5">{firstName}</h1>
                     <p className="text-sm text-muted-foreground mt-1">
                         Here's what's happening with your platform today.
                     </p>
                 </div>
                 <Link href="/backoffice/courses">
-                    <Button size="sm" className="gap-2">
+                    <Button size="sm" className="gap-2 h-8 ">
                         <Plus className="size-4" />
                         New Course
                     </Button>
@@ -139,11 +139,11 @@ export default function BackofficeDashboard() {
                     href="/backoffice/courses"
                 />
                 <StatCard
-                    icon={TrendingUp}
+                    icon={TrendUp}
                     label="Published"
                     value={stats?.publishedCourses ?? '—'}
                     sub="Live on platform"
-                    color="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    color="bg-primary/15 text-primary dark:bg-primary/25 dark:text-primary"
                 />
                 <StatCard
                     icon={Users}
@@ -168,7 +168,7 @@ export default function BackofficeDashboard() {
                 {/* Recent courses */}
                 <div className="lg:col-span-2 flex flex-col gap-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-base font-semibold">Your Courses</h2>
+                        <h2 className="text-base ">Your Courses</h2>
                         <Link href="/backoffice/courses" className="text-sm text-primary hover:underline flex items-center gap-1">
                             View all <ArrowRight className="size-3" />
                         </Link>
@@ -208,7 +208,7 @@ export default function BackofficeDashboard() {
                                     <span className={cn(
                                         'text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0',
                                         course.isPublished
-                                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                            ? 'bg-primary/15 text-primary dark:bg-primary/25 dark:text-primary'
                                             : 'bg-muted text-muted-foreground',
                                     )}>
                                         {course.isPublished ? 'Published' : 'Draft'}
@@ -221,7 +221,7 @@ export default function BackofficeDashboard() {
 
                 {/* Quick actions */}
                 <div className="flex flex-col gap-4">
-                    <h2 className="text-base font-semibold">Quick Actions</h2>
+                    <h2 className="text-base ">Quick Actions</h2>
                     <div className="flex flex-col gap-2">
                         <QuickAction
                             href="/backoffice/courses"
@@ -232,7 +232,7 @@ export default function BackofficeDashboard() {
                         {role === 'ADMIN' && (
                             <QuickAction
                                 href="/backoffice/reporting"
-                                icon={BarChart3}
+                                icon={ChartBar}
                                 label="View Reporting"
                                 desc="Learner progress & stats"
                             />

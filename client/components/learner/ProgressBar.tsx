@@ -24,7 +24,7 @@ export function ProgressBar({
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium text-muted-foreground">{label}</span>
           {showPercentage && (
-            <span className="text-xs font-semibold text-foreground">{value}%</span>
+            <span className="text-xs font-normal text-foreground">{value}%</span>
           )}
         </div>
       )}
@@ -36,7 +36,7 @@ export function ProgressBar({
         )}
       />
       {!label && showPercentage && (
-        <span className="text-xs font-semibold text-foreground text-right">{value}%</span>
+        <span className="text-xs font-normal text-foreground text-right">{value}%</span>
       )}
     </div>
   );

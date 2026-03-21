@@ -5,7 +5,7 @@ import { LearnerCourse } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ProgressBar } from '@/components/learner/ProgressBar';
-import { BookOpen, CheckCircle2, Clock } from 'lucide-react';
+import { BookOpen, CheckCircle, Clock } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface CourseCardProps {
@@ -79,7 +79,7 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
           )}
 
           {/* Title */}
-          <h3 className="font-semibold text-sm leading-snug line-clamp-2">{course.title}</h3>
+          <h3 className=" text-sm leading-snug line-clamp-2">{course.title}</h3>
 
           {/* Description */}
           {course.description && (
@@ -99,7 +99,7 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
                 {enrollment.totalLessons ?? course._count.lessons} total
               </span>
               <span className="inline-flex items-center gap-1 text-emerald-600">
-                <CheckCircle2 className="size-3" />
+                <CheckCircle className="size-3" />
                 {enrollment.completedLessons} done
               </span>
               <span className="inline-flex items-center gap-1 text-amber-600">
@@ -115,12 +115,12 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
               {course.instructor?.name && `by ${course.instructor.name}`}
             </span>
             <span className={cn(
-              'text-xs font-medium px-3 py-1.5 rounded-md',
+              'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-normal shadow-xs',
               getCtaVariant() === 'default'
-                ? 'bg-primary text-primary-foreground'
-                : 'border border-border text-foreground',
-              course.accessRule === 'ON_PAYMENT' && !enrollment && 'text-amber-600 border-amber-300',
-              enrollment?.status === 'COMPLETED' && 'text-emerald-600 border-emerald-300',
+                ? 'bg-primary text-primary-foreground border-primary/20'
+                : 'border-border text-foreground bg-muted',
+              course.accessRule === 'ON_PAYMENT' && !enrollment && 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50',
+              enrollment?.status === 'COMPLETED' && 'bg-primary/15 text-primary border-primary/25',
             )}>
               {getCtaLabel()}
             </span>

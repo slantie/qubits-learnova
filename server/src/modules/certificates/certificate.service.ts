@@ -1,6 +1,7 @@
 import prisma from '../../lib/prisma';
 import { sendMail } from '../../lib/mailer';
 import { AppError } from '../../config/AppError';
+import { evaluate as evaluateBadges } from '../badges/badge.service';
 import { templates, renderCertificate, type CertificateData } from '../../templates/certificates';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -130,6 +131,8 @@ export const issueCertificate = async (
   } catch {
     // Email failure is non-fatal
   }
+
+  evaluateBadges(userId).catch(() => {});
 
   return cert;
 };

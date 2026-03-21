@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { StarRating } from '@/components/learner/StarRating';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2 } from 'lucide-react';
+import { CircleNotch } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface ReviewFormProps {
@@ -72,7 +72,7 @@ export function ReviewForm({
           Cancel
         </Button>
         <Button size="sm" onClick={handleSubmit} disabled={loading || rating === 0}>
-          {loading && <Loader2 className="size-3.5 animate-spin mr-1.5" />}
+          {loading && <CircleNotch className="size-3.5 animate-spin mr-1.5" />}
           {isEditing ? 'Update Review' : 'Submit Review'}
         </Button>
       </div>

@@ -6,10 +6,10 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { formatDuration } from '@/lib/formatDuration';
 import {
-  Search, Play, FileText, Image as ImageIcon, ClipboardList,
-  CheckCircle2, Circle, Lock, ChevronDown, ChevronRight,
-  FileAudio, Link2, Code2, CheckSquare, BarChart2, MessageSquare,
-} from 'lucide-react';
+  MagnifyingGlass, Play, FileText, Image as ImageIcon, ClipboardText,
+  CheckCircle, Circle, Lock, CaretDown, CaretRight,
+  FileAudio, Link as LinkIcon, Code, CheckSquare, ChartBar as ChartBar4, Chat,
+} from '@phosphor-icons/react';
 
 interface SectionSummary {
   id: number;
@@ -35,13 +35,13 @@ function LessonIcon({ type }: { type: string }) {
     case 'DOCUMENT':      return <FileText className={cls} />;
     case 'IMAGE':         return <ImageIcon className={cls} />;
     case 'AUDIO':         return <FileAudio className={cls} />;
-    case 'LINK_BLOCK':    return <Link2 className={cls} />;
-    case 'IFRAME':        return <Code2 className={cls} />;
-    case 'QUIZ_BLOCK':    return <ClipboardList className={cls} />;
-    case 'QUIZ':          return <ClipboardList className={cls} />;
+    case 'LINK_BLOCK':    return <LinkIcon className={cls} />;
+    case 'IFRAME':        return <Code className={cls} />;
+    case 'QUIZ_BLOCK':    return <ClipboardText className={cls} />;
+    case 'QUIZ':          return <ClipboardText className={cls} />;
     case 'ASSIGNMENT':    return <CheckSquare className={cls} />;
-    case 'SURVEY':        return <BarChart2 className={cls} />;
-    case 'FEEDBACK_GATE': return <MessageSquare className={cls} />;
+    case 'SURVEY':        return <ChartBar4 className={cls} />;
+    case 'FEEDBACK_GATE': return <Chat className={cls} />;
     default:              return <Circle className={cls} />;
   }
 }
@@ -64,7 +64,7 @@ function LessonRow({
       <span className="shrink-0">
         {isEnrolled
           ? lesson.isCompleted
-            ? <CheckCircle2 className="size-4 text-emerald-500" />
+            ? <CheckCircle className="size-4 text-emerald-500" />
             : <Circle className="size-4 text-muted-foreground/40" />
           : <Lock className="size-3.5 text-muted-foreground/30" />
         }
@@ -126,7 +126,7 @@ export function LessonList({ lessons, sections = [], isEnrolled, onLessonClick }
   return (
     <div className="space-y-3">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
         <Input
           className="pl-9 h-9 text-sm"
           placeholder="Search lessons..."
@@ -167,8 +167,8 @@ export function LessonList({ lessons, sections = [], isEnrolled, onLessonClick }
                   className="w-full flex items-center gap-2 px-4 py-3 bg-muted/30 hover:bg-muted/50 transition-colors text-left"
                 >
                   {isCollapsed
-                    ? <ChevronRight className="size-3.5 text-muted-foreground shrink-0" />
-                    : <ChevronDown className="size-3.5 text-muted-foreground shrink-0" />
+                    ? <CaretRight className="size-3.5 text-muted-foreground shrink-0" />
+                    : <CaretDown className="size-3.5 text-muted-foreground shrink-0" />
                   }
                   {section.isLocked && !isEnrolled && <Lock className="size-3 text-muted-foreground/50 shrink-0" />}
                   <span className="flex-1 text-sm font-semibold">{section.title}</span>

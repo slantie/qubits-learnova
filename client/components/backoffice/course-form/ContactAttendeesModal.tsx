@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface ContactAttendeesModalProps {
@@ -41,7 +41,7 @@ export function ContactAttendeesModal({ courseId, onClose }: ContactAttendeesMod
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-background rounded-xl shadow-xl w-full max-w-md mx-4">
                 <div className="flex items-center justify-between px-6 py-4 border-b">
-                    <h2 className="text-lg font-semibold">Contact Attendees</h2>
+                    <h2 className="text-lg ">Contact Attendees</h2>
                     <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
                         <X className="size-5" />
                     </button>
@@ -90,7 +90,7 @@ export function ContactAttendeesModal({ courseId, onClose }: ContactAttendeesMod
                     ) : (
                         <>
                             <div className="rounded-lg border bg-muted/30 px-4 py-6 text-center">
-                                <p className="text-2xl font-semibold">{sentCount}</p>
+                                <p className="text-2xl font-normal">{sentCount}</p>
                                 <p className="text-sm text-muted-foreground mt-1">
                                     {sentCount === 1 ? 'learner' : 'learners'} received your message
                                 </p>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { ArrowLeft, Users, BarChart3, Trophy, Target, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Users, ChartBar, Trophy, Target, TrendUp } from '@phosphor-icons/react';
 import { DotsLoader } from '@/components/ui/dots-loader';
 import { cn } from '@/lib/utils';
 
@@ -45,11 +45,11 @@ interface Analytics {
 
 function ScoreBadge({ pct }: { pct: number }) {
   const color =
-    pct >= 80 ? 'text-green-700 bg-green-50 border-green-200' :
+    pct >= 80 ? 'text-primary bg-primary/15 border-primary/25' :
     pct >= 50 ? 'text-amber-700 bg-amber-50 border-amber-200' :
                 'text-red-700 bg-red-50 border-red-200';
   return (
-    <span className={cn('inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border', color)}>
+    <span className={cn('inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-normal shadow-xs', color)}>
       {pct}%
     </span>
   );
@@ -130,7 +130,7 @@ export default function QuizAttemptsPage() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold">Quiz Attempts</h1>
+        <h1 className="text-2xl ">Quiz Attempts</h1>
         <p className="text-sm text-muted-foreground mt-1">Learner performance and analytics</p>
       </div>
 
@@ -142,7 +142,7 @@ export default function QuizAttemptsPage() {
           value={analytics.uniqueLearners}
         />
         <StatCard
-          icon={<BarChart3 className="w-3.5 h-3.5" />}
+          icon={<ChartBar className="w-3.5 h-3.5" />}
           label="Total Attempts"
           value={analytics.totalAttempts}
           sub={analytics.uniqueLearners > 0
@@ -155,7 +155,7 @@ export default function QuizAttemptsPage() {
           value={`${analytics.avgScore}%`}
         />
         <StatCard
-          icon={<TrendingUp className="w-3.5 h-3.5" />}
+          icon={<TrendUp className="w-3.5 h-3.5" />}
           label="Perfect Scores"
           value={analytics.perfectScores}
           sub={analytics.totalAttempts > 0
@@ -204,7 +204,7 @@ export default function QuizAttemptsPage() {
                 {/* Learner header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
                   <div>
-                    <p className="text-sm font-semibold">{user.name}</p>
+                    <p className="text-sm font-normal">{user.name}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                   <div className="text-right">
@@ -300,7 +300,7 @@ export default function QuizAttemptsPage() {
                     <div
                       className={cn(
                         'h-full rounded-full transition-all',
-                        q.correctRate >= 80 ? 'bg-green-500' :
+                        q.correctRate >= 80 ? 'bg-primary' :
                         q.correctRate >= 50 ? 'bg-amber-400' : 'bg-red-400',
                       )}
                       style={{ width: `${q.correctRate}%` }}
