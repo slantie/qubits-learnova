@@ -6,7 +6,7 @@ import { fetchProfile } from '@/lib/api/learner';
 import { fetchBadges } from '@/lib/api/badges';
 import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trophy, BookOpen, CheckCircle2 } from 'lucide-react';
+import { Trophy, BookOpen, CheckCircle } from '@phosphor-icons/react';
 import { BadgesGrid } from '@/components/badges/BadgesGrid';
 
 export function ProfilePanel() {
@@ -90,7 +90,7 @@ export function ProfilePanel() {
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
-            <CheckCircle2 className="size-4 text-emerald-500 shrink-0" />
+            <CheckCircle className="size-4 text-emerald-500 shrink-0" />
             <div>
               <p className="text-sm font-semibold">{profile.completedCount}</p>
               <p className="text-[11px] text-muted-foreground">Completed</p>

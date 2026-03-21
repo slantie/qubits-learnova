@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react';
 
 interface RewardsPanelProps {
   reward: {

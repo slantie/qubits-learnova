@@ -6,9 +6,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
 import {
-    LogOut, LayoutDashboard, Trophy,
-    GraduationCap, ChevronDown, Star, User,
-} from 'lucide-react';
+    SignOut, SquaresFour, Trophy,
+    GraduationCap, CaretDown, Star, User,
+} from '@phosphor-icons/react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { CoursesDropdown } from '@/components/learner/CoursesDropdown';
@@ -48,7 +48,7 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                         {user.totalPoints}
                     </span>
                 )}
-                <ChevronDown className={cn('size-3.5 text-muted-foreground transition-transform', open && 'rotate-180')} />
+                <CaretDown className={cn('size-3.5 text-muted-foreground transition-transform', open && 'rotate-180')} />
             </button>
 
             {open && (
@@ -78,7 +78,7 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                             onClick={() => setOpen(false)}
                             className="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-muted transition-colors"
                         >
-                            <LayoutDashboard className="size-4 text-muted-foreground" />
+                            <SquaresFour className="size-4 text-muted-foreground" />
                             Backoffice
                         </Link>
                     )}
@@ -105,7 +105,7 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                             onClick={() => { setOpen(false); onLogout(); }}
                             className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
                         >
-                            <LogOut className="size-4" />
+                            <SignOut className="size-4" />
                             Log out
                         </button>
                     </div>

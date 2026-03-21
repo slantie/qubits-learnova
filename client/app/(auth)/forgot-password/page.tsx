@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Mail, ShieldCheck, KeyRound, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Envelope, ShieldCheck, Key, CheckCircle } from '@phosphor-icons/react';
 
 type Step = 'email' | 'otp' | 'password' | 'done';
 
@@ -81,7 +81,7 @@ export default function ForgotPasswordPage() {
                 <>
                     <div className="flex flex-col items-center mb-6 gap-3">
                         <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <Mail className="size-5 text-primary" />
+                            <Envelope className="size-5 text-primary" />
                         </div>
                         <h1 className="text-2xl font-medium text-center">Forgot password?</h1>
                         <p className="text-sm text-muted-foreground text-center">
@@ -168,7 +168,7 @@ export default function ForgotPasswordPage() {
                 <>
                     <div className="flex flex-col items-center mb-6 gap-3">
                         <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
-                            <KeyRound className="size-5 text-primary" />
+                            <Key className="size-5 text-primary" />
                         </div>
                         <h1 className="text-2xl font-medium text-center">Set new password</h1>
                         <p className="text-sm text-muted-foreground text-center">
@@ -209,7 +209,7 @@ export default function ForgotPasswordPage() {
             {step === 'done' && (
                 <div className="flex flex-col items-center gap-4 py-4 text-center">
                     <div className="size-16 rounded-full bg-green-500/10 flex items-center justify-center">
-                        <CheckCircle2 className="size-8 text-green-600 dark:text-green-400" />
+                        <CheckCircle className="size-8 text-green-600 dark:text-green-400" />
                     </div>
                     <h1 className="text-2xl font-medium">Password reset!</h1>
                     <p className="text-sm text-muted-foreground">

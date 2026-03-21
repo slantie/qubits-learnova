@@ -10,10 +10,10 @@ import { VideoPlayer } from '@/components/ui/VideoPlayer';
 import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import { TimestampEditor, type Timestamp } from './TimestampEditor';
 import {
-    X, Link2, FileUp, Trash2, FileText, Image as ImageIcon, Video,
-    Loader2, CheckCircle, AlertCircle, Upload, ChevronDown, ChevronRight,
-    Plus, Eye, FileDown,
-} from 'lucide-react';
+    X, Link, FileArrowUp, Trash, FileText, Image as ImageIcon, Video,
+    CircleNotch, CheckCircle, Warning, Upload, CaretDown, CaretRight,
+    Plus, Eye, FileArrowDown,
+} from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { Attachment } from '@/types';
@@ -57,7 +57,7 @@ function SectionHeader({
             onClick={onToggle}
             className="w-full flex items-center gap-2 py-2.5 text-sm font-semibold hover:text-primary transition-colors"
         >
-            {open ? <ChevronDown className="size-4 text-muted-foreground" /> : <ChevronRight className="size-4 text-muted-foreground" />}
+            {open ? <CaretDown className="size-4 text-muted-foreground" /> : <CaretRight className="size-4 text-muted-foreground" />}
             <Icon className="size-4" />
             {title}
             {count !== undefined && count > 0 && (
@@ -334,13 +334,13 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                     )}
                                     {videoState.phase === 'uploading' && (
                                         <div className="flex flex-col items-center gap-3 rounded-xl border bg-muted/30 p-5">
-                                            <Loader2 className="size-7 text-primary animate-spin" />
+                                            <CircleNotch className="size-7 text-primary animate-spin" />
                                             <p className="text-sm font-medium">{videoState.progress}</p>
                                         </div>
                                     )}
                                     {videoState.phase === 'processing' && (
                                         <div className="flex flex-col items-center gap-3 rounded-xl border bg-muted/30 p-5">
-                                            <Loader2 className="size-7 text-amber-500 animate-spin" />
+                                            <CircleNotch className="size-7 text-amber-500 animate-spin" />
                                             <p className="text-sm font-medium">Processing video...</p>
                                             <p className="text-xs text-muted-foreground">Transcoding to HLS. This may take a few minutes.</p>
                                         </div>
@@ -363,7 +363,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                     {videoState.phase === 'failed' && (
                                         <div className="flex flex-col gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
                                             <div className="flex items-center gap-2 text-sm text-destructive">
-                                                <AlertCircle className="size-4" /> {videoState.message}
+                                                <Warning className="size-4" /> {videoState.message}
                                             </div>
                                             <Button type="button" variant="outline" size="sm"
                                                 onClick={() => { setVideoState({ phase: 'idle' }); if (videoFileRef.current) videoFileRef.current.value = ''; }}>
@@ -402,7 +402,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                                         <Eye className="size-4" />
                                                     </a>
                                                     <button onClick={() => handleDeleteAttachment(a.id)} className="text-muted-foreground hover:text-destructive shrink-0">
-                                                        <Trash2 className="size-4" />
+                                                        <Trash className="size-4" />
                                                     </button>
                                                 </li>
                                             ))}
@@ -410,7 +410,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                     )}
                                     <div className="flex items-center gap-2">
                                         <Button type="button" variant="outline" size="sm" onClick={() => docInputRef.current?.click()} disabled={docUploading}>
-                                            {docUploading ? <Loader2 className="size-3 mr-1 animate-spin" /> : <Plus className="size-3 mr-1" />}
+                                            {docUploading ? <CircleNotch className="size-3 mr-1 animate-spin" /> : <Plus className="size-3 mr-1" />}
                                             Upload Document
                                         </Button>
                                         <span className="text-xs text-muted-foreground">PDF, DOCX, PPTX, etc.</span>
@@ -437,7 +437,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                                             <Eye className="size-3.5" />
                                                         </a>
                                                         <button onClick={() => handleDeleteAttachment(a.id)} className="p-1.5 rounded-full bg-white/90 text-destructive hover:bg-white">
-                                                            <Trash2 className="size-3.5" />
+                                                            <Trash className="size-3.5" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -446,7 +446,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                     )}
                                     <div className="flex items-center gap-2">
                                         <Button type="button" variant="outline" size="sm" onClick={() => imgInputRef.current?.click()} disabled={imgUploading}>
-                                            {imgUploading ? <Loader2 className="size-3 mr-1 animate-spin" /> : <Plus className="size-3 mr-1" />}
+                                            {imgUploading ? <CircleNotch className="size-3 mr-1 animate-spin" /> : <Plus className="size-3 mr-1" />}
                                             Upload Image
                                         </Button>
                                         <span className="text-xs text-muted-foreground">JPEG, PNG, WebP, GIF</span>
@@ -460,7 +460,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
 
                         {/* ── 4. Description (Tiptap) ───────────────────────────── */}
                         <div>
-                            <SectionHeader icon={FileUp} title="Description / Notes" open={descOpen} onToggle={() => setDescOpen(o => !o)} />
+                            <SectionHeader icon={FileArrowUp} title="Description / Notes" open={descOpen} onToggle={() => setDescOpen(o => !o)} />
                             {descOpen && (
                                 <div className="pl-6 pt-1">
                                     <RichTextEditor
@@ -476,18 +476,18 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
 
                         {/* ── 5. Links Section ──────────────────────────────────── */}
                         <div>
-                            <SectionHeader icon={Link2} title="External Links" count={linkAttachments.length} open={linksOpen} onToggle={() => setLinksOpen(o => !o)} />
+                            <SectionHeader icon={Link} title="External Links" count={linkAttachments.length} open={linksOpen} onToggle={() => setLinksOpen(o => !o)} />
                             {linksOpen && (
                                 <div className="flex flex-col gap-3 pl-6 pt-1">
                                     {linkAttachments.length > 0 && (
                                         <ul className="flex flex-col gap-2">
                                             {linkAttachments.map(a => (
                                                 <li key={a.id} className="flex items-center gap-3 px-3 py-2 rounded-lg border bg-muted/20 text-sm">
-                                                    <Link2 className="size-4 text-muted-foreground shrink-0" />
+                                                    <Link className="size-4 text-muted-foreground shrink-0" />
                                                     <span className="flex-1 truncate">{a.label}</span>
                                                     <a href={a.externalUrl!} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-xs shrink-0">Open</a>
                                                     <button onClick={() => handleDeleteAttachment(a.id)} className="text-muted-foreground hover:text-destructive shrink-0">
-                                                        <Trash2 className="size-4" />
+                                                        <Trash className="size-4" />
                                                     </button>
                                                 </li>
                                             ))}
@@ -498,7 +498,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                         <div className="flex gap-2">
                                             <Input value={newLinkUrl} onChange={e => setNewLinkUrl(e.target.value)} placeholder="https://..." type="url" className="h-8 text-sm" />
                                             <Button type="button" variant="outline" size="sm" onClick={handleAddLink} disabled={linkAdding || !newLinkUrl.trim()} className="shrink-0 h-8">
-                                                {linkAdding ? <Loader2 className="size-3 animate-spin" /> : 'Add'}
+                                                {linkAdding ? <CircleNotch className="size-3 animate-spin" /> : 'Add'}
                                             </Button>
                                         </div>
                                     </div>

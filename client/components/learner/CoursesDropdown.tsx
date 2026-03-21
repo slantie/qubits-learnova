@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { fetchPublishedCourses } from '@/lib/api/learner';
 import { LearnerCourse } from '@/types';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, ChevronDown, Loader2 } from 'lucide-react';
+import { BookOpen, CaretDown, CircleNotch } from '@phosphor-icons/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,12 +35,12 @@ export function CoursesDropdown() {
         className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground rounded-md hover:bg-muted/60 transition-colors cursor-pointer"
       >
         Courses
-        <ChevronDown className="size-3.5" />
+        <CaretDown className="size-3.5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-80 max-h-96 overflow-y-auto p-2">
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <Loader2 className="size-5 animate-spin text-primary" />
+            <CircleNotch className="size-5 animate-spin text-primary" />
           </div>
         ) : courses.length === 0 ? (
           <div className="text-center py-6 text-sm text-muted-foreground">

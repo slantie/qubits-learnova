@@ -8,7 +8,7 @@ import { StarRating } from '@/components/learner/StarRating';
 import { ReviewForm } from '@/components/learner/ReviewForm';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { MessageSquarePlus, Pencil, Trash2 } from 'lucide-react';
+import { ChatCircle, Pencil, Trash } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface ReviewsTabProps {
@@ -116,13 +116,13 @@ export function ReviewsTab({ courseId, isEnrolled }: ReviewsTabProps) {
               </>
             ) : (
               <>
-                <MessageSquarePlus className="size-3.5 mr-1.5" /> Write a Review
+                <ChatCircle className="size-3.5 mr-1.5" /> Write a Review
               </>
             )}
           </Button>
           {isEditing && (
             <Button size="sm" variant="ghost" onClick={handleDelete} className="text-destructive hover:text-destructive">
-              <Trash2 className="size-3.5 mr-1.5" /> Delete
+              <Trash className="size-3.5 mr-1.5" /> Delete
             </Button>
           )}
         </div>

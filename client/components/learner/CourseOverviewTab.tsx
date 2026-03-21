@@ -4,7 +4,7 @@ import { LearnerCourseDetail, LearnerEnrollment } from '@/types';
 import { ProgressBar } from '@/components/learner/ProgressBar';
 import { LessonList } from '@/components/learner/LessonList';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Users, HelpCircle } from 'lucide-react';
+import { BookOpen, Users, Question } from '@phosphor-icons/react';
 
 interface CourseOverviewTabProps {
   course: LearnerCourseDetail;
@@ -69,7 +69,7 @@ export function CourseOverviewTab({ course, enrollment, onLessonClick }: CourseO
           {totalQuestions > 0 && (
             <div className="rounded-lg border p-4 bg-card space-y-3">
               <h4 className="text-sm font-semibold flex items-center gap-2">
-                <HelpCircle className="size-4 text-primary" />
+                <Question className="size-4 text-primary" />
                 Quiz Summary
               </h4>
               <div className="space-y-2 text-sm">

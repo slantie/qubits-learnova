@@ -4,7 +4,7 @@ import { formatDuration } from '@/lib/formatDuration';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Course } from '@/types';
-import { Share2, Edit, Trash2, BookOpen, Clock } from 'lucide-react';
+import { Share, PencilSimple, Trash, BookOpen, Clock } from '@phosphor-icons/react';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -72,15 +72,15 @@ export function CourseCard({ course, onDelete }: { course: Course; onDelete: () 
 
             <div className="border-t p-2 flex bg-muted/20 items-center justify-between">
                 <Button variant="ghost" size="sm" onClick={() => router.push(`/backoffice/courses/${course.id}/edit`)}>
-                    <Edit className="w-4 h-4 mr-2" />
+                    <PencilSimple className="w-4 h-4 mr-2" />
                     Edit
                 </Button>
                 <div className="flex">
                     <Button variant="ghost" size="icon" onClick={handleShare} title="Share link">
-                        <Share2 className="w-4 h-4" />
+                        <Share className="w-4 h-4" />
                     </Button>
                     <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10" onClick={handleDelete} title="Delete Course">
-                        <Trash2 className="w-4 h-4" />
+                        <Trash className="w-4 h-4" />
                     </Button>
                 </div>
             </div>

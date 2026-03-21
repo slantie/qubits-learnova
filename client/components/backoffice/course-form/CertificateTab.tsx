@@ -5,7 +5,7 @@ import { api } from '@/lib/api';
 import { getToken } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Award, Check, Eye, X, Loader2 } from 'lucide-react';
+import { Medal, Check, Eye, X, CircleNotch } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -64,7 +64,7 @@ function TemplatePreviewCard({
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+            <CircleNotch className="size-5 animate-spin text-muted-foreground" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -89,7 +89,7 @@ function TemplatePreviewCard({
 
       <div className="p-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <Award className="size-4 text-muted-foreground shrink-0" />
+          <Medal className="size-4 text-muted-foreground shrink-0" />
           <span className="text-sm font-medium truncate">{template.name}</span>
         </div>
         <Button
@@ -138,7 +138,7 @@ function FullPreviewModal({
       <div className="relative z-10 w-[95vw] max-w-[960px] h-[85vh] flex flex-col bg-background rounded-2xl border shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between px-5 py-3 border-b bg-card">
           <div className="flex items-center gap-2">
-            <Award className="size-4 text-primary" />
+            <Medal className="size-4 text-primary" />
             <span className="text-sm font-semibold">{templateName}</span>
             <Badge variant="neutral" className="text-xs">
               Preview
@@ -237,7 +237,7 @@ export function CertificateTab({
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        <CircleNotch className="size-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -248,7 +248,7 @@ export function CertificateTab({
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Award className="size-5 text-primary" />
+              <Medal className="size-5 text-primary" />
               Certificate Template
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
@@ -259,7 +259,7 @@ export function CertificateTab({
           </div>
           {saving && (
             <Badge variant="neutral" className="shrink-0">
-              <Loader2 className="size-3 animate-spin mr-1" />
+              <CircleNotch className="size-3 animate-spin mr-1" />
               Saving...
             </Badge>
           )}
@@ -290,7 +290,7 @@ export function CertificateTab({
 
         {templates.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
-            <Award className="size-10 mx-auto mb-3 opacity-40" />
+            <Medal className="size-10 mx-auto mb-3 opacity-40" />
             <p className="text-sm">No certificate templates available.</p>
           </div>
         )}

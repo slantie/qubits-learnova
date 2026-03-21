@@ -9,9 +9,9 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import {
-    ArrowLeft, Trophy, CheckCircle2, XCircle,
-    RotateCcw, Clock, Loader2, ClipboardList, AlertCircle,
-} from 'lucide-react';
+    ArrowLeft, Trophy, CheckCircle, XCircle,
+    ArrowCounterClockwise, Clock, CircleNotch, ClipboardText, Warning,
+} from '@phosphor-icons/react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -218,7 +218,7 @@ export default function LearnerQuizPage() {
     if (pageState === 'loading') {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <Loader2 className="size-7 animate-spin text-primary" />
+                <CircleNotch className="size-7 animate-spin text-primary" />
             </div>
         );
     }
@@ -226,7 +226,7 @@ export default function LearnerQuizPage() {
     if (pageState === 'error' || !quiz) {
         return (
             <div className="flex flex-col items-center gap-4 py-24 text-center">
-                <AlertCircle className="size-10 text-muted-foreground" />
+                <Warning className="size-10 text-muted-foreground" />
                 <p className="text-lg font-medium">{error ?? 'Quiz not found'}</p>
                 <Link href={`/courses/${courseId}`}>
                     <Button variant="outline" size="sm">Back to course</Button>
@@ -254,7 +254,7 @@ export default function LearnerQuizPage() {
                     <h1 className="text-2xl font-semibold">{quiz.title}</h1>
                     <div className="flex items-center gap-2 flex-wrap mt-1">
                         <Badge variant="neutral">
-                            <ClipboardList className="size-3 mr-1" />
+                            <ClipboardText className="size-3 mr-1" />
                             {quiz.questions.length} question{quiz.questions.length !== 1 ? 's' : ''}
                         </Badge>
                         {pastAttempts.length > 0 && (
@@ -319,7 +319,7 @@ export default function LearnerQuizPage() {
                     )}
 
                     <Button onClick={handleRetry} variant="outline" className="self-start">
-                        <RotateCcw className="size-4 mr-2" />
+                        <ArrowCounterClockwise className="size-4 mr-2" />
                         Try Again
                     </Button>
                 </div>
@@ -358,7 +358,7 @@ export default function LearnerQuizPage() {
                                         sel.length === correct.length &&
                                         sel.every((v, i) => v === correct[i]);
                                     return isCorrect
-                                        ? <CheckCircle2 className="size-5 text-green-500 shrink-0" />
+                                        ? <CheckCircle className="size-5 text-green-500 shrink-0" />
                                         : <XCircle className="size-5 text-destructive shrink-0" />;
                                 })()}
                             </div>
@@ -425,7 +425,7 @@ export default function LearnerQuizPage() {
                 <div className="flex flex-col gap-3 sticky bottom-4">
                     {validationError && (
                         <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 px-4 py-2.5 rounded-lg border border-destructive/20">
-                            <AlertCircle className="size-4 shrink-0" />
+                            <Warning className="size-4 shrink-0" />
                             {validationError}
                         </div>
                     )}
@@ -451,7 +451,7 @@ export default function LearnerQuizPage() {
             {/* ── SUBMITTING ─────────────────────────────────────────────────── */}
             {pageState === 'submitting' && (
                 <div className="flex items-center justify-center gap-3 py-8 text-muted-foreground">
-                    <Loader2 className="size-5 animate-spin" />
+                    <CircleNotch className="size-5 animate-spin" />
                     <span className="text-sm">Submitting your answers…</span>
                 </div>
             )}

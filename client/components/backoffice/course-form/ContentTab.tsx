@@ -9,7 +9,7 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { Play, FileText, Image as ImageIcon, ClipboardList, MoreVertical, Plus, GripVertical } from 'lucide-react';
+import { Play, FileText, Image as ImageIcon, ClipboardText, DotsThreeVertical, Plus, DotsSixVertical } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { LessonEditorModal } from './LessonEditorModal';
 import { Lesson, LessonType } from '@/types';
@@ -35,7 +35,7 @@ function LessonTypeIcon({ type }: { type: LessonType }) {
         case 'IMAGE':
             return <ImageIcon className={cls} />;
         case 'QUIZ':
-            return <ClipboardList className={cls} />;
+            return <ClipboardText className={cls} />;
     }
 }
 
@@ -105,7 +105,7 @@ export function ContentTab({ courseId }: ContentTabProps) {
         <div className="flex flex-col gap-4">
             {lessons.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-3 rounded-xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground">
-                    <ClipboardList className="size-10 opacity-40" />
+                    <ClipboardText className="size-10 opacity-40" />
                     <p className="text-sm">No lessons yet. Add your first lesson.</p>
                 </div>
             ) : (
@@ -115,7 +115,7 @@ export function ContentTab({ courseId }: ContentTabProps) {
                             key={lesson.id}
                             className="flex items-center gap-3 px-4 py-3 rounded-lg border bg-card hover:border-primary/40 transition-colors"
                         >
-                            <GripVertical className="size-4 text-muted-foreground/40 shrink-0" />
+                            <DotsSixVertical className="size-4 text-muted-foreground/40 shrink-0" />
                             <span className="text-xs text-muted-foreground w-5 text-right shrink-0">
                                 {index + 1}
                             </span>
@@ -130,7 +130,7 @@ export function ContentTab({ courseId }: ContentTabProps) {
                             )}
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="shrink-0 inline-flex items-center justify-center rounded-md p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
-                                        <MoreVertical className="size-4" />
+                                        <DotsThreeVertical className="size-4" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => handleEdit(lesson)}>

@@ -4,17 +4,17 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Award,
-  CheckCircle2,
+  Medal,
+  CheckCircle,
   XCircle,
   Calendar,
   Star,
   BookOpen,
-  ExternalLink,
+  ArrowSquareOut,
   ShieldCheck,
-  Loader2,
+  CircleNotch,
   Printer,
-} from 'lucide-react';
+} from '@phosphor-icons/react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -65,7 +65,7 @@ export default function VerifyPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="size-8 animate-spin text-primary" />
+          <CircleNotch className="size-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">Verifying certificate...</p>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function VerifyPage() {
               href="/"
               className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
             >
-              <ExternalLink className="size-4" />
+              <ArrowSquareOut className="size-4" />
               Go to Learnova
             </Link>
           </div>
@@ -110,7 +110,7 @@ export default function VerifyPage() {
       <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-sm font-semibold">
-            <Award className="size-5 text-primary" />
+            <Medal className="size-5 text-primary" />
             <span>Learnova</span>
           </Link>
           <span className="text-xs text-muted-foreground">Certificate Verification</span>
@@ -169,7 +169,7 @@ export default function VerifyPage() {
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 className="size-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <CheckCircle className="size-4 text-muted-foreground mt-0.5 shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Certificate ID</p>
                     <p className="text-xs font-mono text-muted-foreground break-all">{cert.uid}</p>
@@ -202,7 +202,7 @@ export default function VerifyPage() {
             <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
               <div className="px-5 py-3 border-b bg-muted/30 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Award className="size-4 text-primary" />
+                  <Medal className="size-4 text-primary" />
                   <span className="text-sm font-semibold">Certificate Preview</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -242,7 +242,7 @@ export default function VerifyPage() {
                 </div>
               ) : (
                 <div className="flex items-center justify-center py-20 text-muted-foreground">
-                  <Loader2 className="size-5 animate-spin mr-2" />
+                  <CircleNotch className="size-5 animate-spin mr-2" />
                   Loading certificate...
                 </div>
               )}

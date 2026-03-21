@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Trash2, Plus, Check } from 'lucide-react';
+import { Trash, Plus, Check } from '@phosphor-icons/react';
 
 interface Question {
   id: number;
@@ -135,7 +135,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
             disabled={deleting}
             className="flex items-center gap-1.5 text-xs text-destructive hover:text-destructive/80 border border-destructive/30 hover:border-destructive/60 rounded-md px-2 py-1.5 transition-colors disabled:opacity-50"
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash className="w-3.5 h-3.5" />
             {deleting ? 'Deleting…' : 'Delete question'}
           </button>
         </div>
@@ -197,7 +197,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
                 className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded"
                 title="Remove option"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <Trash className="w-3.5 h-3.5" />
               </button>
             )}
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Trophy, Star, Medal, Crown } from 'lucide-react';
+import { Trophy, Star, Medal, Crown } from '@phosphor-icons/react';
 import { api } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';

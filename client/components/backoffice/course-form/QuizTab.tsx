@@ -6,7 +6,7 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, ClipboardList } from 'lucide-react';
+import { Plus, Pencil, Trash, ClipboardText } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface QuizRewards {
@@ -92,7 +92,7 @@ export function QuizTab({ courseId }: QuizTabProps) {
         <div className="flex flex-col gap-4">
             {quizzes.length === 0 && !showCreate ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-3 rounded-xl border-2 border-dashed border-muted-foreground/30 text-muted-foreground">
-                    <ClipboardList className="size-10 opacity-40" />
+                    <ClipboardText className="size-10 opacity-40" />
                     <p className="text-sm">No quizzes yet. Create your first quiz.</p>
                 </div>
             ) : (
@@ -102,7 +102,7 @@ export function QuizTab({ courseId }: QuizTabProps) {
                             key={quiz.id}
                             className="flex items-center gap-3 px-4 py-3 rounded-lg border bg-card hover:border-primary/40 transition-colors"
                         >
-                            <ClipboardList className="size-4 text-muted-foreground shrink-0" />
+                            <ClipboardText className="size-4 text-muted-foreground shrink-0" />
                             <span className="flex-1 text-sm font-medium truncate">{quiz.title}</span>
                             {quiz.questionCount != null && (
                                 <Badge variant="neutral" className="shrink-0">
@@ -130,7 +130,7 @@ export function QuizTab({ courseId }: QuizTabProps) {
                                     onClick={() => handleDelete(quiz.id)}
                                     title="Delete quiz"
                                 >
-                                    <Trash2 className="size-4" />
+                                    <Trash className="size-4" />
                                 </Button>
                             </div>
                         </li>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
-import { ArrowLeft, Users, BarChart3, Trophy, Target, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Users, ChartBar, Trophy, Target, TrendUp } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface Attempt {
@@ -141,7 +141,7 @@ export default function QuizAttemptsPage() {
           value={analytics.uniqueLearners}
         />
         <StatCard
-          icon={<BarChart3 className="w-3.5 h-3.5" />}
+          icon={<ChartBar className="w-3.5 h-3.5" />}
           label="Total Attempts"
           value={analytics.totalAttempts}
           sub={analytics.uniqueLearners > 0
@@ -154,7 +154,7 @@ export default function QuizAttemptsPage() {
           value={`${analytics.avgScore}%`}
         />
         <StatCard
-          icon={<TrendingUp className="w-3.5 h-3.5" />}
+          icon={<TrendUp className="w-3.5 h-3.5" />}
           label="Perfect Scores"
           value={analytics.perfectScores}
           sub={analytics.totalAttempts > 0

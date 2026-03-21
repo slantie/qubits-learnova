@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { api } from '@/lib/api';
 import {
-    BookOpen, Users, BarChart3, ArrowRight,
-    TrendingUp, GraduationCap, ClipboardList, Plus,
-} from 'lucide-react';
+    BookOpen, Users, ChartBar, ArrowRight,
+    TrendUp, GraduationCap, ClipboardText, Plus,
+} from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -139,7 +139,7 @@ export default function BackofficeDashboard() {
                     href="/backoffice/courses"
                 />
                 <StatCard
-                    icon={TrendingUp}
+                    icon={TrendUp}
                     label="Published"
                     value={stats?.publishedCourses ?? '—'}
                     sub="Live on platform"
@@ -232,7 +232,7 @@ export default function BackofficeDashboard() {
                         {role === 'ADMIN' && (
                             <QuickAction
                                 href="/backoffice/reporting"
-                                icon={BarChart3}
+                                icon={ChartBar}
                                 label="View Reporting"
                                 desc="Learner progress & stats"
                             />

@@ -8,7 +8,7 @@ import { ListView } from './ListView';
 import { CreateCourseModal } from './CreateCourseModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { LayoutGrid, List, Search, Plus } from 'lucide-react';
+import { GridFour, List, MagnifyingGlass, Plus } from '@phosphor-icons/react';
 
 export function CoursesDashboard() {
     const [view, setView] = useState<'kanban' | 'list'>('kanban');
@@ -48,7 +48,7 @@ export function CoursesDashboard() {
 
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-card p-4 rounded-lg border shadow-sm">
                 <div className="relative w-full sm:w-80">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                         placeholder="Search courses..."
                         value={search}
@@ -63,7 +63,7 @@ export function CoursesDashboard() {
                         onClick={() => setView('kanban')}
                         className="w-20"
                     >
-                        <LayoutGrid className="w-4 h-4 mr-1" /> Kanban
+                        <GridFour className="w-4 h-4 mr-1" /> Kanban
                     </Button>
                     <Button
                         variant={view === 'list' ? 'default' : 'ghost'}

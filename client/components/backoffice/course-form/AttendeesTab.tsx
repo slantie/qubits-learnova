@@ -6,10 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    Users, Search, ChevronLeft, ChevronRight, Clock,
-    CheckCircle, CircleDot, CircleDashed, Loader2,
-    Mail, UserPlus, BarChart3,
-} from 'lucide-react';
+    Users, MagnifyingGlass, CaretLeft, CaretRight, Clock,
+    CheckCircle, CircleHalf, CircleDashed, CircleNotch,
+    Envelope, UserPlus, ChartBar,
+} from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface Enrollment {
@@ -41,7 +41,7 @@ interface AttendeesTabProps {
 
 const STATUS_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string; badgeVariant: 'neutral' | 'warning' | 'info' | 'success' }> = {
     NOT_STARTED: { label: 'Not Started', icon: CircleDashed, color: 'text-muted-foreground', badgeVariant: 'neutral' },
-    IN_PROGRESS: { label: 'In Progress', icon: CircleDot, color: 'text-blue-500', badgeVariant: 'info' },
+    IN_PROGRESS: { label: 'In Progress', icon: CircleHalf, color: 'text-blue-500', badgeVariant: 'info' },
     COMPLETED: { label: 'Completed', icon: CheckCircle, color: 'text-green-500', badgeVariant: 'success' },
 };
 
@@ -142,7 +142,7 @@ export function AttendeesTab({ courseId, onAddAttendees, onContactAttendees }: A
                         onClick={() => setStatusFilter(statusFilter === 'NOT_STARTED' ? '' : 'NOT_STARTED')}
                     />
                     <StatCard
-                        icon={CircleDot}
+                        icon={CircleHalf}
                         label="In Progress"
                         value={summary.inProgress}
                         active={statusFilter === 'IN_PROGRESS'}
@@ -161,7 +161,7 @@ export function AttendeesTab({ courseId, onAddAttendees, onContactAttendees }: A
             {/* Toolbar */}
             <div className="flex items-center gap-3 flex-wrap">
                 <div className="relative flex-1 min-w-[200px] max-w-sm">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                    <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                     <Input
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
@@ -178,7 +178,7 @@ export function AttendeesTab({ courseId, onAddAttendees, onContactAttendees }: A
                     )}
                     {onContactAttendees && (
                         <Button variant="outline" size="sm" onClick={onContactAttendees}>
-                            <Mail className="size-3.5 mr-1.5" /> Email All
+                            <Envelope className="size-3.5 mr-1.5" /> Email All
                         </Button>
                     )}
                 </div>
@@ -201,7 +201,7 @@ export function AttendeesTab({ courseId, onAddAttendees, onContactAttendees }: A
                             {loading ? (
                                 <tr>
                                     <td colSpan={5} className="px-4 py-12 text-center">
-                                        <Loader2 className="size-5 animate-spin mx-auto text-muted-foreground" />
+                                        <CircleNotch className="size-5 animate-spin mx-auto text-muted-foreground" />
                                     </td>
                                 </tr>
                             ) : filtered.length === 0 ? (
@@ -278,7 +278,7 @@ export function AttendeesTab({ courseId, onAddAttendees, onContactAttendees }: A
                                 onClick={() => setPage(p => p - 1)}
                                 className="h-7 w-7 p-0"
                             >
-                                <ChevronLeft className="size-4" />
+                                <CaretLeft className="size-4" />
                             </Button>
                             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                                 let pageNum: number;
@@ -310,7 +310,7 @@ export function AttendeesTab({ courseId, onAddAttendees, onContactAttendees }: A
                                 onClick={() => setPage(p => p + 1)}
                                 className="h-7 w-7 p-0"
                             >
-                                <ChevronRight className="size-4" />
+                                <CaretRight className="size-4" />
                             </Button>
                         </div>
                     </div>

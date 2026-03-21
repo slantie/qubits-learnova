@@ -6,9 +6,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import {
-    LogOut, BookOpen, BarChart3, LayoutDashboard,
-    Users, Settings, ChevronRight, GraduationCap,
-} from 'lucide-react';
+    SignOut, BookOpen, ChartBar, SquaresFour,
+    Users, GearSix, CaretRight, GraduationCap,
+} from '@phosphor-icons/react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -22,11 +22,11 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-    { href: '/backoffice', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/backoffice', label: 'Dashboard', icon: SquaresFour },
     { href: '/backoffice/courses', label: 'Courses', icon: BookOpen },
-    { href: '/backoffice/reporting', label: 'Reporting', icon: BarChart3, adminOnly: true },
+    { href: '/backoffice/reporting', label: 'Reporting', icon: ChartBar, adminOnly: true },
     { href: '/backoffice/users', label: 'Users', icon: Users, adminOnly: true, badge: 'Soon' },
-    { href: '/backoffice/settings', label: 'Settings', icon: Settings, adminOnly: true, badge: 'Soon' },
+    { href: '/backoffice/settings', label: 'Settings', icon: GearSix, adminOnly: true, badge: 'Soon' },
 ];
 
 function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
@@ -48,7 +48,7 @@ function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
                     {item.badge}
                 </span>
             )}
-            {isActive && <ChevronRight className="size-3 text-primary" />}
+            {isActive && <CaretRight className="size-3 text-primary" />}
         </Link>
     );
 }
@@ -153,7 +153,7 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                             className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded"
                             title="Log out"
                         >
-                            <LogOut className="size-4" />
+                            <SignOut className="size-4" />
                         </button>
                     </div>
                 </div>
@@ -168,7 +168,7 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
                         <span className="font-semibold text-sm">Learnova</span>
                     </div>
                     <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
-                        <LogOut className="size-4" />
+                        <SignOut className="size-4" />
                     </Button>
                 </header>
 

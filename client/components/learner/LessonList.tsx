@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { formatDuration } from '@/lib/formatDuration';
 import {
-  Search, Play, FileText, Image as ImageIcon, ClipboardList,
-  CheckCircle2, Circle, Lock,
-} from 'lucide-react';
+  MagnifyingGlass, Play, FileText, Image as ImageIcon, ClipboardText,
+  CheckCircle, Circle, Lock,
+} from '@phosphor-icons/react';
 
 interface LessonListProps {
   lessons: LessonSummary[];
@@ -22,7 +22,7 @@ function LessonIcon({ type }: { type: string }) {
     case 'VIDEO': return <Play className={cls} />;
     case 'DOCUMENT': return <FileText className={cls} />;
     case 'IMAGE': return <ImageIcon className={cls} />;
-    case 'QUIZ': return <ClipboardList className={cls} />;
+    case 'QUIZ': return <ClipboardText className={cls} />;
     default: return <Circle className={cls} />;
   }
 }
@@ -40,7 +40,7 @@ export function LessonList({ lessons, isEnrolled, onLessonClick }: LessonListPro
     <div className="space-y-3">
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
         <Input
           className="pl-9 h-9 text-sm"
           placeholder="Search lessons..."
@@ -72,7 +72,7 @@ export function LessonList({ lessons, isEnrolled, onLessonClick }: LessonListPro
               <span className="shrink-0">
                 {isEnrolled ? (
                   lesson.isCompleted ? (
-                    <CheckCircle2 className="size-4 text-emerald-500" />
+                    <CheckCircle className="size-4 text-emerald-500" />
                   ) : (
                     <Circle className="size-4 text-muted-foreground/40" />
                   )

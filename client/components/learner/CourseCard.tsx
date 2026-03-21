@@ -5,7 +5,7 @@ import { LearnerCourse } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ProgressBar } from '@/components/learner/ProgressBar';
-import { BookOpen, CheckCircle2, Clock } from 'lucide-react';
+import { BookOpen, CheckCircle, Clock } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 interface CourseCardProps {
@@ -99,7 +99,7 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
                 {enrollment.totalLessons ?? course._count.lessons} total
               </span>
               <span className="inline-flex items-center gap-1 text-emerald-600">
-                <CheckCircle2 className="size-3" />
+                <CheckCircle className="size-3" />
                 {enrollment.completedLessons} done
               </span>
               <span className="inline-flex items-center gap-1 text-amber-600">

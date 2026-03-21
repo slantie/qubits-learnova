@@ -18,13 +18,13 @@ import { formatDuration } from '@/lib/formatDuration';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import {
-    Play, FileText, Image as ImageIcon, ClipboardList,
-    Clock, BookOpen, ChevronLeft, Loader2,
-    Link2, FileDown, X, ChevronRight, Download,
+    Play, FileText, Image as ImageIcon, ClipboardText,
+    Clock, BookOpen, CaretLeft, CircleNotch,
+    Link as LinkIcon2, FileArrowDown, X, CaretRight, DownloadSimple,
     CheckCircle, Circle, Trophy, ArrowRight,
-    Users, Lock, Award, ExternalLink, Printer,
-    Share2, Copy, BadgeCheck, Star,
-} from 'lucide-react';
+    Users, Lock, Medal, ArrowSquareOut, Printer,
+    Share, Copy, SealCheck, Star,
+} from '@phosphor-icons/react';
 import { LessonType } from '@/types';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -49,7 +49,7 @@ interface LessonDetail {
     videoStatus: string | null;
     thumbnailUrl: string | null;
     filePath: string | null;
-    allowDownload: boolean;
+    allowDownloadSimple: boolean;
     duration: number | null;
     timestamps: LessonTimestamp[] | null;
     attachments: { id: number; type: 'FILE' | 'LINK'; label: string; filePath: string | null; externalUrl: string | null }[];
@@ -74,7 +74,7 @@ type ContentTab = 'description' | 'images' | 'documents' | 'chapters' | 'resourc
 
 const IMAGE_EXT = /\.(jpg|jpeg|png|gif|webp|svg|bmp|avif)(\?|$)/i;
 
-function getDownloadUrl(url: string, filename: string): string {
+function getDownloadSimpleUrl(url: string, filename: string): string {
     if (url.includes('res.cloudinary.com')) {
         const baseName = filename.replace(/\.[^.]+$/, '');
         return url.replace('/upload/', `/upload/fl_attachment:${encodeURIComponent(baseName)}/`);
@@ -103,9 +103,9 @@ function LessonContent({
     const tabs: { key: ContentTab; label: string; icon: React.ReactNode; count?: number; show: boolean }[] = [
         { key: 'description', label: 'Description', icon: <FileText className="size-3.5" />, show: !!lesson.description },
         { key: 'images', label: 'Images', icon: <ImageIcon className="size-3.5" />, count: images.length, show: images.length > 0 },
-        { key: 'documents', label: 'Documents', icon: <FileDown className="size-3.5" />, count: docs.length, show: docs.length > 0 },
+        { key: 'documents', label: 'Documents', icon: <FileArrowDown className="size-3.5" />, count: docs.length, show: docs.length > 0 },
         { key: 'chapters', label: 'Chapters', icon: <Clock className="size-3.5" />, count: chapters.length, show: chapters.length > 0 },
-        { key: 'resources', label: 'Resources', icon: <Link2 className="size-3.5" />, count: links.length, show: links.length > 0 },
+        { key: 'resources', label: 'Resources', icon: <LinkIcon2 className="size-3.5" />, count: links.length, show: links.length > 0 },
     ];
     const visibleTabs = tabs.filter(t => t.show);
 
@@ -139,7 +139,7 @@ function LessonContent({
                 <VideoPlayer src={lesson.videoUrl} poster={lesson.thumbnailUrl ?? undefined} title={lesson.title} timestamps={lesson.timestamps ?? undefined} className="w-full shadow-lg" />
             ) : lesson.videoStatus === 'PROCESSING' ? (
                 <div className="aspect-video rounded-xl bg-muted flex flex-col items-center justify-center gap-3 text-muted-foreground">
-                    <Loader2 className="size-8 animate-spin text-amber-500" />
+                    <CircleNotch className="size-8 animate-spin text-amber-500" />
                     <p className="text-sm font-medium">Video is being processed</p>
                     <p className="text-xs">Check back in a few minutes</p>
                 </div>
@@ -155,9 +155,9 @@ function LessonContent({
                 <div className="flex items-center gap-3 p-4 border rounded-xl bg-muted/30">
                     <FileText className="size-8 text-muted-foreground shrink-0" />
                     <span className="flex-1 font-medium text-sm truncate">{lesson.title}</span>
-                    {lesson.allowDownload && (
-                        <a href={getDownloadUrl(lesson.filePath, lesson.title)} download={lesson.title} target="_blank" rel="noopener noreferrer">
-                            <Button size="sm" variant="outline"><Download className="size-3.5 mr-1" />Download</Button>
+                    {lesson.allowDownloadSimple && (
+                        <a href={getDownloadSimpleUrl(lesson.filePath, lesson.title)} download={lesson.title} target="_blank" rel="noopener noreferrer">
+                            <Button size="sm" variant="outline"><DownloadSimple className="size-3.5 mr-1" />DownloadSimple</Button>
                         </a>
                     )}
                 </div>
@@ -210,11 +210,11 @@ function LessonContent({
                             <ul className="flex flex-col gap-2">
                                 {docs.map(a => (
                                     <li key={a.id}>
-                                        <a href={lesson.allowDownload ? getDownloadUrl(a.filePath!, a.label) : a.filePath!} target="_blank" rel="noopener noreferrer" download={lesson.allowDownload ? a.label : undefined}
+                                        <a href={lesson.allowDownloadSimple ? getDownloadSimpleUrl(a.filePath!, a.label) : a.filePath!} target="_blank" rel="noopener noreferrer" download={lesson.allowDownloadSimple ? a.label : undefined}
                                             className="inline-flex items-center gap-3 px-4 py-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors text-sm group w-full">
                                             <FileText className="size-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                                             <span className="flex-1 truncate font-medium">{a.label}</span>
-                                            {lesson.allowDownload && <FileDown className="size-4 text-muted-foreground group-hover:text-primary shrink-0" />}
+                                            {lesson.allowDownloadSimple && <FileArrowDown className="size-4 text-muted-foreground group-hover:text-primary shrink-0" />}
                                         </a>
                                     </li>
                                 ))}
@@ -243,7 +243,7 @@ function LessonContent({
                                     <li key={a.id}>
                                         <a href={a.externalUrl ?? '#'} target="_blank" rel="noopener noreferrer"
                                             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border bg-card hover:bg-muted/50 transition-colors text-sm group">
-                                            <Link2 className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                            <LinkIcon2 className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
                                             <span>{a.label}</span>
                                         </a>
                                     </li>
@@ -270,7 +270,7 @@ function LessonContent({
                         </>
                     ) : (
                         <Button onClick={async () => { await onMarkComplete(lesson.id); if (next) onNavigate(next.id); }} disabled={marking} className="gap-2">
-                            {marking ? <Loader2 className="size-4 animate-spin" /> : <CheckCircle className="size-4" />}
+                            {marking ? <CircleNotch className="size-4 animate-spin" /> : <CheckCircle className="size-4" />}
                             {next ? 'Complete & Continue' : 'Mark as Complete'}
                             {next && <ArrowRight className="size-4" />}
                         </Button>
@@ -279,12 +279,12 @@ function LessonContent({
                 <div className="flex items-center justify-between">
                     {prev ? (
                         <button onClick={() => onNavigate(prev.id)} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                            <ChevronLeft className="size-4" /><span className="hidden sm:inline">Previous:</span> {prev.title}
+                            <CaretLeft className="size-4" /><span className="hidden sm:inline">Previous:</span> {prev.title}
                         </button>
                     ) : <div />}
                     {next && (
                         <button onClick={() => onNavigate(next.id)} className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline ml-auto">
-                            Next: {next.title}<ChevronLeft className="size-4 rotate-180" />
+                            Next: {next.title}<CaretLeft className="size-4 rotate-180" />
                         </button>
                     )}
                 </div>
@@ -295,19 +295,19 @@ function LessonContent({
                 <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightboxIndex(null)}>
                     <button onClick={() => setLightboxIndex(null)} className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10"><X className="size-5" /></button>
                     <span className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-sm font-mono">{lightboxIndex + 1} / {images.length}</span>
-                    {lesson.allowDownload && (
-                        <a href={getDownloadUrl(images[lightboxIndex].filePath!, images[lightboxIndex].label)} download={images[lightboxIndex].label} onClick={e => e.stopPropagation()} className="absolute top-4 right-16 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
-                            <Download className="size-5" />
+                    {lesson.allowDownloadSimple && (
+                        <a href={getDownloadSimpleUrl(images[lightboxIndex].filePath!, images[lightboxIndex].label)} download={images[lightboxIndex].label} onClick={e => e.stopPropagation()} className="absolute top-4 right-16 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
+                            <DownloadSimple className="size-5" />
                         </a>
                     )}
                     {lightboxIndex > 0 && (
                         <button onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
-                            <ChevronLeft className="size-6" />
+                            <CaretLeft className="size-6" />
                         </button>
                     )}
                     {lightboxIndex < images.length - 1 && (
                         <button onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
-                            <ChevronRight className="size-6" />
+                            <CaretRight className="size-6" />
                         </button>
                     )}
                     <img src={images[lightboxIndex].filePath!} alt={images[lightboxIndex].label} className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg shadow-2xl" onClick={e => e.stopPropagation()} />
@@ -482,7 +482,7 @@ export default function CourseDetailPage() {
         }
         return (
             <Button onClick={handleEnroll} disabled={enrolling}>
-                {enrolling ? <Loader2 className="size-4 mr-2 animate-spin" /> : <BookOpen className="size-4 mr-2" />}
+                {enrolling ? <CircleNotch className="size-4 mr-2 animate-spin" /> : <BookOpen className="size-4 mr-2" />}
                 {enrolling ? 'Enrolling...' : 'Enroll for Free'}
             </Button>
         );
@@ -510,7 +510,7 @@ export default function CourseDetailPage() {
                 {/* Slim course header */}
                 <div className="border-b bg-muted/20 px-4 py-2 flex items-center gap-3">
                     <button onClick={() => setActiveLessonId(null)} className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                        <ChevronLeft className="size-3.5" /> Overview
+                        <CaretLeft className="size-3.5" /> Overview
                     </button>
                     <span className="text-xs text-muted-foreground">·</span>
                     <span className="text-sm font-medium truncate">{overviewData.title}</span>
@@ -551,7 +551,7 @@ export default function CourseDetailPage() {
                             {certificate && (
                                 <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
                                     <div className="flex items-center gap-2 mb-3">
-                                        <BadgeCheck className="size-4 text-primary shrink-0" />
+                                        <SealCheck className="size-4 text-primary shrink-0" />
                                         <div className="min-w-0 flex-1">
                                             <p className="text-xs font-semibold text-foreground leading-tight">Certificate Earned</p>
                                             <p className="text-[11px] text-muted-foreground tabular-nums">
@@ -565,7 +565,7 @@ export default function CourseDetailPage() {
                                             onClick={() => setShowCertModal(true)}
                                             className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md px-3 py-1.5 transition-colors"
                                         >
-                                            <Award className="size-3" /> View
+                                            <Medal className="size-3" /> View
                                         </button>
                                         <a
                                             href={`${clientUrl}/verify/${certificate.uid}`}
@@ -573,7 +573,7 @@ export default function CourseDetailPage() {
                                             rel="noopener noreferrer"
                                             className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted hover:bg-muted/80 border border-border rounded-md px-3 py-1.5 transition-colors"
                                         >
-                                            <ExternalLink className="size-3" /> Verify
+                                            <ArrowSquareOut className="size-3" /> Verify
                                         </a>
                                     </div>
                                 </div>
@@ -602,7 +602,7 @@ export default function CourseDetailPage() {
                                             </span>
                                             <span className="flex items-center gap-2 mt-0.5">
                                                 {l.duration && <span className="text-[11px] text-muted-foreground">{formatDuration(l.duration)}</span>}
-                                                {isProcessing && <span className="text-[10px] text-amber-500 inline-flex items-center gap-0.5"><Loader2 className="size-2.5 animate-spin" /> Processing</span>}
+                                                {isProcessing && <span className="text-[10px] text-amber-500 inline-flex items-center gap-0.5"><CircleNotch className="size-2.5 animate-spin" /> Processing</span>}
                                             </span>
                                         </span>
                                     </button>
@@ -612,7 +612,7 @@ export default function CourseDetailPage() {
                             {quizzes.length > 0 && (
                                 <>
                                     <div className="flex items-center gap-2 px-5 py-2 mt-1 border-t border-border/50">
-                                        <ClipboardList className="size-3 text-muted-foreground" />
+                                        <ClipboardText className="size-3 text-muted-foreground" />
                                         <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Quizzes</span>
                                     </div>
                                     {quizzes.map(q => (
@@ -632,7 +632,7 @@ export default function CourseDetailPage() {
 
                     {/* Main lesson content */}
                     <main className="flex-1 overflow-y-auto">
-                        {lessonLoading && <div className="flex items-center justify-center h-64"><Loader2 className="size-6 animate-spin text-primary" /></div>}
+                        {lessonLoading && <div className="flex items-center justify-center h-64"><CircleNotch className="size-6 animate-spin text-primary" /></div>}
                         {!lessonLoading && lesson && (
                             <LessonContent
                                 lesson={lesson} course={courseView!}
@@ -671,7 +671,7 @@ export default function CourseDetailPage() {
                                     {/* Left: icon + label */}
                                     <div className="flex items-center gap-2.5 min-w-0">
                                         <div className="size-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0">
-                                            <Award className="size-4 text-amber-600 dark:text-amber-400" />
+                                            <Medal className="size-4 text-amber-600 dark:text-amber-400" />
                                         </div>
                                         <div className="min-w-0">
                                             <p className="text-sm font-semibold leading-tight truncate">Your Certificate</p>
@@ -704,11 +704,11 @@ export default function CourseDetailPage() {
                                             className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg border border-border/70 hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                             aria-label="Open certificate in full size in a new tab"
                                         >
-                                            <ExternalLink className="size-3" />
+                                            <ArrowSquareOut className="size-3" />
                                             Full Size
                                         </a>
 
-                                        {/* Primary: Print / Download */}
+                                        {/* Primary: Print / DownloadSimple */}
                                         <button
                                             onClick={() => {
                                                 const w = window.open('', '_blank');
@@ -741,7 +741,7 @@ export default function CourseDetailPage() {
                                     </span>
                                     {/* UID chip */}
                                     <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted/60 border border-border/50 rounded-full px-2.5 py-0.5 font-mono tracking-tight">
-                                        <BadgeCheck className="size-3 shrink-0" />
+                                        <SealCheck className="size-3 shrink-0" />
                                         {certificate.uid}
                                     </span>
                                     {/* Mobile-only action links */}
@@ -752,7 +752,7 @@ export default function CourseDetailPage() {
                                         className="sm:hidden inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
                                         aria-label="Open certificate full size"
                                     >
-                                        <ExternalLink className="size-3" />
+                                        <ArrowSquareOut className="size-3" />
                                         Full Size
                                     </a>
                                 </div>
@@ -785,7 +785,7 @@ export default function CourseDetailPage() {
                                     /* Loading state */
                                     <div className="flex flex-col items-center justify-center gap-4 text-muted-foreground py-24" aria-live="polite" aria-busy="true">
                                         <div className="size-14 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                                            <Loader2 className="size-6 animate-spin text-amber-500" />
+                                            <CircleNotch className="size-6 animate-spin text-amber-500" />
                                         </div>
                                         <div className="text-center">
                                             <p className="text-sm font-medium text-foreground">Preparing your certificate</p>
@@ -835,7 +835,7 @@ export default function CourseDetailPage() {
                     <span className="flex items-center gap-1.5"><Users className="size-4" />{overviewData._count.enrollments} enrolled</span>
                     {overviewData.quizzes.length > 0 && (
                         <span className="flex items-center gap-1.5">
-                            <ClipboardList className="size-4" />{overviewData.quizzes.reduce((s, q) => s + q._count.questions, 0)} quiz questions
+                            <ClipboardText className="size-4" />{overviewData.quizzes.reduce((s, q) => s + q._count.questions, 0)} quiz questions
                         </span>
                     )}
                 </div>

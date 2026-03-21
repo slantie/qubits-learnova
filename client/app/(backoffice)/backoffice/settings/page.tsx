@@ -1,6 +1,6 @@
 'use client';
 
-import { Settings, Palette, Bell, Lock, Globe } from 'lucide-react';
+import { GearSix, Palette, Bell, Lock, Globe } from '@phosphor-icons/react';
 
 const SETTING_GROUPS = [
     {
@@ -37,7 +37,7 @@ export default function SettingsPage() {
 
             <div className="border rounded-2xl bg-card p-12 flex flex-col items-center gap-6 text-center">
                 <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-                    <Settings className="size-8 text-primary" strokeWidth={1.5} />
+                    <GearSix className="size-8 text-primary" strokeWidth={1.5} />
                 </div>
                 <div className="max-w-sm">
                     <h2 className="text-lg font-semibold">Platform Settings — Coming Soon</h2>

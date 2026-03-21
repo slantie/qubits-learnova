@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Trash2, Clock, GripVertical } from 'lucide-react';
+import { Plus, Trash, Clock, DotsSixVertical } from '@phosphor-icons/react';
 
 export interface Timestamp {
     time: number;
@@ -63,7 +63,7 @@ function TimestampRow({
     return (
         <div className="flex items-start gap-2 group">
             <div className="pt-2 text-muted-foreground/40">
-                <GripVertical className="size-4" />
+                <DotsSixVertical className="size-4" />
             </div>
 
             <button
@@ -106,7 +106,7 @@ function TimestampRow({
                 className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100 mt-0.5"
                 title="Remove timestamp"
             >
-                <Trash2 className="size-4" />
+                <Trash className="size-4" />
             </button>
         </div>
     );

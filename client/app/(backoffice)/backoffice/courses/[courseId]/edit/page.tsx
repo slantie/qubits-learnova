@@ -17,12 +17,12 @@ import { AddAttendeesModal } from '@/components/backoffice/course-form/AddAttend
 import { ContactAttendeesModal } from '@/components/backoffice/course-form/ContactAttendeesModal';
 import {
     ArrowLeft,
-    ExternalLink,
+    ArrowSquareOut,
     UserPlus,
-    Mail,
+    Envelope,
     Upload,
-    ImageOff,
-} from 'lucide-react';
+    ImageBroken,
+} from '@phosphor-icons/react';
 import { toast } from 'sonner';
 import { CourseDetail, Visibility, AccessRule } from '@/types';
 
@@ -255,7 +255,7 @@ export default function CourseEditPage() {
                         size="sm"
                         onClick={() => window.open(`/courses/${courseId}`, '_blank')}
                     >
-                        <ExternalLink className="size-4 mr-1.5" />
+                        <ArrowSquareOut className="size-4 mr-1.5" />
                         Preview
                     </Button>
 
@@ -273,7 +273,7 @@ export default function CourseEditPage() {
                         size="sm"
                         onClick={() => setContactModalOpen(true)}
                     >
-                        <Mail className="size-4 mr-1.5" />
+                        <Envelope className="size-4 mr-1.5" />
                         Contact Attendees
                     </Button>
                 </div>
@@ -292,7 +292,7 @@ export default function CourseEditPage() {
                             <img src={course.coverImage} alt="Cover" className="w-full h-full object-cover" />
                         ) : (
                             <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                                <ImageOff className="size-8 opacity-40" />
+                                <ImageBroken className="size-8 opacity-40" />
                                 <span className="text-xs">No cover</span>
                             </div>
                         )}

@@ -4,7 +4,7 @@ import { Course } from '@/types';
 import { formatDuration } from '@/lib/formatDuration';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Edit, Share2, Trash2 } from 'lucide-react';
+import { PencilSimple, Share, Trash } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
@@ -88,13 +88,13 @@ export function ListView({ courses, onDelete }: { courses: Course[]; onDelete: (
                                 <TableCell className="text-right">
                                     <div className="flex justify-end gap-1">
                                         <Button variant="ghost" size="icon" onClick={() => router.push(`/backoffice/courses/${course.id}/edit`)}>
-                                            <Edit className="w-4 h-4" />
+                                            <PencilSimple className="w-4 h-4" />
                                         </Button>
                                         <Button variant="ghost" size="icon" onClick={() => handleShare(course)}>
-                                            <Share2 className="w-4 h-4" />
+                                            <Share className="w-4 h-4" />
                                         </Button>
                                         <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10" onClick={() => handleDelete(course)}>
-                                            <Trash2 className="w-4 h-4" />
+                                            <Trash className="w-4 h-4" />
                                         </Button>
                                     </div>
                                 </TableCell>

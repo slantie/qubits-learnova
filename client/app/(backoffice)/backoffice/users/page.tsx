@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, Search, Shield, GraduationCap, BookOpen } from 'lucide-react';
+import { Users, MagnifyingGlass, Shield, GraduationCap, BookOpen } from '@phosphor-icons/react';
 
 export default function UsersPage() {
     return (

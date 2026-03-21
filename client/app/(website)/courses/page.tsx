@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { api } from '@/lib/api';
-import { BookOpen, Clock, Users, Search, ArrowRight, GraduationCap } from 'lucide-react';
+import { BookOpen, Clock, Users, MagnifyingGlass, ArrowRight, GraduationCap } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -78,7 +78,7 @@ export default function CoursesPage() {
 
             {/* Search */}
             <div className="relative mb-8 max-w-lg">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                     className="pl-10"
                     placeholder="Search courses..."
@@ -126,7 +126,7 @@ export default function CoursesPage() {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <BookOpen className="size-12 text-primary/30" strokeWidth={1.5} />
+                                    <BookOpen className="size-12 text-primary/30" />
                                 )}
                             </div>
 

@@ -8,7 +8,7 @@ import { fetchBadges } from '@/lib/api/badges';
 import { useAuth } from '@/hooks/useAuth';
 import { BadgeIcon } from '@/components/badges/BadgeIcon';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trophy, BookOpen, CheckCircle2, CalendarDays, Award } from 'lucide-react';
+import { Trophy, BookOpen, CheckCircle, CalendarDots, Medal } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 function StatCard({
@@ -113,7 +113,7 @@ export default function ProfilePage() {
           </div>
           {memberSince && (
             <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
-              <CalendarDays className="size-3.5" />
+              <CalendarDots className="size-3.5" />
               Member since {memberSince}
             </div>
           )}
@@ -134,7 +134,7 @@ export default function ProfilePage() {
           label="Courses Enrolled"
         />
         <StatCard
-          icon={<CheckCircle2 className="size-5 text-emerald-500" />}
+          icon={<CheckCircle className="size-5 text-emerald-500" />}
           value={profile.completedCount}
           label="Completed"
         />
@@ -144,7 +144,7 @@ export default function ProfilePage() {
       <div className="rounded-2xl border bg-card p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Award className="size-5 text-primary" />
+            <Medal className="size-5 text-primary" />
             <h2 className="font-semibold">Badges</h2>
           </div>
           <span className="text-xs text-muted-foreground">

@@ -6,7 +6,7 @@ import { PublicProfile } from '@/types';
 import { fetchPublicProfile } from '@/lib/api/learner';
 import { BadgeIcon } from '@/components/badges/BadgeIcon';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Trophy, BookOpen, CheckCircle2, CalendarDays } from 'lucide-react';
+import { Trophy, BookOpen, CheckCircle, CalendarDots } from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 
 function StatCard({
@@ -102,7 +102,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
           </div>
           {memberSince && (
             <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
-              <CalendarDays className="size-3.5" />
+              <CalendarDots className="size-3.5" />
               Member since {memberSince}
             </div>
           )}
@@ -123,7 +123,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
           label="Courses Enrolled"
         />
         <StatCard
-          icon={<CheckCircle2 className="size-5 text-emerald-500" />}
+          icon={<CheckCircle className="size-5 text-emerald-500" />}
           value={profile.completedCount}
           label="Completed"
         />

@@ -7,9 +7,9 @@ import {
 import Hls from 'hls.js';
 import { cn } from '@/lib/utils';
 import {
-    Play, Pause, Volume2, VolumeX, Maximize, Minimize,
-    Settings, SkipForward, SkipBack,
-} from 'lucide-react';
+    Play, Pause, SpeakerHigh, SpeakerX, ArrowsOut, ArrowsIn,
+    GearSix, SkipForward, SkipBack,
+} from '@phosphor-icons/react';
 
 interface QualityLevel {
     index: number;
@@ -448,7 +448,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                                         onClick={() => { const v = videoRef.current; if (v) { v.muted = !v.muted; setMuted(v.muted); } }}
                                         className="p-1.5 hover:bg-white/10 rounded-md transition-colors"
                                     >
-                                        {muted || volume === 0 ? <VolumeX className="size-4" /> : <Volume2 className="size-4" />}
+                                        {muted || volume === 0 ? <SpeakerX className="size-4" /> : <SpeakerHigh className="size-4" />}
                                     </button>
                                     <input
                                         type="range" min="0" max="1" step="0.05" value={muted ? 0 : volume}
@@ -474,7 +474,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                                                 onClick={() => setSettingsOpen(o => !o)}
                                                 className="p-1.5 hover:bg-white/10 rounded-md transition-colors flex items-center gap-1"
                                             >
-                                                <Settings className={cn('size-4 transition-transform', settingsOpen && 'rotate-45')} />
+                                                <GearSix className={cn('size-4 transition-transform', settingsOpen && 'rotate-45')} />
                                                 <span className="text-[10px] font-medium">
                                                     {currentLevel === -1
                                                         ? `Auto${activeHeight ? ` ${activeHeight}p` : ''}`
@@ -514,7 +514,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
 
                                     {/* Fullscreen */}
                                     <button onClick={toggleFullscreen} className="p-1.5 hover:bg-white/10 rounded-md transition-colors">
-                                        {isFullscreen ? <Minimize className="size-4" /> : <Maximize className="size-4" />}
+                                        {isFullscreen ? <ArrowsIn className="size-4" /> : <ArrowsOut className="size-4" />}
                                     </button>
                                 </div>
                             </div>

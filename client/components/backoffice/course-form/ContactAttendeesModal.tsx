@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { X } from 'lucide-react';
+import { X } from '@phosphor-icons/react';
 import { toast } from 'sonner';
 
 interface ContactAttendeesModalProps {

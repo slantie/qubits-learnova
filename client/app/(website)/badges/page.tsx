@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { BadgeStatusItem } from '@/types';
 import { fetchBadges } from '@/lib/api/badges';
 import { BadgesGrid } from '@/components/badges/BadgesGrid';
-import { Award } from 'lucide-react';
+import { Medal } from '@phosphor-icons/react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function BadgesPage() {
@@ -25,7 +25,7 @@ export default function BadgesPage() {
       {/* Header */}
       <div className="text-center flex flex-col items-center gap-3">
         <div className="size-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-          <Award className="size-7 text-primary" />
+          <Medal className="size-7 text-primary" />
         </div>
         <div>
           <h1 className="text-2xl font-semibold">Your Badges</h1>
