@@ -199,14 +199,14 @@ async function processJob(job: Job<TranscodeJobData>): Promise<void> {
 
     // 8. Send webhook
     if (callbackUrl) {
-      const { getPublicUrl } = await import('../lib/minio');
+      const { getStreamUrl } = await import('../lib/minio');
       await sendWebhook(callbackUrl, {
         event: 'video.ready',
         videoId,
         status: 'READY',
         duration,
-        thumbnailUrl: getPublicUrl(processedBucket, thumbnailKey),
-        streamUrl: getPublicUrl(processedBucket, hlsKey),
+        thumbnailUrl: getStreamUrl(videoId, 'thumbnail.jpg'),
+        streamUrl: getStreamUrl(videoId, 'hls/master.m3u8'),
         resolutions: resolutionKeys,
         processedAt: now,
       });
