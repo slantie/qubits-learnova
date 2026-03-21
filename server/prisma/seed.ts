@@ -20,7 +20,7 @@ async function main() {
       passwordHash: await hash('admin123'),
       role: 'ADMIN',
     },
-  });
+  })
 
   await prisma.user.upsert({
     where: { email: 'instructor@learnova.dev' },

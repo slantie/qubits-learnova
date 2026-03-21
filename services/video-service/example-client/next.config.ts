@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/video-service/:path*',
-        destination: 'http://localhost:4001/api/:path*',
+        destination: 'localhost:4001/api/:path*',
       },
     ];
   },

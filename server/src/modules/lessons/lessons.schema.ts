@@ -10,9 +10,12 @@ export const updateLessonSchema = z.object({
   title: z.string().min(1).optional(),
   type: z.enum(['VIDEO', 'DOCUMENT', 'IMAGE', 'QUIZ']).optional(),
   videoUrl: z.string().optional(),
+  videoId: z.string().optional(),        // video service UUID
+  videoStatus: z.string().optional(),    // PROCESSING | READY | FAILED
+  thumbnailUrl: z.string().optional(),
   duration: z.number().int().optional(),
   allowDownload: z.boolean().optional(),
-  description: z.string().optional(),
+  description: z.string().nullable().optional(),
   responsibleId: z.number().int().nullable().optional(),
 });
 

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as lessonsService from './lessons.service';
 import { AppError } from '../../config/AppError';
+import { uploadToCloudinary } from '../../lib/cloudinary';
 
 const courseId = (req: Request) => Number(req.params.courseId);
 const lessonId = (req: Request) => Number(req.params.lessonId);
@@ -53,8 +54,11 @@ export const uploadFile = async (req: Request, res: Response, next: NextFunction
       next(new AppError(400, 'No file uploaded', 'NO_FILE'));
       return;
     }
-    const filePath = `/uploads/lessons/${req.file.filename}`;
-    const result = await lessonsService.uploadLessonFile(courseId(req), lessonId(req), filePath, req.user.id, req.user.role);
+    const { url } = await uploadToCloudinary(req.file.buffer, 'lessons', {
+      resourceType: 'auto',
+      filename: req.file.originalname,
+    });
+    const result = await lessonsService.uploadLessonFile(courseId(req), lessonId(req), url, req.user.id, req.user.role);
     res.json(result);
   } catch (err) { next(err); }
 };
@@ -73,8 +77,11 @@ export const addAttachment = async (req: Request, res: Response, next: NextFunct
     // Multipart = file attachment; JSON = link attachment
     if (req.file) {
       const label = (req.body.label as string) || req.file.originalname;
-      const filePath = `/uploads/attachments/${req.file.filename}`;
-      const attachment = await lessonsService.addFileAttachment(courseId(req), lessonId(req), filePath, label, req.user.id, req.user.role);
+      const { url } = await uploadToCloudinary(req.file.buffer, 'attachments', {
+        resourceType: 'auto',
+        filename: req.file.originalname,
+      });
+      const attachment = await lessonsService.addFileAttachment(courseId(req), lessonId(req), url, label, req.user.id, req.user.role);
       res.status(201).json(attachment);
     } else {
       const attachment = await lessonsService.addLinkAttachment(courseId(req), lessonId(req), req.body, req.user.id, req.user.role);

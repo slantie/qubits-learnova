@@ -16,6 +16,11 @@ import * as ctrl from './courses.controller';
 const router = Router();
 const adminOrInstructor = [authenticate, authorize('ADMIN', 'INSTRUCTOR')] as const;
 
+// ─── Learner-facing (public) routes — must come before /:id ───────────────────
+router.get('/public', ctrl.listPublic);
+router.get('/:id/view', authenticate, ctrl.getView);
+router.get('/:id/lessons/:lessonId/view', authenticate, ctrl.getLessonView);
+
 // ─── Dashboard (A1) ───────────────────────────────────────────────────────────
 router.get(
   '/',
@@ -31,7 +36,7 @@ router.post('/:id/share-link', ...adminOrInstructor, ctrl.shareLink);
 router.get('/:id', ...adminOrInstructor, ctrl.getDetail);
 router.patch('/:id', ...adminOrInstructor, validate(updateCourseSchema), ctrl.update);
 router.patch('/:id/publish', ...adminOrInstructor, validate(publishCourseSchema), ctrl.publish);
-router.post('/:id/cover', ...adminOrInstructor, uploadCover.single('cover'), ctrl.uploadCoverImage);
+router.post('/:id/cover', ...adminOrInstructor, uploadCover.single('file'), ctrl.uploadCoverImage);
 router.post('/:id/attendees', ...adminOrInstructor, validate(addAttendeesSchema), ctrl.addAttendees);
 router.post('/:id/contact', ...adminOrInstructor, validate(contactAttendeesSchema), ctrl.contactAttendees);
 

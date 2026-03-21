@@ -54,6 +54,11 @@ export interface Lesson {
   order: number;
   duration: number | null;
   filePath: string | null;
+  videoUrl: string | null;
+  videoId: string | null;
+  videoStatus: string | null;
+  thumbnailUrl: string | null;
+  description: string | null;
   content: string | null;
   attachmentsCount: number;
 }

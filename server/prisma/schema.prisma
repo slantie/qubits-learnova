@@ -101,7 +101,10 @@ model Lesson {
   type          LessonType
   order         Int
   description   String?
-  videoUrl      String?
+  videoUrl      String?   // HLS stream URL (from video service)
+  videoId       String?   // UUID in the video service (for status polling)
+  thumbnailUrl  String?   // Thumbnail URL (from video service webhook)
+  videoStatus   String?   // PROCESSING | READY | FAILED
   duration      Int?
   filePath      String?
   allowDownload Boolean    @default(false)

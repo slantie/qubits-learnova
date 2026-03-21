@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as coursesService from './courses.service';
 import { AppError } from '../../config/AppError';
+import { uploadToCloudinary } from '../../lib/cloudinary';
 
 export const list = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -69,11 +70,43 @@ export const uploadCoverImage = async (req: Request, res: Response, next: NextFu
       next(new AppError(400, 'No file uploaded', 'NO_FILE'));
       return;
     }
-    const filePath = `/uploads/covers/${req.file.filename}`;
+    const { url } = await uploadToCloudinary(req.file.buffer, 'covers', {
+      resourceType: 'image',
+      filename: req.file.originalname,
+    });
     const result = await coursesService.updateCoverImage(
-      Number(req.params.id), filePath, req.user.id, req.user.role,
+      Number(req.params.id), url, req.user.id, req.user.role,
     );
     res.json(result);
+  } catch (err) { next(err); }
+};
+
+// ─── Learner-facing ───────────────────────────────────────────────────────────
+
+export const listPublic = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const search = req.query.search as string | undefined;
+    const courses = await coursesService.listPublicCourses(search);
+    res.json({ courses });
+  } catch (err) { next(err); }
+};
+
+export const getView = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const course = await coursesService.getCourseView(Number(req.params.id), req.user.id, req.user.role);
+    res.json(course);
+  } catch (err) { next(err); }
+};
+
+export const getLessonView = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const lesson = await coursesService.getLessonView(
+      Number(req.params.id),
+      Number(req.params.lessonId),
+      req.user.id,
+      req.user.role,
+    );
+    res.json(lesson);
   } catch (err) { next(err); }
 };
 

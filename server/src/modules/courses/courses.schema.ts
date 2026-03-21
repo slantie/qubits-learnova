@@ -12,6 +12,7 @@ export const updateCourseSchema = z.object({
   courseAdminId: z.number().nullable().optional(),
   visibility: z.enum(['EVERYONE', 'SIGNED_IN']).optional(),
   accessRule: z.enum(['OPEN', 'ON_INVITATION', 'ON_PAYMENT']).optional(),
+  price: z.number().nonnegative().optional(),
 });
 
 export const publishCourseSchema = z.object({

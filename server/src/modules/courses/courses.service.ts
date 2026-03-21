@@ -145,6 +145,99 @@ export const updateCoverImage = async (
   return { coverImage: filePath };
 };
 
+// ─── Learner-facing: public course list ────────────────────────────────────────
+
+export const listPublicCourses = async (search?: string) => {
+  const courses = await prisma.course.findMany({
+    where: {
+      isPublished: true,
+      ...(search ? { title: { contains: search, mode: 'insensitive' } } : {}),
+    },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      instructor: { select: { name: true } },
+      lessons: { select: { id: true, duration: true } },
+    },
+  });
+
+  return courses.map(c => ({
+    id: c.id,
+    title: c.title,
+    description: c.description,
+    coverImage: c.coverImage,
+    tags: c.tags,
+    lessonCount: c.lessons.length,
+    totalDuration: c.lessons.reduce((s, l) => s + (l.duration ?? 0), 0),
+    instructorName: c.instructor.name,
+  }));
+};
+
+// ─── Learner-facing: course detail with lessons ─────────────────────────────
+
+export const getCourseView = async (courseId: number, userId: number, role: string) => {
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    include: {
+      instructor: { select: { name: true } },
+      lessons: {
+        orderBy: { order: 'asc' },
+        select: {
+          id: true, title: true, type: true, order: true,
+          duration: true, description: true,
+          videoUrl: true, videoStatus: true, thumbnailUrl: true,
+          filePath: true, allowDownload: true,
+        },
+      },
+    },
+  });
+
+  if (!course) throw new AppError(404, 'Course not found', 'COURSE_NOT_FOUND');
+  if (!course.isPublished && role !== 'ADMIN' && role !== 'INSTRUCTOR') {
+    throw new AppError(403, 'Course not available', 'FORBIDDEN');
+  }
+
+  // Check enrollment (learners must be enrolled)
+  if (role === 'LEARNER') {
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId, courseId } },
+    });
+    if (!enrollment) throw new AppError(403, 'You are not enrolled in this course', 'NOT_ENROLLED');
+  }
+
+  const { instructor, ...rest } = course;
+  return { ...rest, instructorName: instructor.name };
+};
+
+// ─── Learner-facing: single lesson view ────────────────────────────────────────
+
+export const getLessonView = async (
+  courseId: number,
+  lessonId: number,
+  userId: number,
+  role: string,
+) => {
+  // Enrollment guard for learners
+  if (role === 'LEARNER') {
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId, courseId } },
+    });
+    if (!enrollment) throw new AppError(403, 'You are not enrolled in this course', 'NOT_ENROLLED');
+  }
+
+  const lesson = await prisma.lesson.findUnique({
+    where: { id: lessonId },
+    include: {
+      attachments: { select: { id: true, type: true, label: true, filePath: true, externalUrl: true } },
+    },
+  });
+
+  if (!lesson || lesson.courseId !== courseId) {
+    throw new AppError(404, 'Lesson not found', 'LESSON_NOT_FOUND');
+  }
+
+  return lesson;
+};
+
 // ─── Add attendees ─────────────────────────────────────────────────────────────
 
 export const addAttendees = async (
@@ -155,29 +248,27 @@ export const addAttendees = async (
 ) => {
   await assertAccess(courseId, userId, role);
 
+  const course = await prisma.course.findUnique({ where: { id: courseId }, select: { title: true } });
+  const courseTitle = course?.title ?? 'a course';
+  const baseUrl = process.env.CLIENT_URL ?? 'http://localhost:3000';
+
   let enrolled = 0;
   let alreadyEnrolled = 0;
   let invited = 0;
+  const emailErrors: string[] = [];
 
   for (const email of data.emails) {
     let targetUser = await prisma.user.findUnique({ where: { email } });
     let isNew = false;
+    let tempPassword: string | null = null;
 
     if (!targetUser) {
-      const tempPassword = uuidv4().slice(0, 12);
+      tempPassword = uuidv4().slice(0, 12);
       const passwordHash = await hashPassword(tempPassword);
       targetUser = await prisma.user.create({
         data: { email, name: email.split('@')[0], passwordHash, role: 'LEARNER' },
       });
       isNew = true;
-
-      await sendMail({
-        to: email,
-        subject: 'You have been invited to Learnova',
-        html: `<p>You have been invited to a course on Learnova. Your temporary password is: <strong>${tempPassword}</strong></p><p>Please log in and change your password.</p>`,
-      }).catch(() => { /* non-fatal */ });
-
-      invited++;
     }
 
     const existing = await prisma.enrollment.findUnique({
@@ -186,13 +277,36 @@ export const addAttendees = async (
 
     if (existing) {
       alreadyEnrolled++;
-    } else {
-      await prisma.enrollment.create({ data: { userId: targetUser.id, courseId } });
-      if (!isNew) enrolled++;
+      continue;
+    }
+
+    await prisma.enrollment.create({ data: { userId: targetUser.id, courseId } });
+
+    // Send appropriate email
+    try {
+      if (isNew && tempPassword) {
+        await sendMail({
+          to: email,
+          subject: `You've been invited to "${courseTitle}" on Learnova`,
+          html: `<p>You've been enrolled in <strong>${courseTitle}</strong> on Learnova.</p><p>Your temporary password is: <strong>${tempPassword}</strong></p><p>Please <a href="${baseUrl}/login">log in</a> and change your password.</p>`,
+        });
+        invited++;
+      } else {
+        await sendMail({
+          to: email,
+          subject: `You've been enrolled in "${courseTitle}" on Learnova`,
+          html: `<p>You've been enrolled in <strong>${courseTitle}</strong> on Learnova.</p><p><a href="${baseUrl}/courses/${courseId}">View the course</a></p>`,
+        });
+        enrolled++;
+      }
+    } catch {
+      // Enrollment succeeded; note the email failure
+      if (isNew) invited++; else enrolled++;
+      emailErrors.push(email);
     }
   }
 
-  return { enrolled, alreadyEnrolled, invited };
+  return { enrolled, alreadyEnrolled, invited, emailErrors };
 };
 
 // ─── Contact attendees ─────────────────────────────────────────────────────────
