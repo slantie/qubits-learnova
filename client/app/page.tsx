@@ -1,5 +1,5 @@
 /**
- * Qubits AI — Landing Page
+ * Learnova — Landing Page (by Qubits)
  * Design system: Academic Minimal
  *
  * Page structure:
@@ -18,7 +18,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   BookOpen,
   Brain,
@@ -36,10 +36,38 @@ import {
   ChevronRight,
   Star,
 } from "lucide-react"
-import { Button, ButtonAnchor } from "@/components/ui/button"
-import { ProgressBar, CircleProgress } from "@/components/ui/progress"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/hooks/useAuth"
+import Link from "next/link"
+
+const ButtonAnchor = React.forwardRef<HTMLAnchorElement, React.ComponentProps<"a"> & { variant?: any, size?: any }>(
+  ({ className, variant, size, ...props }, ref) => (
+    <a className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
+  )
+)
+ButtonAnchor.displayName = "ButtonAnchor"
+
+function ProgressBar({ value, size, label, className }: any) {
+  return (
+    <div className={cn("w-full bg-muted rounded-full overflow-hidden h-2", className)}>
+      <div className="bg-primary h-full transition-all" style={{ width: `${value}%` }} />
+    </div>
+  )
+}
+
+function CircleProgress({ value, size, strokeWidth }: any) {
+  const radius = size / 2 - strokeWidth
+  const dasharray = 2 * Math.PI * radius
+  const dashoffset = dasharray - (dasharray * value) / 100
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle className="text-muted" strokeWidth={strokeWidth} stroke="currentColor" fill="transparent" r={radius} cx={size / 2} cy={size / 2} />
+      <circle className="text-primary transition-all" strokeWidth={strokeWidth} strokeDasharray={dasharray} strokeDashoffset={dashoffset} strokeLinecap="round" stroke="currentColor" fill="transparent" r={radius} cx={size / 2} cy={size / 2} />
+    </svg>
+  )
+}
 
 /* ─── Theme Toggle ────────────────────────────────────────────────────────── */
 
@@ -77,6 +105,8 @@ function ThemeToggle() {
  * Bottom border is 1px slate — never decorative, always structural.
  */
 function Nav() {
+  const { user, isAuthenticated, role } = useAuth()
+
   const handleScrollToCTA = () => {
     document.getElementById("get-started")?.scrollIntoView({ behavior: "smooth" })
   }
@@ -94,9 +124,9 @@ function Nav() {
             aria-hidden
             strokeWidth={2}
           />
-          <span className="text-lg font-bold tracking-tight text-foreground select-none">
-            Qubits AI
-          </span>
+          <Link href="/" className="text-lg font-medium tracking-tight text-foreground select-none">
+            Learnova
+          </Link>
           <Badge variant="primary" className="hidden sm:inline-flex text-[11px]">
             Beta
           </Badge>
@@ -139,14 +169,24 @@ function Nav() {
           <ThemeToggle />
 
           {/* Primary CTA — one per nav, solid indigo */}
-          <Button
-            onClick={handleScrollToCTA}
-            className="ml-2 hidden sm:inline-flex"
-            aria-label="Get started with Qubits AI"
-          >
-            Get Started
-            <ArrowRight className="size-4" />
-          </Button>
+          {!isAuthenticated ? (
+            <ButtonAnchor
+              href="/login"
+              className="ml-2 hidden sm:inline-flex"
+              aria-label="Log in to Learnova"
+            >
+              Log in
+            </ButtonAnchor>
+          ) : (
+            <ButtonAnchor
+              href={role === 'ADMIN' || role === 'INSTRUCTOR' ? '/backoffice/courses' : '/courses'}
+              className="ml-2 hidden sm:inline-flex"
+              aria-label="Go to Dashboard"
+            >
+              Dashboard
+              <ArrowRight className="size-4 ml-2" />
+            </ButtonAnchor>
+          )}
         </div>
       </div>
     </nav>
@@ -184,7 +224,7 @@ function Hero() {
           <div className="space-y-3">
             <h1
               id="hero-heading"
-              className="text-[48px] font-bold leading-[1.1] tracking-[-0.02em] text-foreground"
+              className="text-[48px] font-medium leading-[1.1] tracking-[-0.02em] text-foreground"
             >
               Learn smarter.
               <br />
@@ -198,17 +238,17 @@ function Hero() {
 
           {/* Body copy — 18px, weight 400, max 520px for reading comfort */}
           <p className="text-[18px] leading-[1.7] text-muted-foreground max-w-[520px]">
-            Qubits AI understands your stack, tracks your learning progress,
+            Learnova understands your curriculum, tracks your learning progress,
             and surfaces insights from your Odoo data — all in a focused,
             distraction-free environment built for deep work.
           </p>
 
           {/* CTA row — primary + secondary, gap-3 */}
           <div id="get-started" className="flex flex-col sm:flex-row gap-3">
-            <Button size="lg" className="sm:w-auto">
+            <ButtonAnchor size="lg" className="sm:w-auto" href="/signup">
               <Zap className="size-4" />
               Start Learning Free
-            </Button>
+            </ButtonAnchor>
             <ButtonAnchor
               variant="outline"
               size="lg"
@@ -225,7 +265,7 @@ function Hero() {
           {/* Social proof — 13px, muted, no clutter */}
           <p className="text-sm text-muted-foreground flex items-center gap-1.5">
             <Star className="size-3.5 fill-amber-400 text-amber-400" aria-hidden />
-            <span>No credit card required — free during beta</span>
+            <span>No credit card required — free during beta. <Link href="/login" className="text-primary hover:underline font-medium">Log in here</Link></span>
           </p>
         </div>
 
@@ -266,7 +306,7 @@ function LearningCard() {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             Current Course
           </p>
-          <h3 className="text-[16px] font-semibold text-foreground leading-snug">
+          <h3 className="text-[16px] font-medium text-foreground leading-snug">
             Backend Engineering Path
           </h3>
           {/* Streak — amber, warm accent */}
@@ -282,7 +322,7 @@ function LearningCard() {
             <CircleProgress value={overallProgress} size={52} strokeWidth={5} />
             {/* Percentage label centered in ring */}
             <span
-              className="absolute inset-0 flex items-center justify-center text-xs font-bold text-foreground"
+              className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground"
               aria-hidden
             >
               {overallProgress}%
@@ -384,7 +424,7 @@ const FEATURES = [
   {
     icon: Brain,
     title: "Context-aware AI",
-    body: "Qubits understands your data model, your team's patterns, and your business logic — not just generic LLM outputs. It learns as you do.",
+    body: "Learnova understands your curriculum, your team's patterns, and your business logic — not just generic LLM outputs. It learns as you do.",
     stat: "3x faster",
     statLabel: "concept retention",
   },
@@ -427,10 +467,10 @@ function Features() {
 
         {/* Section header */}
         <div className="max-w-xl mb-16 space-y-4">
-          <p className="am-label">Why Qubits AI</p>
+          <p className="am-label">Why Learnova</p>
           <h2
             id="features-heading"
-            className="text-[32px] font-bold tracking-[-0.015em] text-foreground"
+            className="text-[32px] font-medium tracking-[-0.015em] text-foreground"
           >
             Built for learners who move fast
           </h2>
@@ -479,13 +519,13 @@ function FeatureCard({ icon: Icon, title, body, stat, statLabel }: FeatureCardPr
 
       {/* Stat — prominent number, weight 700, 24px */}
       <div>
-        <p className="text-2xl font-bold text-foreground tracking-tight">{stat}</p>
+        <p className="text-2xl font-semibold text-foreground tracking-tight">{stat}</p>
         <p className="text-xs text-muted-foreground font-medium mt-0.5">{statLabel}</p>
       </div>
 
       {/* Title + body */}
       <div className="space-y-2">
-        <h3 className="text-[15px] font-semibold text-foreground leading-snug">{title}</h3>
+        <h3 className="text-[15px] font-medium text-foreground leading-snug">{title}</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
       </div>
     </div>
@@ -514,7 +554,7 @@ function ProgressDemo() {
             <p className="am-label">How it works</p>
             <h2
               id="progress-demo-heading"
-              className="text-[32px] font-bold tracking-[-0.015em] text-foreground"
+              className="text-[32px] font-medium tracking-[-0.015em] text-foreground"
             >
               Progress is built into every pixel
             </h2>
@@ -548,7 +588,7 @@ function ProgressDemo() {
                 <li key={title} className="flex gap-3">
                   <Icon className={cn("size-5 shrink-0 mt-0.5", color)} aria-hidden />
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{title}</p>
+                    <p className="text-sm font-medium text-foreground">{title}</p>
                     <p className="text-sm text-muted-foreground">{desc}</p>
                   </div>
                 </li>
@@ -582,7 +622,7 @@ function WeeklyProgressCard() {
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
             This week
           </p>
-          <h3 className="text-lg font-semibold text-foreground mt-0.5">
+          <h3 className="text-lg font-medium text-foreground mt-0.5">
             Learning summary
           </h3>
         </div>
@@ -600,7 +640,7 @@ function WeeklyProgressCard() {
           { value: "47", label: "Problems solved" },
         ].map(({ value, label }) => (
           <div key={label} className="text-center p-3 bg-muted/50 rounded-md">
-            <p className="text-lg font-bold text-foreground">{value}</p>
+            <p className="text-lg font-semibold text-foreground">{value}</p>
             <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
           </div>
         ))}
@@ -661,10 +701,10 @@ function Stats() {
               role="listitem"
               className="space-y-1 text-center md:text-left"
             >
-              <p className="text-3xl font-bold text-foreground tracking-tight">
+              <p className="text-3xl font-semibold text-foreground tracking-tight">
                 {value}
               </p>
-              <p className="text-sm font-semibold text-foreground">{label}</p>
+              <p className="text-sm font-medium text-foreground">{label}</p>
               <p className="text-xs text-muted-foreground">{desc}</p>
             </div>
           ))}
@@ -699,7 +739,7 @@ function TechStack() {
           <p className="am-label">The stack</p>
           <h2
             id="stack-heading"
-            className="text-2xl font-bold tracking-tight text-foreground"
+            className="text-2xl font-medium tracking-tight text-foreground"
           >
             Built on proven technology
           </h2>
@@ -745,23 +785,23 @@ function CTABanner() {
             <p className="am-label">Ready to start</p>
             <h2
               id="cta-heading"
-              className="text-[40px] font-bold tracking-[-0.02em] text-foreground leading-[1.1]"
+              className="text-[40px] font-medium tracking-[-0.02em] text-foreground leading-[1.1]"
             >
               Your next learning
               <br />
               breakthrough is one click away.
             </h2>
             <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
-              Join engineers who use Qubits AI to learn faster, retain more,
+              Join learners who use Learnova to learn faster, retain more,
               and ship better code — without the noise.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button size="lg">
-              <Zap className="size-4" />
+            <ButtonAnchor size="lg" href="/signup">
+              <Zap className="size-4 ml-[-4px]" />
               Start for free
-            </Button>
+            </ButtonAnchor>
             <ButtonAnchor
               variant="outline"
               size="lg"
@@ -769,16 +809,16 @@ function CTABanner() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Github className="size-4" />
+              <Github className="size-4 ml-[-4px]" />
               Star on GitHub
             </ButtonAnchor>
           </div>
 
           <p className="text-sm text-muted-foreground">
             No account needed to explore. Free during beta.{" "}
-            <a href="#features" className="text-primary hover:underline underline-offset-4 font-medium">
-              See what is included
-            </a>
+            <Link href="/login" className="text-primary hover:underline underline-offset-4 font-medium">
+              Log in instead
+            </Link>
           </p>
         </div>
       </div>
@@ -800,7 +840,7 @@ function Footer() {
           {/* Brand */}
           <div className="flex items-center gap-2.5">
             <BookOpen className="size-4 text-primary" aria-hidden />
-            <span className="text-sm font-semibold text-foreground">Qubits AI</span>
+            <span className="text-sm font-medium text-foreground">Learnova</span>
           </div>
 
           {/* Footer links — weight 500, muted, keyboard navigable */}
@@ -827,7 +867,7 @@ function Footer() {
         {/* Bottom row */}
         <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            2026 Qubits AI. Built at Hackathon 2026. MIT License.
+            2026 Learnova by Qubits. Built at Hackathon 2026. MIT License.
           </p>
           <p className="text-xs text-muted-foreground flex items-center gap-1">
             Press{" "}

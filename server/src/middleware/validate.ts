@@ -3,12 +3,17 @@ import { ZodSchema } from 'zod';
 
 export const validate =
   (schema: ZodSchema, source: 'body' | 'query' | 'params' = 'body') =>
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: Request, _res: Response, next: NextFunction) => {
     const result = schema.safeParse(req[source]);
     if (!result.success) {
-      res.status(400).json({ message: 'Validation error', errors: result.error.flatten() });
+      next(result.error);
       return;
     }
-    req[source] = result.data;
+    // req.query is a read-only getter in Express 5 — mutate properties, don't replace
+    if (source === 'query') {
+      Object.assign(req.query, result.data);
+    } else {
+      req[source] = result.data;
+    }
     next();
   };

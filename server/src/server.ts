@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import path from 'path';
 import prisma from './lib/prisma';
 import router from './routes';
 import { notFound } from './middleware/notFound';
@@ -27,6 +28,10 @@ app.use(rateLimiter);
 // Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Static file serving for uploads
+const uploadDir = path.join(process.cwd(), process.env.UPLOAD_DIR || 'uploads');
+app.use('/uploads', express.static(uploadDir));
 
 // Routes
 app.get('/', (_, res) => {

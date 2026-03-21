@@ -1,29 +1,62 @@
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+import { AppError } from '../config/AppError';
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, process.env.UPLOAD_DIR || 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    cb(null, `${unique}${path.extname(file.originalname)}`);
-  },
-});
+const MAX_SIZE = parseInt(process.env.MAX_FILE_SIZE || '5242880');
 
-const fileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  const allowed = (process.env.ALLOWED_FILE_TYPES || 'image/jpeg,image/png,image/webp,application/pdf').split(',');
-  if (allowed.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error(`File type ${file.mimetype} not allowed`));
-  }
-};
+function createUploader(subDir: string, allowedMimes: string[]) {
+  const dir = path.join(process.cwd(), process.env.UPLOAD_DIR || 'uploads', subDir);
+  fs.mkdirSync(dir, { recursive: true });
 
-export const upload = multer({
-  storage,
-  fileFilter,
-  limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE || '5242880'), // 5MB default
-  },
-});
+  return multer({
+    storage: multer.diskStorage({
+      destination: (_req, _file, cb) => cb(null, dir),
+      filename: (_req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        cb(null, `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`);
+      },
+    }),
+    fileFilter: (_req, file, cb) => {
+      if (allowedMimes.includes(file.mimetype)) {
+        cb(null, true);
+      } else {
+        cb(new AppError(400, `File type '${file.mimetype}' is not allowed`, 'INVALID_FILE_TYPE'));
+      }
+    },
+    limits: { fileSize: MAX_SIZE },
+  });
+}
+
+export const uploadCover = createUploader('covers', [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+]);
+
+export const uploadLessonFile = createUploader('lessons', [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+]);
+
+export const uploadAttachment = createUploader('attachments', [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'text/plain',
+  'text/csv',
+]);
+

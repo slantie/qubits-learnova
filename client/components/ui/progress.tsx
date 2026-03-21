@@ -1,121 +1,83 @@
-/**
- * ProgressBar — Academic Minimal
- *
- * Progress indicators are first-class citizens in edtech UI.
- * Thin (4–6px), indigo fill, always shows completion percentage.
- * Fully accessible with aria-valuenow/min/max and role="progressbar".
- *
- * Usage:
- *   <ProgressBar value={65} label="Module 3 of 5" />
- */
+"use client"
 
-interface ProgressBarProps {
-  /** 0–100 percent complete */
-  value: number
-  /** Accessible label describing what is being measured */
-  label?: string
-  /** Visual size variant: "sm" = 4px, "default" = 6px */
-  size?: "sm" | "default"
-  /** Optional className override on the track */
-  className?: string
-}
+import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
 
-export function ProgressBar({
-  value,
-  label,
-  size = "default",
+import { cn } from "@/lib/utils"
+
+function Progress({
   className,
-}: ProgressBarProps) {
-  const clamped = Math.min(100, Math.max(0, value))
-  const height = size === "sm" ? "4px" : "6px"
-
+  children,
+  value,
+  ...props
+}: ProgressPrimitive.Root.Props) {
   return (
-    <div
-      role="progressbar"
-      aria-valuenow={clamped}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-label={label ?? `${clamped}% complete`}
-      className={className}
-      style={{
-        height,
-        background: "var(--muted)",
-        borderRadius: "9999px",
-        overflow: "hidden",
-        width: "100%",
-      }}
+    <ProgressPrimitive.Root
+      value={value}
+      data-slot="progress"
+      className={cn("flex flex-wrap gap-3", className)}
+      {...props}
     >
-      <div
-        style={{
-          height: "100%",
-          width: `${clamped}%`,
-          background: "var(--primary)",
-          borderRadius: "9999px",
-          transition: "width 400ms ease",
-        }}
-      />
-    </div>
+      {children}
+      <ProgressTrack>
+        <ProgressIndicator />
+      </ProgressTrack>
+    </ProgressPrimitive.Root>
   )
 }
 
-/**
- * CircleProgress — ring variant for overall completion ratios on dashboards
- *
- * Usage:
- *   <CircleProgress value={72} size={56} />
- */
-interface CircleProgressProps {
-  value: number
-  size?: number
-  strokeWidth?: number
-  label?: string
-  className?: string
+function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
+  return (
+    <ProgressPrimitive.Track
+      className={cn(
+        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted",
+        className
+      )}
+      data-slot="progress-track"
+      {...props}
+    />
+  )
 }
 
-export function CircleProgress({
-  value,
-  size = 48,
-  strokeWidth = 4,
-  label,
+function ProgressIndicator({
   className,
-}: CircleProgressProps) {
-  const clamped = Math.min(100, Math.max(0, value))
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference - (clamped / 100) * circumference
-
+  ...props
+}: ProgressPrimitive.Indicator.Props) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      aria-label={label ?? `${clamped}% complete`}
-      role="img"
-      className={className}
-      style={{ transform: "rotate(-90deg)" }}
-    >
-      {/* Track */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="var(--muted)"
-        strokeWidth={strokeWidth}
-      />
-      {/* Fill */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="var(--primary)"
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        style={{ transition: "stroke-dashoffset 500ms ease" }}
-      />
-    </svg>
+    <ProgressPrimitive.Indicator
+      data-slot="progress-indicator"
+      className={cn("h-full bg-primary transition-all", className)}
+      {...props}
+    />
   )
+}
+
+function ProgressLabel({ className, ...props }: ProgressPrimitive.Label.Props) {
+  return (
+    <ProgressPrimitive.Label
+      className={cn("text-sm font-medium", className)}
+      data-slot="progress-label"
+      {...props}
+    />
+  )
+}
+
+function ProgressValue({ className, ...props }: ProgressPrimitive.Value.Props) {
+  return (
+    <ProgressPrimitive.Value
+      className={cn(
+        "ml-auto text-sm text-muted-foreground tabular-nums",
+        className
+      )}
+      data-slot="progress-value"
+      {...props}
+    />
+  )
+}
+
+export {
+  Progress,
+  ProgressTrack,
+  ProgressIndicator,
+  ProgressLabel,
+  ProgressValue,
 }

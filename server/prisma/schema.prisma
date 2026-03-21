@@ -7,10 +7,214 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  INSTRUCTOR
+  LEARNER
+}
+
+enum LessonType {
+  VIDEO
+  DOCUMENT
+  IMAGE
+  QUIZ
+}
+
+enum Visibility {
+  EVERYONE
+  SIGNED_IN
+}
+
+enum AccessRule {
+  OPEN
+  ON_INVITATION
+  ON_PAYMENT
+}
+
+enum EnrollmentStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum AttachmentType {
+  FILE
+  LINK
+}
+
+// ─── Models ───────────────────────────────────────────────────────────────────
+
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(LEARNER)
+  totalPoints  Int      @default(0)
+  currentBadge String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ownedCourses     Course[]         @relation("CourseInstructor")
+  adminCourses     Course[]         @relation("CourseAdmin")
+  enrollments      Enrollment[]
+  quizAttempts     QuizAttempt[]
+  reviews          Review[]
+  lessonProgresses LessonProgress[]
+}
+
+model Course {
+  id           Int        @id @default(autoincrement())
+  title        String
+  tags         String[]
+  description  String?
+  coverImage   String?
+  isPublished  Boolean    @default(false)
+  visibility   Visibility @default(EVERYONE)
+  accessRule   AccessRule @default(OPEN)
+  price        Decimal?   @db.Decimal(10, 2)
+  websiteUrl   String?
+
+  instructorId  Int
+  instructor    User  @relation("CourseInstructor", fields: [instructorId], references: [id])
+  courseAdminId Int?
+  courseAdmin   User? @relation("CourseAdmin", fields: [courseAdminId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  lessons     Lesson[]
+  quizzes     Quiz[]
+  enrollments Enrollment[]
+  reviews     Review[]
+}
+
+model Lesson {
+  id            Int        @id @default(autoincrement())
+  courseId      Int
+  course        Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title         String
+  type          LessonType
+  order         Int
+  description   String?
+  videoUrl      String?
+  duration      Int?
+  filePath      String?
+  allowDownload Boolean    @default(false)
+  responsibleId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attachments      Attachment[]
+  lessonProgresses LessonProgress[]
+
+  @@index([courseId, order])
+}
+
+model Attachment {
+  id          Int            @id @default(autoincrement())
+  lessonId    Int
+  lesson      Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  type        AttachmentType
+  label       String
+  filePath    String?
+  externalUrl String?
+  createdAt   DateTime       @default(now())
+}
+
+model Quiz {
+  id       Int    @id @default(autoincrement())
+  courseId Int
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questions Question[]
+  rewards   QuizReward?
+  attempts  QuizAttempt[]
+}
+
+model Question {
+  id             Int      @id @default(autoincrement())
+  quizId         Int
+  quiz           Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text           String
+  options        String[]
+  correctOptions Int[]
+  order          Int
+
+  @@index([quizId, order])
+}
+
+model QuizReward {
+  id                 Int  @id @default(autoincrement())
+  quizId             Int  @unique
+  quiz               Quiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  attempt1Points     Int  @default(10)
+  attempt2Points     Int  @default(7)
+  attempt3Points     Int  @default(4)
+  attempt4PlusPoints Int  @default(1)
+}
+
+model Enrollment {
+  id          Int              @id @default(autoincrement())
+  userId      Int
+  user        User             @relation(fields: [userId], references: [id])
+  courseId    Int
+  course      Course           @relation(fields: [courseId], references: [id])
+  enrolledAt  DateTime         @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  status      EnrollmentStatus @default(NOT_STARTED)
+  timeSpent   Int              @default(0)
+
+  lessonProgresses LessonProgress[]
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id           Int        @id @default(autoincrement())
+  enrollmentId Int
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lessonId     Int
+  lesson       Lesson     @relation(fields: [lessonId], references: [id])
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  isCompleted  Boolean    @default(false)
+  completedAt  DateTime?
+
+  @@unique([enrollmentId, lessonId])
+}
+
+model QuizAttempt {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  user          User     @relation(fields: [userId], references: [id])
+  quizId        Int
+  quiz          Quiz     @relation(fields: [quizId], references: [id])
+  attemptNumber Int
+  answers       Json
+  pointsEarned  Int      @default(0)
+  completedAt   DateTime @default(now())
+
+  @@index([userId, quizId])
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  courseId   Int
+  course     Course   @relation(fields: [courseId], references: [id])
+  rating     Int
+  reviewText String?
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, courseId])
 }

@@ -12,8 +12,12 @@
     "db:studio": "prisma studio",
     "db:generate": "prisma generate",
     "db:migrate:deploy": "prisma migrate deploy",
+    "db:seed": "ts-node prisma/seed.ts",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\""
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",

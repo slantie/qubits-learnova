@@ -32,8 +32,9 @@ const variantClasses: Record<BadgeVariant, string> = {
   primary: "am-badge",
 }
 
+// Teal primary badge — uses alpha of the teal #007067 accent
 const primaryStyle = {
-  background: "rgb(79 70 229 / 0.1)",
+  background: "rgb(0 112 103 / 0.1)",
   color: "var(--primary)",
 }
 

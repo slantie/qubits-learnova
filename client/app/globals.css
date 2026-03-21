@@ -4,23 +4,40 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ─── Academic Minimal Design System ─────────────────────────────────────────
+/* ─── Learnova Design System — Academic Minimal ──────────────────────────────
+ *
+ * Platform: Learnova eLearning Platform
+ * Team:     Qubits
  *
  * Token philosophy:
- *   - Primary accent: Indigo-600 — CTAs, active states, progress, links only
+ *   - Primary accent: Teal #007067 — CTAs, active states, progress, links only
+ *     Used as a precision accent, NOT spread decoratively.
  *   - Neutrals: Slate family — all UI chrome, borders, text, backgrounds
  *   - Semantic colors: locked to meaning (green=complete, amber=in-progress,
  *     red=error, blue=info) — never reassigned for decoration
  *   - Spacing: strict 4px base grid (--space-1 through --space-16)
  *   - Typography: Inter for body/UI; 2-typeface max; weight-based hierarchy
  *
+ * Design philosophy:
+ *   - Asymmetric layouts over centered-everything grids
+ *   - Typographic hierarchy as the hero — large, confident type with varied
+ *     weights, not just card grids
+ *   - Breathing room — generous whitespace, never a wall of cards
+ *   - Meaningful micro-interactions — hover states that feel alive (subtle
+ *     translate + shadow, not just opacity)
+ *   - Content-first navigation — sidebar or compact top nav
+ *   - Progress as personality — streak counters, completion rings, XP bars
+ *     should feel premium (Linear/Vercel aesthetics), not gamified-cheap
+ *   - Avoid: rainbow accents, heavy gradients, glassmorphism, generic
+ *     "floating card on gradient background" hero sections
+ *
  * ─────────────────────────────────────────────────────────────────────────── */
 
 @theme inline {
     /* Font stack */
-    --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-    --font-mono: var(--font-mono), ui-monospace, "Cascadia Code", monospace;
-    --font-heading: var(--font-sans);
+    --font-sans: var(--font-matter), ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, "Cascadia Code", monospace;
+    --font-heading: var(--font-season), var(--font-matter), ui-sans-serif, sans-serif;
 
     /* Color mappings from CSS vars → Tailwind utilities */
     --color-background: var(--background);
@@ -102,6 +119,17 @@
     --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.08);
+    --kanban-board-circle-primary: var(--primary);
+    --color-kanban-board-circle-yellow: var(--kanban-board-circle-yellow);
+    --color-kanban-board-circle-violet: var(--kanban-board-circle-violet);
+    --color-kanban-board-circle-red: var(--kanban-board-circle-red);
+    --color-kanban-board-circle-purple: var(--kanban-board-circle-purple);
+    --color-kanban-board-circle-pink: var(--kanban-board-circle-pink);
+    --color-kanban-board-circle-indigo: var(--kanban-board-circle-indigo);
+    --color-kanban-board-circle-green: var(--kanban-board-circle-green);
+    --color-kanban-board-circle-gray: var(--kanban-board-circle-gray);
+    --color-kanban-board-circle-cyan: var(--kanban-board-circle-cyan);
+    --color-kanban-board-circle-blue: var(--kanban-board-circle-blue);
 }
 
 /* ─── Light mode tokens ───────────────────────────────────────────────────── */
@@ -117,8 +145,9 @@
     --popover: #FFFFFF;
     --popover-foreground: #0F172A;
 
-    /* Primary: Indigo-600 — used ONLY for CTAs, active states, links, progress */
-    --primary: #4F46E5;
+    /* Primary: Teal #007067 — used ONLY for CTAs, active states, links, progress */
+    /* oklch(0.45 0.1 185) approximates #007067 in perceptual color space      */
+    --primary: oklch(0.45 0.10 185);
     --primary-foreground: #FFFFFF;
 
     /* Secondary: slate-100 — secondary buttons, tags */
@@ -139,7 +168,7 @@
     /* Borders: slate-200 — always subtle, never decorative */
     --border: #E2E8F0;
     --input: #E2E8F0;
-    --ring: #4F46E5;
+    --ring: oklch(0.45 0.10 185);
 
     /* Semantic colors (locked meaning, never decorative) */
     --success: #16A34A;           /* green-600 — complete */
@@ -149,12 +178,12 @@
     --info: #2563EB;              /* blue-600 — informational */
     --info-foreground: #FFFFFF;
 
-    /* Chart colors — indigo family for consistency */
-    --chart-1: #4F46E5;
-    --chart-2: #6366F1;
-    --chart-3: #818CF8;
-    --chart-4: #A5B4FC;
-    --chart-5: #C7D2FE;
+    /* Chart colors — teal family for consistency */
+    --chart-1: oklch(0.45 0.10 185);
+    --chart-2: oklch(0.52 0.11 185);
+    --chart-3: oklch(0.60 0.10 185);
+    --chart-4: oklch(0.68 0.09 185);
+    --chart-5: oklch(0.76 0.07 185);
 
     /* Border radius: 6px — enough to feel modern, not pill-shaped */
     --radius: 6px;
@@ -162,12 +191,22 @@
     /* Sidebar */
     --sidebar: #FFFFFF;
     --sidebar-foreground: #0F172A;
-    --sidebar-primary: #4F46E5;
+    --sidebar-primary: oklch(0.45 0.10 185);
     --sidebar-primary-foreground: #FFFFFF;
     --sidebar-accent: #F1F5F9;
     --sidebar-accent-foreground: #1E293B;
     --sidebar-border: #E2E8F0;
-    --sidebar-ring: #4F46E5;
+    --sidebar-ring: oklch(0.45 0.10 185);
+    --kanban-board-circle-blue: oklch(0.6232 0.1879 259.80);
+    --kanban-board-circle-cyan: oklch(0.7146 0.1256 215.13);
+    --kanban-board-circle-gray: oklch(0.5513 0.0233 264.36);
+    --kanban-board-circle-green: oklch(0.7229 0.1921 149.58);
+    --kanban-board-circle-indigo: oklch(0.5860 0.2037 277.12);
+    --kanban-board-circle-pink: oklch(0.6559 0.2117 354.34);
+    --kanban-board-circle-purple: oklch(0.6267 0.2325 303.86);
+    --kanban-board-circle-red: oklch(0.6368 0.2078 25.33);
+    --kanban-board-circle-violet: oklch(0.6059 0.2187 292.72);
+    --kanban-board-circle-yellow: oklch(0.7959 0.1618 86.05);
 }
 
 /* ─── Dark mode tokens ────────────────────────────────────────────────────── */
@@ -183,8 +222,9 @@
     --popover: #0F172A;
     --popover-foreground: #F8FAFC;
 
-    /* Primary: slightly lighter indigo for dark bg contrast */
-    --primary: #6366F1;
+    /* Primary: slightly lighter teal for dark bg contrast */
+    /* oklch(0.58 0.12 185) is a lighter teal that reads well on dark surfaces */
+    --primary: oklch(0.58 0.12 185);
     --primary-foreground: #FFFFFF;
 
     /* Secondary: slate-800 */
@@ -205,7 +245,7 @@
     /* Borders: slate-800 */
     --border: #1E293B;
     --input: #1E293B;
-    --ring: #6366F1;
+    --ring: oklch(0.58 0.12 185);
 
     /* Semantic — same hues, dark mode values */
     --success: #22C55E;
@@ -215,22 +255,32 @@
     --info: #3B82F6;
     --info-foreground: #EFF6FF;
 
-    /* Chart — indigo family */
-    --chart-1: #6366F1;
-    --chart-2: #818CF8;
-    --chart-3: #A5B4FC;
-    --chart-4: #C7D2FE;
-    --chart-5: #E0E7FF;
+    /* Chart — teal family (dark mode) */
+    --chart-1: oklch(0.58 0.12 185);
+    --chart-2: oklch(0.65 0.11 185);
+    --chart-3: oklch(0.72 0.10 185);
+    --chart-4: oklch(0.79 0.08 185);
+    --chart-5: oklch(0.86 0.06 185);
 
     /* Sidebar */
     --sidebar: #0F172A;
     --sidebar-foreground: #F8FAFC;
-    --sidebar-primary: #6366F1;
+    --sidebar-primary: oklch(0.58 0.12 185);
     --sidebar-primary-foreground: #FFFFFF;
     --sidebar-accent: #1E293B;
     --sidebar-accent-foreground: #F1F5F9;
     --sidebar-border: #1E293B;
-    --sidebar-ring: #6366F1;
+    --sidebar-ring: oklch(0.58 0.12 185);
+    --kanban-board-circle-blue: oklch(0.7135 0.1435 254.61);
+    --kanban-board-circle-cyan: oklch(0.7973 0.1339 211.45);
+    --kanban-board-circle-gray: oklch(0.7137 0.0192 261.33);
+    --kanban-board-circle-green: oklch(0.8003 0.1823 151.70);
+    --kanban-board-circle-indigo: oklch(0.6797 0.1586 276.96);
+    --kanban-board-circle-pink: oklch(0.7253 0.1752 349.74);
+    --kanban-board-circle-purple: oklch(0.7218 0.1766 305.51);
+    --kanban-board-circle-red: oklch(0.7108 0.1660 22.21);
+    --kanban-board-circle-violet: oklch(0.7093 0.1589 293.52);
+    --kanban-board-circle-yellow: oklch(0.8601 0.1730 91.84);
 }
 
 /* ─── Base layer ──────────────────────────────────────────────────────────── */
@@ -256,20 +306,31 @@
         scrollbar-gutter: stable;
     }
 
-    /* Typography hierarchy through weight + size, never decoration alone */
-    h1, h2, h3, h4, h5, h6 {
-        font-weight: 600;
+    /* Typography hierarchy through weight + size, never decoration alone.
+     * SeasonMix (display) for h1/h2 — weight 500 (Medium) is sufficient.
+     * Matter (sans) for h3-h6 — weight 500, no bold synthesis. */
+    h1, h2 {
+        font-family: var(--font-heading);
+        font-weight: 500;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        color: var(--foreground);
+    }
+
+    h3, h4, h5, h6 {
+        font-family: var(--font-sans);
+        font-weight: 500;
         line-height: 1.25;
         letter-spacing: -0.01em;
         color: var(--foreground);
     }
 
-    h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; }
-    h2 { font-size: 32px; font-weight: 700; letter-spacing: -0.015em; }
-    h3 { font-size: 24px; font-weight: 600; }
-    h4 { font-size: 20px; font-weight: 600; }
-    h5 { font-size: 18px; font-weight: 600; }
-    h6 { font-size: 16px; font-weight: 600; }
+    h1 { font-size: 40px; }
+    h2 { font-size: 32px; letter-spacing: -0.015em; }
+    h3 { font-size: 24px; }
+    h4 { font-size: 20px; }
+    h5 { font-size: 18px; }
+    h6 { font-size: 16px; }
 
     p {
         font-size: 16px;
@@ -312,6 +373,19 @@
         color: var(--muted-foreground);
         line-height: 1.4;
     }
+  :root {
+    --color-kanban-board-circle-blue: var(--kanban-board-circle-blue);
+    --color-kanban-board-circle-cyan: var(--kanban-board-circle-cyan);
+    --color-kanban-board-circle-gray: var(--kanban-board-circle-gray);
+    --color-kanban-board-circle-green: var(--kanban-board-circle-green);
+    --color-kanban-board-circle-indigo: var(--kanban-board-circle-indigo);
+    --color-kanban-board-circle-pink: var(--kanban-board-circle-pink);
+    --color-kanban-board-circle-primary: var(--kanban-board-circle-primary);
+    --color-kanban-board-circle-purple: var(--kanban-board-circle-purple);
+    --color-kanban-board-circle-red: var(--kanban-board-circle-red);
+    --color-kanban-board-circle-violet: var(--kanban-board-circle-violet);
+    --color-kanban-board-circle-yellow: var(--kanban-board-circle-yellow);
+    }
 }
 
 /* ─── Academic Minimal Utility Classes ────────────────────────────────────── */
@@ -335,7 +409,8 @@
     top: var(--space-4);
 }
 
-/* Card — white surface with border, subtle shadow */
+/* Card — white surface with border, subtle shadow
+ * Hover: translate -2px + elevated shadow — alive, not just opacity change */
 .am-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -345,9 +420,10 @@
 }
 .am-card:hover {
     box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
-/* Progress bar — thin, 4px height, indigo fill */
+/* Progress bar — thin, 4px height, teal fill */
 .am-progress-bar {
     height: 4px;
     background: var(--muted);

@@ -1,47 +1,58 @@
 /**
- * Root Layout — Qubits AI / Academic Minimal Design System
+ * Root Layout — Learnova by Qubits / Academic Minimal Design System
  *
- * Font strategy: Inter for all UI and body copy. Geist Mono for code snippets.
- * Two typefaces max per Academic Minimal principle.
+ * Font strategy:
+ *   Matter (Regular 400, Medium 500, SemiBold 600) — body, UI, labels
+ *   SeasonMix (Regular 400, Medium 500) — display headings (h1, h2)
+ *   Two typefaces max per Academic Minimal principle.
+ *   Bold (700) is avoided unless absolutely necessary — the typefaces carry weight through design.
  *
  * ThemeProvider wraps everything for dark mode support.
  * skip-to-content link ensures keyboard accessibility at page top.
  */
-import { Inter, Geist_Mono } from "next/font/google"
+import localFont from "next/font/local"
 import type { Metadata } from "next"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
+import { AuthProvider } from "@/hooks/useAuth"
+import { Toaster } from "sonner"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
-/* Inter: primary type — body, headings, UI labels */
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
+/* Matter: primary type — body text, UI chrome, labels, sub-headings */
+const matter = localFont({
+  src: [
+    { path: "../fonts/MatterRegular.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/MatterMedium.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/MatterSemiBold.woff2", weight: "600", style: "normal" },
+  ],
+  variable: "--font-matter",
   display: "swap",
-  // Preload only the weights we actually use to keep initial load fast
-  weight: ["400", "500", "600", "700"],
 })
 
-/* Geist Mono: code blocks, terminal snippets, keyboard shortcuts */
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+/* SeasonMix: display type — h1 and h2 headings only */
+const seasonMix = localFont({
+  src: [
+    { path: "../fonts/SeasonMix-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/SeasonMix-Medium.woff2", weight: "500", style: "normal" },
+  ],
+  variable: "--font-season",
   display: "swap",
 })
 
 export const metadata: Metadata = {
   title: {
-    default: "Qubits AI — Learn Smarter, Build Faster",
-    template: "%s | Qubits AI",
+    default: "Learnova — Learn Smarter, Build Faster",
+    template: "%s | Learnova",
   },
   description:
-    "An AI-powered learning platform that connects your knowledge, tracks your progress, and accelerates how you build and understand software.",
-  keywords: ["AI", "learning", "edtech", "Odoo", "productivity", "education"],
+    "Learnova by Qubits — a full-stack eLearning platform with course management, progress tracking, quizzes, and gamification built for the modern learner.",
+  keywords: ["Learnova", "Qubits", "learning", "edtech", "Odoo", "courses", "education"],
   openGraph: {
-    title: "Qubits AI — Learn Smarter, Build Faster",
+    title: "Learnova — Learn Smarter, Build Faster",
     description:
-      "An AI-powered learning platform that connects your knowledge, tracks your progress, and accelerates how you build.",
+      "Learnova by Qubits — a focused eLearning platform that tracks your progress, surfaces completion states, and rewards learning momentum.",
     type: "website",
   },
 }
@@ -57,8 +68,8 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(
         "antialiased",
-        inter.variable,
-        geistMono.variable,
+        matter.variable,
+        seasonMix.variable,
       )}
     >
       <body>
@@ -68,7 +79,12 @@ export default function RootLayout({
         </a>
 
         <ThemeProvider>
-          {children}
+          <AuthProvider>
+            <TooltipProvider>
+              {children}
+            </TooltipProvider>
+          </AuthProvider>
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>

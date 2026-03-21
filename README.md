@@ -1,5 +1,5 @@
-# E-LEARNING PLATFORM
-## Hackathon Mockup — Product README
+# Learnova — eLearning Platform
+## By Qubits | Hackathon 2026 — Product README
 ### Design Specification & Feature Documentation
 
 ---
@@ -28,7 +28,7 @@
 
 ## 1. Overview & Architecture
 
-The platform is a full-stack e-learning solution with two distinct user roles:
+Learnova (by Qubits) is a full-stack eLearning solution with two distinct user roles:
 
 - **Admin / Organizer** — manages courses from a backend dashboard
 - **Participant / Portal User** — consumes content through a front-end interface
@@ -509,4 +509,4 @@ Total points accumulate across all quizzes. The badge label changes dynamically 
 
 ---
 
-*— End of README —*
+*— Learnova by Qubits — End of README —*
