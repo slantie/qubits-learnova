@@ -9,10 +9,18 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Pencil, Trash2, ClipboardList } from 'lucide-react';
 import { toast } from 'sonner';
 
+interface QuizRewards {
+    attempt1Points: number;
+    attempt2Points: number;
+    attempt3Points: number;
+    attempt4PlusPoints: number;
+}
+
 interface Quiz {
     id: number;
     title: string;
     questionCount?: number;
+    rewards?: QuizRewards | null;
 }
 
 interface QuizTabProps {
@@ -100,6 +108,11 @@ export function QuizTab({ courseId }: QuizTabProps) {
                                 <Badge variant="neutral" className="shrink-0">
                                     {quiz.questionCount} {quiz.questionCount === 1 ? 'question' : 'questions'}
                                 </Badge>
+                            )}
+                            {quiz.rewards && (
+                                <span className="text-xs text-muted-foreground shrink-0 font-mono">
+                                    {quiz.rewards.attempt1Points} / {quiz.rewards.attempt2Points} / {quiz.rewards.attempt3Points} / {quiz.rewards.attempt4PlusPoints} pts
+                                </span>
                             )}
                             <div className="flex items-center gap-1 shrink-0">
                                 <Button

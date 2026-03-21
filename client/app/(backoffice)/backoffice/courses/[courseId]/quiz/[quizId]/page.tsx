@@ -7,10 +7,10 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { QuestionEditor } from '@/components/backoffice/quiz-builder/QuestionEditor';
 import { RewardsPanel } from '@/components/backoffice/quiz-builder/RewardsPanel';
-import { ArrowLeft, Plus, Trophy, FileQuestion } from 'lucide-react';
+import { ArrowLeft, Plus, Trophy, FileQuestion, BarChart3 } from 'lucide-react';
 
 interface Question {
-  id: string;
+  id: number;
   text: string;
   options: string[];
   correctOptions: number[];
@@ -25,7 +25,7 @@ interface Rewards {
 }
 
 interface Quiz {
-  id: string;
+  id: number;
   title: string;
   questions: Question[];
   rewards: Rewards | null;
@@ -98,7 +98,7 @@ export default function QuizBuilderPage() {
     });
   };
 
-  const handleQuestionDelete = (deletedId: string) => {
+  const handleQuestionDelete = (deletedId: number) => {
     setQuiz((prev) => {
       if (!prev) return prev;
       const next = prev.questions.filter((q) => q.id !== deletedId);
@@ -209,6 +209,13 @@ export default function QuizBuilderPage() {
                 <span className="ml-auto text-xs text-green-600 font-medium">Set</span>
               )}
             </Button>
+            <Link
+              href={`/backoffice/courses/${courseId}/quiz/${quizId}/attempts`}
+              className="w-full inline-flex items-center gap-1.5 text-sm border rounded-md px-3 py-1.5 hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground"
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              View Attempts
+            </Link>
           </div>
         </aside>
 
@@ -230,7 +237,7 @@ export default function QuizBuilderPage() {
                 key={activeQuestion.id}
                 question={activeQuestion}
                 courseId={courseId}
-                quizId={quizId}
+                quizId={String(quizId)}
                 onUpdate={handleQuestionUpdate}
                 onDelete={() => handleQuestionDelete(activeQuestion.id)}
               />

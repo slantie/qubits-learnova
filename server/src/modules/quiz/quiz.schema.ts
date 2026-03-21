@@ -31,9 +31,22 @@ export const upsertRewardSchema = z.object({
   attempt4PlusPoints: z.number().int().min(0),
 });
 
+// Each answer: which question and which option indices the student selected
+export const submitAttemptSchema = z.object({
+  answers: z
+    .array(
+      z.object({
+        questionId: z.number().int().positive(),
+        selectedOptions: z.array(z.number().int().min(0)).min(1),
+      }),
+    )
+    .min(1),
+});
+
 export type CreateQuizInput = z.infer<typeof createQuizSchema>;
 export type UpdateQuizInput = z.infer<typeof updateQuizSchema>;
 export type AddQuestionInput = z.infer<typeof addQuestionSchema>;
 export type UpdateQuestionInput = z.infer<typeof updateQuestionSchema>;
 export type ReorderQuestionsInput = z.infer<typeof reorderQuestionsSchema>;
 export type UpsertRewardInput = z.infer<typeof upsertRewardSchema>;
+export type SubmitAttemptInput = z.infer<typeof submitAttemptSchema>;

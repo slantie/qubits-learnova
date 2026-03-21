@@ -11,7 +11,7 @@ import { formatDuration } from '@/lib/formatDuration';
 import {
     Play, FileText, Image as ImageIcon, ClipboardList,
     Clock, BookOpen, ChevronLeft, Loader2,
-    Link2, FileDown, AlertCircle, X, ChevronRight, Download,
+    Link2, FileDown, AlertCircle, X, ChevronRight, Download, Trophy,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LessonType } from '@/types';
@@ -50,6 +50,17 @@ interface LessonDetail {
         filePath: string | null;
         externalUrl: string | null;
     }[];
+}
+
+interface QuizMeta {
+    id: number;
+    title: string;
+    rewards: {
+        attempt1Points: number;
+        attempt2Points: number;
+        attempt3Points: number;
+        attempt4PlusPoints: number;
+    } | null;
 }
 
 interface CourseView {
@@ -300,9 +311,9 @@ function LessonContent({
                     onClick={() => setLightboxIndex(null)}
                 >
                     {/* Close */}
-                    <button className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10">
+                    <Button className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10">
                         <X className="size-5" />
-                    </button>
+                    </Button>
 
                     {/* Counter */}
                     <span className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-sm font-mono tabular-nums">
@@ -323,22 +334,22 @@ function LessonContent({
 
                     {/* Prev */}
                     {lightboxIndex > 0 && (
-                        <button
+                        <Button
                             onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
                             className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
                         >
                             <ChevronLeft className="size-6" />
-                        </button>
+                        </Button>
                     )}
 
                     {/* Next */}
                     {lightboxIndex < images.length - 1 && (
-                        <button
+                        <Button
                             onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
                             className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
                         >
                             <ChevronRight className="size-6" />
-                        </button>
+                        </Button>
                     )}
 
                     {/* Image */}
@@ -372,13 +383,19 @@ export default function CourseViewPage() {
     const [lesson, setLesson] = useState<LessonDetail | null>(null);
     const [lessonLoading, setLessonLoading] = useState(false);
 
+    const [quizzes, setQuizzes] = useState<QuizMeta[]>([]);
+
     // Load course
     useEffect(() => {
         setCourseLoading(true);
-        api.get(`/courses/${courseId}/view`)
-            .then((data) => {
-                const c: CourseView = data.course ?? data;
+        Promise.all([
+            api.get(`/courses/${courseId}/view`),
+            api.get(`/courses/${courseId}/quizzes`).catch(() => []),
+        ])
+            .then(([courseData, quizData]) => {
+                const c: CourseView = courseData.course ?? courseData;
                 setCourse(c);
+                setQuizzes(Array.isArray(quizData) ? quizData : (quizData.quizzes ?? []));
                 // Auto-select first lesson
                 if (c.lessons.length > 0) setActiveLessonId(c.lessons[0].id);
             })
@@ -499,6 +516,37 @@ export default function CourseViewPage() {
                             </button>
                         );
                     })}
+
+                    {/* Quizzes section */}
+                    {quizzes.length > 0 && (
+                        <>
+                            <div className="flex items-center gap-2 px-5 py-2 mt-1 border-t border-border/50">
+                                <ClipboardList className="size-3 text-muted-foreground" />
+                                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                                    Quizzes
+                                </span>
+                            </div>
+                            {quizzes.map((q) => (
+                                <Link
+                                    key={q.id}
+                                    href={`/courses/${courseId}/quiz/${q.id}`}
+                                    className="w-full flex items-start gap-3 px-5 py-3 text-left transition-colors text-sm border-b border-border/50 border-l-2 border-l-transparent hover:bg-muted/60 hover:border-l-primary/40 group"
+                                >
+                                    <Trophy className="size-4 shrink-0 mt-0.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                                    <span className="flex-1 min-w-0">
+                                        <span className="block truncate font-medium group-hover:text-primary transition-colors">
+                                            {q.title}
+                                        </span>
+                                        {q.rewards && (
+                                            <span className="text-[11px] text-muted-foreground font-mono">
+                                                {q.rewards.attempt1Points} pts
+                                            </span>
+                                        )}
+                                    </span>
+                                </Link>
+                            ))}
+                        </>
+                    )}
                 </nav>
             </aside>
 

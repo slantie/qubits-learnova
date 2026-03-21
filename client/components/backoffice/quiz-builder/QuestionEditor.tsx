@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Trash2, Plus, Check } from 'lucide-react';
 
 interface Question {
-  id: string;
+  id: number;
   text: string;
   options: string[];
   correctOptions: number[];
@@ -17,7 +17,7 @@ interface QuestionEditorProps {
   question: Question;
   courseId: string;
   quizId: string;
-  onUpdate: (q: any) => void;
+  onUpdate: (q: Question) => void;
   onDelete: () => void;
 }
 
@@ -27,6 +27,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
   const [correctOptions, setCorrectOptions] = useState<number[]>(question.correctOptions);
   const [saved, setSaved] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [noCorrectWarning, setNoCorrectWarning] = useState(false);
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Sync local state when question prop changes (different question selected)
@@ -48,6 +49,11 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
 
   const saveToApi = useCallback(
     async (updatedText: string, updatedOptions: string[], updatedCorrectOptions: number[]) => {
+      if (updatedCorrectOptions.length === 0) {
+        setNoCorrectWarning(true);
+        return;
+      }
+      setNoCorrectWarning(false);
       try {
         const updated = await api.patch(
           `/courses/${courseId}/quizzes/${quizId}/questions/${questionId}`,
@@ -56,7 +62,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
         onUpdate(updated);
         showSaved();
       } catch {
-        // silent — could add error toast here
+        // silent
       }
     },
     [courseId, quizId, questionId, onUpdate]
@@ -206,6 +212,12 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
           <Plus className="w-3.5 h-3.5 mr-1.5" />
           Add Option
         </Button>
+
+        {noCorrectWarning && (
+          <p className="text-xs text-destructive mt-1">
+            Mark at least one option as correct before saving.
+          </p>
+        )}
       </div>
     </div>
   );

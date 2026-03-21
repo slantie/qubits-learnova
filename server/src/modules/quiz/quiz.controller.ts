@@ -86,3 +86,39 @@ export const upsertReward = async (req: Request, res: Response, next: NextFuncti
     res.json(reward);
   } catch (err) { next(err); }
 };
+
+export const submitAttempt = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await quizService.submitAttempt(
+      courseId(req), quizId(req), req.body, req.user.id,
+    );
+    res.status(201).json(result);
+  } catch (err) { next(err); }
+};
+
+export const getMyAttempts = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const attempts = await quizService.getMyAttempts(
+      courseId(req), quizId(req), req.user.id,
+    );
+    res.json({ attempts });
+  } catch (err) { next(err); }
+};
+
+export const getQuizAttempts = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const attempts = await quizService.getQuizAttempts(
+      courseId(req), quizId(req), req.user.id, req.user.role,
+    );
+    res.json({ attempts });
+  } catch (err) { next(err); }
+};
+
+export const getQuizAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const analytics = await quizService.getQuizAnalytics(
+      courseId(req), quizId(req), req.user.id, req.user.role,
+    );
+    res.json(analytics);
+  } catch (err) { next(err); }
+};

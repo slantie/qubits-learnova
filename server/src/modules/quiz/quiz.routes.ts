@@ -9,6 +9,7 @@ import {
   updateQuestionSchema,
   reorderQuestionsSchema,
   upsertRewardSchema,
+  submitAttemptSchema,
 } from './quiz.schema';
 import * as ctrl from './quiz.controller';
 
@@ -16,9 +17,11 @@ const router = Router({ mergeParams: true });
 const adminOrInstructor = [authenticate, authorize('ADMIN', 'INSTRUCTOR')] as const;
 
 // ─── Quiz routes ──────────────────────────────────────────────────────────────
-router.get('/', ...adminOrInstructor, ctrl.listQuizzes);
+// GET endpoints are open to any authenticated user (learners need to list & take quizzes)
+router.get('/', authenticate, ctrl.listQuizzes);
+router.get('/:quizId', authenticate, ctrl.getQuiz);
+
 router.post('/', ...adminOrInstructor, validate(createQuizSchema), ctrl.createQuiz);
-router.get('/:quizId', ...adminOrInstructor, ctrl.getQuiz);
 router.patch('/:quizId', ...adminOrInstructor, validate(updateQuizSchema), ctrl.updateQuiz);
 router.delete('/:quizId', ...adminOrInstructor, ctrl.deleteQuiz);
 
@@ -30,5 +33,13 @@ router.delete('/:quizId/questions/:questionId', ...adminOrInstructor, ctrl.delet
 
 // ─── Reward routes ────────────────────────────────────────────────────────────
 router.put('/:quizId/reward', ...adminOrInstructor, validate(upsertRewardSchema), ctrl.upsertReward);
+
+// ─── Student attempt routes (any authenticated user) ──────────────────────────
+router.post('/:quizId/attempt', authenticate, validate(submitAttemptSchema), ctrl.submitAttempt);
+router.get('/:quizId/attempts', authenticate, ctrl.getMyAttempts);
+
+// ─── Instructor analytics ─────────────────────────────────────────────────────
+router.get('/:quizId/all-attempts', ...adminOrInstructor, ctrl.getQuizAttempts);
+router.get('/:quizId/analytics', ...adminOrInstructor, ctrl.getQuizAnalytics);
 
 export default router;
