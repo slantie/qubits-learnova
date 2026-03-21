@@ -35,54 +35,49 @@ export function CourseCard({ course, onDelete }: { course: Course; onDelete: () 
     };
 
     return (
-        <div className="bg-card text-card-foreground border rounded-lg shadow-sm overflow-hidden flex flex-col hover:border-primary/50 transition-colors">
-            <div className="aspect-video bg-muted relative">
+        <div className="bg-card text-card-foreground border rounded-lg shadow-sm overflow-hidden flex items-center gap-3 px-3 py-2.5 hover:border-primary/50 transition-colors group">
+            {/* Thumbnail */}
+            <div className="size-11 rounded-md bg-muted shrink-0 overflow-hidden">
                 {course.coverImage ? (
                     <img src={course.coverImage} alt={course.title} className="object-cover w-full h-full" />
                 ) : (
-                    <div className="flex items-center justify-center w-full h-full text-muted-foreground bg-muted/50 border-b">
-                        No cover image
+                    <div className="flex items-center justify-center w-full h-full">
+                        <BookOpen className="size-4 text-muted-foreground/40" />
                     </div>
-                )}
-                {course.isPublished && (
-                    <Badge variant="primary" className="absolute top-2 right-2">Published</Badge>
                 )}
             </div>
 
-            <div className="p-4 flex-1 flex flex-col">
-                <h3 className=" text-lg line-clamp-2 mb-2">{course.title}</h3>
-                <div className="flex flex-wrap gap-1 mb-4">
-                    {course.tags.map((tag: string) => (
-                        <Badge variant="neutral" key={tag} className="text-xs">{tag}</Badge>
-                    ))}
-                    {course.tags.length === 0 && <span className="text-xs text-muted-foreground italic">No tags</span>}
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                    <p className="text-sm font-normal truncate">{course.title}</p>
+                    {course.isPublished && (
+                        <Badge variant="primary" className="text-[10px] px-1.5 py-0 shrink-0">Live</Badge>
+                    )}
                 </div>
-
-                <div className="flex items-center gap-4 text-xs text-muted-foreground mt-auto">
-                    <div className="flex items-center gap-1">
-                        <BookOpen className="w-4 h-4" />
-                        <span>{course.lessonCount} {course.lessonCount === 1 ? 'lesson' : 'lessons'}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        <span>{formatDuration(course.totalDuration)}</span>
-                    </div>
+                <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                        <BookOpen className="size-3" />
+                        {course.lessonCount} {course.lessonCount === 1 ? 'lesson' : 'lessons'}
+                    </span>
+                    <span className="flex items-center gap-1">
+                        <Clock className="size-3" />
+                        {formatDuration(course.totalDuration)}
+                    </span>
                 </div>
             </div>
 
-            <div className="border-t p-2 flex bg-muted/20 items-center justify-between">
-                <Button variant="ghost" size="sm" onClick={() => router.push(`/backoffice/courses/${course.id}/edit`)}>
-                    <PencilSimple className="w-4 h-4 mr-2" />
-                    Edit
+            {/* Actions — visible on hover */}
+            <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="icon-sm" onClick={() => router.push(`/backoffice/courses/${course.id}/edit`)} title="Edit">
+                    <PencilSimple className="size-3.5" />
                 </Button>
-                <div className="flex">
-                    <Button variant="ghost" size="icon" onClick={handleShare} title="Share link">
-                        <Share className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10" onClick={handleDelete} title="Delete Course">
-                        <Trash className="w-4 h-4" />
-                    </Button>
-                </div>
+                <Button variant="ghost" size="icon-sm" onClick={handleShare} title="Share link">
+                    <Share className="size-3.5" />
+                </Button>
+                <Button variant="ghost" size="icon-sm" className="text-destructive hover:bg-destructive/10" onClick={handleDelete} title="Delete">
+                    <Trash className="size-3.5" />
+                </Button>
             </div>
         </div>
     );

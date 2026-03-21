@@ -95,7 +95,7 @@ export function KanbanView({ courses, onRefresh }: { courses: Course[]; onRefres
                         </h2>
                     </KanbanBoardColumnHeader>
 
-                    <KanbanBoardColumnList className="p-4 gap-4 flex flex-col bg-muted/30 rounded-xl min-h-[500px]">
+                    <KanbanBoardColumnList className="p-3 gap-2 flex flex-col bg-muted/30 rounded-xl min-h-[200px]">
                         {drafts.length === 0 ? (
                             <div className="text-center text-muted-foreground py-10 text-sm">
                                 No drafts — drag a published course here to unpublish it.
@@ -121,7 +121,7 @@ export function KanbanView({ courses, onRefresh }: { courses: Course[]; onRefres
                         </h2>
                     </KanbanBoardColumnHeader>
 
-                    <KanbanBoardColumnList className="p-4 gap-4 flex flex-col bg-muted/30 rounded-xl min-h-[500px]">
+                    <KanbanBoardColumnList className="p-3 gap-2 flex flex-col bg-muted/30 rounded-xl min-h-[200px]">
                         {published.length === 0 ? (
                             <div className="text-center text-muted-foreground py-10 text-sm">
                                 Drag a draft here to publish it. Make sure to set a Website URL first.
