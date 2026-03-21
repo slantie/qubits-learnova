@@ -69,6 +69,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
         const [currentLevel, setCurrentLevel] = useState(-1);
         const [activeHeight, setActiveHeight] = useState<number | null>(null);
         const [settingsOpen, setSettingsOpen] = useState(false);
+        const [nativeRatio, setNativeRatio] = useState<string | null>(null);
 
         const sorted = timestamps?.length
             ? [...timestamps].sort((a, b) => a.time - b.time)
@@ -140,17 +141,24 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
             const onProgress = () => {
                 if (v.buffered.length > 0) setBuffered(v.buffered.end(v.buffered.length - 1));
             };
+            const onMeta = () => {
+                if (v.videoWidth && v.videoHeight) {
+                    setNativeRatio(`${v.videoWidth} / ${v.videoHeight}`);
+                }
+            };
             v.addEventListener('timeupdate', onTime);
             v.addEventListener('durationchange', onDur);
             v.addEventListener('play', onPlay);
             v.addEventListener('pause', onPause);
             v.addEventListener('progress', onProgress);
+            v.addEventListener('loadedmetadata', onMeta);
             return () => {
                 v.removeEventListener('timeupdate', onTime);
                 v.removeEventListener('durationchange', onDur);
                 v.removeEventListener('play', onPlay);
                 v.removeEventListener('pause', onPause);
                 v.removeEventListener('progress', onProgress);
+                v.removeEventListener('loadedmetadata', onMeta);
             };
         }, [started]);
 
@@ -304,14 +312,15 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
             <div className={cn('relative', className)}>
                 <div
                     ref={containerRef}
-                    className="relative bg-black rounded-xl overflow-hidden select-none group/player aspect-video"
+                    className="relative bg-black rounded-xl overflow-hidden select-none group/player"
+                    style={{ aspectRatio: nativeRatio ?? '16 / 9' }}
                     onDoubleClick={toggleFullscreen}
                 >
                     {/* ── Poster overlay ──────────────────────────────────────── */}
                     {!started && (
                         <div className="absolute inset-0 z-10 cursor-pointer group" onClick={handleStart}>
                             {poster ? (
-                                <img src={poster} alt={title ?? ''} className="w-full h-full object-contain" draggable={false} />
+                                <img src={poster} alt={title ?? ''} className="w-full h-full object-cover" draggable={false} />
                             ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800" />
                             )}
@@ -335,7 +344,7 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
                         poster={poster}
                         playsInline
                         onClick={togglePlay}
-                        className={cn('w-full h-full block object-contain', !started && 'invisible')}
+                        className={cn('w-full h-full block', !started && 'invisible')}
                     />
 
                     {/* ── Click-to-play center icon ──────────────────────────── */}
