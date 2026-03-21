@@ -4,9 +4,10 @@ import { ReactNode } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { LogOut, Home, ArrowRight, BookOpen } from 'lucide-react';
+import { LogOut, ArrowRight, BookOpen, GraduationCap } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useRouter } from 'next/navigation';
+import { CoursesDropdown } from '@/components/learner/CoursesDropdown';
 
 export default function WebsiteLayout({ children }: { children: ReactNode }) {
     const { user, isAuthenticated, role, logout } = useAuth();
@@ -21,13 +22,16 @@ export default function WebsiteLayout({ children }: { children: ReactNode }) {
     return (
         <div className="flex min-h-screen flex-col">
             <header className="h-16 border-b flex items-center px-6 justify-between bg-background sticky top-0 z-50">
-                <Link href="/" className="font-bold text-xl text-primary inline-flex items-center gap-2">
-                    <BookOpen className="size-5" /> Learnova
-                </Link>
-                <nav className="hidden md:flex gap-6">
-                    <Link href="/courses" className="text-sm font-medium hover:text-primary transition-colors">Courses</Link>
-                </nav>
-                <div className="flex gap-4 items-center">
+                <div className="flex items-center gap-6">
+                    <Link href="/" className="font-bold text-xl text-primary inline-flex items-center gap-2">
+                        <BookOpen className="size-5" /> Learnova
+                    </Link>
+                    <nav className="hidden md:flex items-center gap-1">
+                        <CoursesDropdown />
+                    </nav>
+                </div>
+
+                <div className="flex gap-3 items-center">
                     {!isAuthenticated ? (
                         <>
                             <Link href="/login" className="text-sm font-medium hover:underline">Log in</Link>
@@ -35,10 +39,23 @@ export default function WebsiteLayout({ children }: { children: ReactNode }) {
                         </>
                     ) : (
                         <>
-                            <span className="text-sm text-muted-foreground mr-2 hidden sm:inline-block">{user?.name || user?.email}</span>
-                            <Link href={role === 'ADMIN' || role === 'INSTRUCTOR' ? '/backoffice/courses' : '/courses'} className="text-sm font-medium inline-flex items-center hover:underline">
-                                Dashboard <ArrowRight className="size-3 ml-1" />
-                            </Link>
+                            {role === 'LEARNER' && (
+                                <Link
+                                    href="/my-courses"
+                                    className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                >
+                                    <GraduationCap className="size-4" />
+                                    My Courses
+                                </Link>
+                            )}
+                            {(role === 'ADMIN' || role === 'INSTRUCTOR') && (
+                                <Link href="/backoffice/courses" className="text-sm font-medium inline-flex items-center hover:underline">
+                                    Dashboard <ArrowRight className="size-3 ml-1" />
+                                </Link>
+                            )}
+                            <span className="text-sm text-muted-foreground hidden sm:inline-block">
+                                {user?.name || user?.email}
+                            </span>
                             <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Logout" className="text-muted-foreground hover:text-destructive">
                                 <LogOut className="size-4" />
                             </Button>

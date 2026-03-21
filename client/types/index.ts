@@ -89,3 +89,86 @@ export interface Course {
   coverImage: string | null;
   createdAt: string;
 }
+
+// ─── Learner types ────────────────────────────────────────────────────────────
+
+export interface LearnerEnrollment {
+  id: number;
+  status: EnrollmentStatus;
+  enrolledAt?: string;
+  progressPct: number;
+  completedLessons: number;
+  incompleteLessons: number;
+  totalLessons?: number;
+}
+
+export interface LearnerCourse {
+  id: number;
+  title: string;
+  description: string | null;
+  coverImage: string | null;
+  tags: string[];
+  accessRule: AccessRule;
+  price: string | null;
+  visibility: Visibility;
+  totalDuration?: number;
+  instructor: { id: number; name: string | null } | null;
+  _count: { lessons: number; enrollments: number };
+  enrollment?: LearnerEnrollment;
+}
+
+export interface LessonSummary {
+  id: number;
+  title: string;
+  type: LessonType;
+  order: number;
+  duration: number | null;
+  thumbnailUrl?: string | null;
+  isCompleted?: boolean;
+}
+
+export interface LearnerCourseDetail {
+  id: number;
+  title: string;
+  description: string | null;
+  coverImage: string | null;
+  tags: string[];
+  accessRule: AccessRule;
+  price: string | null;
+  visibility: Visibility;
+  instructor: { id: number; name: string | null } | null;
+  lessons: LessonSummary[];
+  quizzes: { id: number; title: string; _count: { questions: number } }[];
+  _count: { lessons: number; enrollments: number };
+  enrollment?: LearnerEnrollment;
+}
+
+export interface CourseProgress {
+  completedLessonIds: number[];
+  progressPct: number;
+  status: EnrollmentStatus;
+  totalLessons: number;
+  completedLessons: number;
+}
+
+export interface ReviewData {
+  id: number;
+  rating: number;
+  reviewText: string | null;
+  createdAt: string;
+  user: { id: number; name: string | null };
+}
+
+export interface ReviewsResponse {
+  reviews: ReviewData[];
+  averageRating: number;
+  totalCount: number;
+}
+
+export interface UserProfile {
+  user: { id: number; name: string | null; email: string };
+  totalPoints: number;
+  currentBadge: string | null;
+  enrollmentCount: number;
+  completedCount: number;
+}

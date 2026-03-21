@@ -7,6 +7,7 @@ import quizRouter from '../modules/quiz/quiz.routes';
 import reportingRouter from '../modules/reporting/reporting.routes';
 import usersRouter from '../modules/users/users.routes';
 import webhooksRouter from '../modules/webhooks/webhooks.routes';
+import learnerRouter from '../modules/learner/learner.routes';
 
 const router = Router();
 
@@ -17,6 +18,7 @@ router.use('/courses/:courseId/lessons', lessonsRouter);
 router.use('/courses/:courseId/quizzes', quizRouter);
 router.use('/reporting', reportingRouter);
 router.use('/users', usersRouter);
+router.use('/learner', learnerRouter);
 // Video service integration (token issuing + webhook receiver)
 router.use('/videos', webhooksRouter);
 router.use('/webhooks', webhooksRouter);
