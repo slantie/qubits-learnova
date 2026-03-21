@@ -40,7 +40,12 @@ export async function uploadToCloudinary(
     };
 
     if (filename) {
-      uploadOptions.public_id = filename.replace(/\.[^.]+$/, ''); // strip extension
+      const ext = filename.match(/\.[^.]+$/)?.[0] ?? '';
+      const baseName = filename.replace(/\.[^.]+$/, '');
+      uploadOptions.public_id = baseName;
+      if (ext) {
+        uploadOptions.format = ext.replace('.', '');
+      }
     }
 
     const stream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {

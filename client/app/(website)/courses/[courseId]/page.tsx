@@ -74,6 +74,14 @@ function LessonIcon({ type }: { type: LessonType }) {
 
 const IMAGE_EXT = /\.(jpg|jpeg|png|gif|webp|svg|bmp|avif)(\?|$)/i;
 
+function getDownloadUrl(url: string, filename: string): string {
+    if (url.includes('res.cloudinary.com')) {
+        const baseName = filename.replace(/\.[^.]+$/, '');
+        return url.replace('/upload/', `/upload/fl_attachment:${encodeURIComponent(baseName)}/`);
+    }
+    return url;
+}
+
 type ContentTab = 'description' | 'images' | 'documents' | 'chapters' | 'resources';
 
 function LessonContent({
@@ -214,9 +222,12 @@ function LessonContent({
                             <ul className="flex flex-col gap-2">
                                 {docs.map(a => (
                                     <li key={a.id}>
-                                        <a href={a.filePath!} target="_blank" rel="noopener noreferrer"
+                                        <a
+                                            href={lesson.allowDownload ? getDownloadUrl(a.filePath!, a.label) : a.filePath!}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            download={lesson.allowDownload ? a.label : undefined}
                                             className="inline-flex items-center gap-3 px-4 py-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors text-sm group w-full"
-                                            {...(lesson.allowDownload ? { download: true } : {})}
                                         >
                                             <FileText className="size-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                                             <span className="flex-1 truncate font-medium">{a.label}</span>
@@ -312,8 +323,8 @@ function LessonContent({
                     {/* Download */}
                     {lesson.allowDownload && (
                         <a
-                            href={images[lightboxIndex].filePath!}
-                            download
+                            href={getDownloadUrl(images[lightboxIndex].filePath!, images[lightboxIndex].label)}
+                            download={images[lightboxIndex].label}
                             onClick={e => e.stopPropagation()}
                             className="absolute top-4 right-16 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors z-10"
                         >
