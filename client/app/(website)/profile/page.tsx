@@ -145,7 +145,7 @@ export default function ProfilePage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Medal className="size-5 text-primary" />
-            <h2 className="">Badges</h2>
+            <h2 className="text-md font-medium">Badges</h2>
           </div>
           <span className="text-xs text-muted-foreground">
             {earnedCount} of {badgeList.length} earned

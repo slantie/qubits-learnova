@@ -1,5 +1,5 @@
 import localFont from "next/font/local"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import Script from "next/script"
 
 import "./globals.css"
@@ -28,6 +28,10 @@ const seasonMix = localFont({
   display: "swap",
 })
 
+export const viewport: Viewport = {
+  themeColor: "#3d9970",
+}
+
 export const metadata: Metadata = {
   title: {
     default: "Learnova — Learn Smarter, Build Faster",
@@ -37,7 +41,6 @@ export const metadata: Metadata = {
     "Learnova by Qubits — a full-stack eLearning platform with course management, progress tracking, quizzes, and gamification built for the modern learner.",
   keywords: ["Learnova", "Qubits", "learning", "edtech", "Odoo", "courses", "education"],
   manifest: "/manifest.webmanifest",
-  themeColor: "#3d9970",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -63,6 +66,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={cn(
         matter.variable,
         seasonMix.variable,

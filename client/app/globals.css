@@ -241,7 +241,7 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; — handled via data-scroll-behavior="smooth" on <html> */
     /* text-size-adjust: 100%; */
   }
 
