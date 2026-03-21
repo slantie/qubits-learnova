@@ -165,7 +165,7 @@ function LessonContent({
 
             {/* Title + meta */}
             <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-2xl font-semibold">{lesson.title}</h2>
+                <h2 className="text-2xl ">{lesson.title}</h2>
                 {lesson.duration && (
                     <Badge variant="neutral" className="text-xs">
                         <Clock className="size-3 mr-1" />{formatDuration(lesson.duration)}
@@ -525,7 +525,7 @@ export default function CourseDetailPage() {
                     {/* Sidebar */}
                     <aside className="w-72 xl:w-80 border-r bg-muted/20 flex flex-col shrink-0 overflow-y-auto">
                         <div className="p-5 border-b">
-                            <h1 className="font-semibold text-sm leading-snug line-clamp-2 mb-1">{overviewData.title}</h1>
+                            <h1 className=" text-sm leading-snug line-clamp-2 mb-1">{overviewData.title}</h1>
                             {overviewData.instructor?.name && <p className="text-xs text-muted-foreground mb-3">by {overviewData.instructor.name}</p>}
                             <div className="flex items-center gap-3 text-xs text-muted-foreground">
                                 <span className="inline-flex items-center gap-1"><BookOpen className="size-3" />{courseView?.lessons.length ?? 0} lessons</span>
@@ -821,7 +821,7 @@ export default function CourseDetailPage() {
                                 <Badge key={tag} variant="neutral" className="bg-white/10 text-white border-white/20 text-xs">{tag}</Badge>
                             ))}
                         </div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight line-clamp-2">{overviewData.title}</h1>
+                        <h1 className="text-2xl md:text-3xl text-white leading-tight line-clamp-2">{overviewData.title}</h1>
                         {overviewData.instructor?.name && <p className="text-sm text-white/70 mt-1">by {overviewData.instructor.name}</p>}
                     </div>
                     <div className="shrink-0">{renderCTA()}</div>

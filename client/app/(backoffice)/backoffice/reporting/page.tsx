@@ -136,7 +136,7 @@ export default function ReportingPage() {
 
   return (
     <div className="px-6 py-8 space-y-6">
-      <h1 className="text-2xl font-semibold">Reporting</h1>
+      <h1 className="text-2xl ">Reporting</h1>
 
       {/* Course filter pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">

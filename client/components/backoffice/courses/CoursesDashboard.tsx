@@ -39,7 +39,7 @@ export function CoursesDashboard() {
     return (
         <div className="px-6 py-8 flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-2xl font-semibold">Courses</h1>
+                <h1 className="text-2xl ">Courses</h1>
                 <Button onClick={() => setIsCreateModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Create Course

@@ -50,7 +50,7 @@ export function CourseCard({ course, onDelete }: { course: Course; onDelete: () 
             </div>
 
             <div className="p-4 flex-1 flex flex-col">
-                <h3 className="font-semibold text-lg line-clamp-2 mb-2">{course.title}</h3>
+                <h3 className=" text-lg line-clamp-2 mb-2">{course.title}</h3>
                 <div className="flex flex-wrap gap-1 mb-4">
                     {course.tags.map((tag: string) => (
                         <Badge variant="neutral" key={tag} className="text-xs">{tag}</Badge>

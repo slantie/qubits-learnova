@@ -28,7 +28,7 @@ export default function BadgesPage() {
           <Medal className="size-7 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-semibold">Your Badges</h1>
+          <h1 className="text-2xl ">Your Badges</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {isLoading ? 'Loading...' : `${earnedCount} of ${badges.length} badges earned`}
           </p>

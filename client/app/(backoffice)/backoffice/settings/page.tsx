@@ -29,7 +29,7 @@ export default function SettingsPage() {
     return (
         <div className="px-6 py-8 flex flex-col gap-6">
             <div>
-                <h1 className="text-2xl font-semibold">Settings</h1>
+                <h1 className="text-2xl ">Settings</h1>
                 <p className="text-sm text-muted-foreground mt-1">
                     Configure your platform's behavior, branding, and access rules.
                 </p>
@@ -40,7 +40,7 @@ export default function SettingsPage() {
                     <GearSix className="size-8 text-primary" strokeWidth={1.5} />
                 </div>
                 <div className="max-w-sm">
-                    <h2 className="text-lg font-semibold">Platform Settings — Coming Soon</h2>
+                    <h2 className="text-lg ">Platform Settings — Coming Soon</h2>
                     <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
                         Control every aspect of your Learnova instance from a single place.
                         This section is under active development.

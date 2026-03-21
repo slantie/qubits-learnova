@@ -251,7 +251,7 @@ export default function LearnerQuizPage() {
                         <ArrowLeft className="size-3.5" />
                         Back to course
                     </Link>
-                    <h1 className="text-2xl font-semibold">{quiz.title}</h1>
+                    <h1 className="text-2xl ">{quiz.title}</h1>
                     <div className="flex items-center gap-2 flex-wrap mt-1">
                         <Badge variant="neutral">
                             <ClipboardText className="size-3 mr-1" />
@@ -459,7 +459,7 @@ export default function LearnerQuizPage() {
             {/* ── ATTEMPT HISTORY ────────────────────────────────────────────── */}
             {pastAttempts.length > 0 && (
                 <div className="flex flex-col gap-3">
-                    <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                    <h2 className="text-sm text-muted-foreground uppercase tracking-wide">
                         Attempt History
                     </h2>
                     <div className="rounded-xl border overflow-hidden">

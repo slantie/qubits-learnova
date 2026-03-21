@@ -129,7 +129,7 @@ export default function QuizAttemptsPage() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-semibold">Quiz Attempts</h1>
+        <h1 className="text-2xl ">Quiz Attempts</h1>
         <p className="text-sm text-muted-foreground mt-1">Learner performance and analytics</p>
       </div>
 

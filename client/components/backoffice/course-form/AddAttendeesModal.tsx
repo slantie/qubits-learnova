@@ -56,7 +56,7 @@ export function AddAttendeesModal({ courseId, onClose }: AddAttendeesModalProps)
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
             <div className="bg-background rounded-xl shadow-xl w-full max-w-md mx-4">
                 <div className="flex items-center justify-between px-6 py-4 border-b">
-                    <h2 className="text-lg font-semibold">Add Attendees</h2>
+                    <h2 className="text-lg ">Add Attendees</h2>
                     <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
                         <X className="size-5" />
                     </button>

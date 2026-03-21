@@ -115,7 +115,7 @@ export default function BackofficeDashboard() {
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <p className="text-sm text-muted-foreground">{greeting()},</p>
-                    <h1 className="text-2xl font-semibold mt-0.5">{firstName}</h1>
+                    <h1 className="text-2xl mt-0.5">{firstName}</h1>
                     <p className="text-sm text-muted-foreground mt-1">
                         Here's what's happening with your platform today.
                     </p>
@@ -168,7 +168,7 @@ export default function BackofficeDashboard() {
                 {/* Recent courses */}
                 <div className="lg:col-span-2 flex flex-col gap-4">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-base font-semibold">Your Courses</h2>
+                        <h2 className="text-base ">Your Courses</h2>
                         <Link href="/backoffice/courses" className="text-sm text-primary hover:underline flex items-center gap-1">
                             View all <ArrowRight className="size-3" />
                         </Link>
@@ -221,7 +221,7 @@ export default function BackofficeDashboard() {
 
                 {/* Quick actions */}
                 <div className="flex flex-col gap-4">
-                    <h2 className="text-base font-semibold">Quick Actions</h2>
+                    <h2 className="text-base ">Quick Actions</h2>
                     <div className="flex flex-col gap-2">
                         <QuickAction
                             href="/backoffice/courses"

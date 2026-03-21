@@ -228,7 +228,7 @@ export default function CourseEditPage() {
                         </Button>
                     </Link>
                     <div className="flex items-center gap-2">
-                        <h1 className="text-2xl font-semibold tracking-tight truncate max-w-xs sm:max-w-sm">
+                        <h1 className="text-2xl tracking-tight truncate max-w-xs sm:max-w-sm">
                             {course.title}
                         </h1>
                         <Badge variant={course.isPublished ? 'success' : 'neutral'}>

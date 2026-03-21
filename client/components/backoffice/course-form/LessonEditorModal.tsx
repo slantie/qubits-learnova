@@ -298,7 +298,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
             <div className="bg-background rounded-xl shadow-xl w-full max-w-2xl mx-4 flex flex-col max-h-[90vh]">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
-                    <h2 className="text-lg font-semibold">{isEdit ? 'Edit Lesson' : 'Add Lesson'}</h2>
+                    <h2 className="text-lg ">{isEdit ? 'Edit Lesson' : 'Add Lesson'}</h2>
                     <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
                         <X className="size-5" />
                     </button>

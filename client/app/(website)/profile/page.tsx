@@ -102,7 +102,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>
-              <h1 className="text-xl font-bold">{profile.user.name ?? 'Learner'}</h1>
+              <h1 className="text-xl ">{profile.user.name ?? 'Learner'}</h1>
               <p className="text-sm text-muted-foreground">{profile.user.email}</p>
             </div>
             {profile.currentBadge && (
@@ -145,7 +145,7 @@ export default function ProfilePage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Medal className="size-5 text-primary" />
-            <h2 className="font-semibold">Badges</h2>
+            <h2 className="">Badges</h2>
           </div>
           <span className="text-xs text-muted-foreground">
             {earnedCount} of {badgeList.length} earned

@@ -79,7 +79,7 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
           )}
 
           {/* Title */}
-          <h3 className="font-semibold text-sm leading-snug line-clamp-2">{course.title}</h3>
+          <h3 className=" text-sm leading-snug line-clamp-2">{course.title}</h3>
 
           {/* Description */}
           {course.description && (

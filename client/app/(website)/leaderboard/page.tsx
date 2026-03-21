@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
                     <Trophy className="size-7 text-amber-500" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-semibold">Leaderboard</h1>
+                    <h1 className="text-2xl ">Leaderboard</h1>
                     <p className="text-sm text-muted-foreground mt-1">Top learners ranked by points earned</p>
                 </div>
             </div>

@@ -247,7 +247,7 @@ export function CertificateTab({
       <div className="rounded-xl border bg-card p-6">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <h3 className="text-lg font-semibold flex items-center gap-2">
+            <h3 className="text-lg flex items-center gap-2">
               <Medal className="size-5 text-primary" />
               Certificate Template
             </h3>

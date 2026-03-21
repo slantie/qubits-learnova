@@ -122,7 +122,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
     <div className="flex flex-col gap-6 max-w-2xl w-full">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
-        <h2 className="text-lg font-semibold text-foreground">Question</h2>
+        <h2 className="text-lg text-foreground">Question</h2>
         <div className="flex items-center gap-3">
           {saved && (
             <span className="flex items-center gap-1 text-xs text-green-600 font-medium">

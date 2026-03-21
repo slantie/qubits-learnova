@@ -60,7 +60,7 @@ export function BadgesGrid({ badges, compact = false }: BadgesGridProps) {
         if (categoryBadges.length === 0) return null;
         return (
           <div key={category}>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 pb-2 border-b border-border">
+            <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-4 pb-2 border-b border-border">
               {CATEGORY_LABELS[category]}
             </h3>
             <div className="flex flex-wrap gap-5">

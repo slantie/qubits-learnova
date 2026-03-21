@@ -50,7 +50,7 @@ export function CourseOverviewTab({ course, enrollment, onLessonClick }: CourseO
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Lesson list */}
         <div className="lg:col-span-2">
-          <h3 className="text-base font-semibold mb-3 flex items-center gap-2">
+          <h3 className="text-base mb-3 flex items-center gap-2">
             <BookOpen className="size-4" />
             Course Content
             <Badge variant="neutral" className="text-[10px]">
@@ -68,7 +68,7 @@ export function CourseOverviewTab({ course, enrollment, onLessonClick }: CourseO
         <div className="space-y-4">
           {totalQuestions > 0 && (
             <div className="rounded-lg border p-4 bg-card space-y-3">
-              <h4 className="text-sm font-semibold flex items-center gap-2">
+              <h4 className="text-sm flex items-center gap-2">
                 <Question className="size-4 text-primary" />
                 Quiz Summary
               </h4>
@@ -93,7 +93,7 @@ export function CourseOverviewTab({ course, enrollment, onLessonClick }: CourseO
 
           {/* Course stats card */}
           <div className="rounded-lg border p-4 bg-card space-y-3">
-            <h4 className="text-sm font-semibold">Course Info</h4>
+            <h4 className="text-sm ">Course Info</h4>
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">Instructor</span>

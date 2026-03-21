@@ -80,7 +80,7 @@ export default function VerifyPage() {
             <div className="mx-auto mb-6 size-20 rounded-full bg-destructive/10 flex items-center justify-center">
               <XCircle className="size-10 text-destructive" />
             </div>
-            <h1 className="text-2xl font-bold mb-2">Certificate Not Found</h1>
+            <h1 className="text-2xl mb-2">Certificate Not Found</h1>
             <p className="text-muted-foreground mb-6">
               The certificate ID <code className="text-xs bg-muted px-2 py-1 rounded">{uid}</code>{' '}
               could not be verified. It may have been revoked or the ID is incorrect.
@@ -138,7 +138,7 @@ export default function VerifyPage() {
                   {cert.recipientName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="font-semibold text-lg leading-tight">{cert.recipientName}</h2>
+                  <h2 className=" text-lg leading-tight">{cert.recipientName}</h2>
                   <p className="text-xs text-muted-foreground">Certificate Holder</p>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export default function VerifyPage() {
 
             {/* Verification info */}
             <div className="rounded-2xl border bg-card p-6 shadow-sm">
-              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <h3 className="text-sm mb-3 flex items-center gap-2">
                 <ShieldCheck className="size-4 text-emerald-600" />
                 About Verification
               </h3>

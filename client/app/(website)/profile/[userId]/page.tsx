@@ -77,7 +77,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
     return (
       <div className="max-w-2xl mx-auto px-4 py-20 text-center space-y-3">
         <p className="text-4xl">🙁</p>
-        <h1 className="text-xl font-semibold">User not found</h1>
+        <h1 className="text-xl ">User not found</h1>
         <p className="text-sm text-muted-foreground">This profile doesn't exist or has been removed.</p>
       </div>
     );
@@ -93,7 +93,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
             {initials}
           </div>
           <div className="flex items-start justify-between gap-3 flex-wrap">
-            <h1 className="text-xl font-bold">{profile.user.name ?? 'Learner'}</h1>
+            <h1 className="text-xl ">{profile.user.name ?? 'Learner'}</h1>
             {profile.currentBadge && (
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
                 {profile.currentBadge}
@@ -132,7 +132,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
       {/* Earned badges */}
       {profile.badges.length > 0 ? (
         <div className="rounded-2xl border bg-card p-6 space-y-4">
-          <h2 className="font-semibold">Badges Earned</h2>
+          <h2 className="">Badges Earned</h2>
           <div className="flex flex-wrap gap-3">
             {profile.badges.map(b => (
               <BadgeIcon key={b.badgeKey} badgeKey={b.badgeKey} size="md" showLabel />
