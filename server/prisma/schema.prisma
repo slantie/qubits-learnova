@@ -44,6 +44,19 @@ enum AttachmentType {
   LINK
 }
 
+enum VideoStatus {
+  UPLOADING
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum StorageProvider {
+  local
+  s3
+}
+
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model User {
@@ -222,4 +235,35 @@ model Review {
   createdAt  DateTime @default(now())
 
   @@unique([userId, courseId])
+}
+
+// ─── Video Service ─────────────────────────────────────────────────────────────
+
+model Video {
+  id              String          @id @default(uuid())
+  originalName    String
+  mimeType        String
+  fileSize        BigInt
+  status          VideoStatus     @default(UPLOADING)
+  storageProvider StorageProvider  @default(local)
+
+  duration Float?
+
+  rawKey       String  @unique
+  thumbnailKey String?
+  hlsKey       String?
+
+  resolutions Json?
+
+  errorMessage String?
+
+  callbackUrl String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  processedAt DateTime?
+
+  @@index([status])
+  @@index([storageProvider])
+  @@map("videos")
 }

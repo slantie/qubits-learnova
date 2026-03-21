@@ -1,23 +1,4 @@
 services:
-  # ─── PostgreSQL for video metadata ──────────────────────────────────────────
-  video-db:
-    image: postgres:16-alpine
-    container_name: learnova-video-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: learnova_video
-      POSTGRES_PASSWORD: learnova_video_pass
-      POSTGRES_DB: learnova_video
-    ports:
-      - '5433:5432'
-    volumes:
-      - video_pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U learnova_video']
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   # ─── Redis for BullMQ job queue ─────────────────────────────────────────────
   video-redis:
     image: redis:7-alpine
@@ -70,6 +51,5 @@ services:
       "
 
 volumes:
-  video_pgdata:
   video_redis_data:
   video_minio_data:
