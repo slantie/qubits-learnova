@@ -57,6 +57,15 @@ enum StorageProvider {
   s3
 }
 
+enum BadgeCategory {
+  TIER
+  COURSE_MILESTONE
+  QUIZ_EXCELLENCE
+  SPEED
+  CERTIFICATION
+  DEDICATION
+}
+
 // ─── Models ───────────────────────────────────────────────────────────────────
 
 model User {
@@ -79,6 +88,7 @@ model User {
   reviews          Review[]
   lessonProgresses LessonProgress[]
   certificates     Certificate[]
+  badges           UserBadge[]
 }
 
 model Course {
@@ -224,6 +234,7 @@ model QuizAttempt {
   attemptNumber Int
   answers       Json
   pointsEarned  Int      @default(0)
+  scorePercent  Int      @default(0)
   completedAt   DateTime @default(now())
 
   @@index([userId, quizId])
@@ -255,6 +266,17 @@ model Certificate {
   issuedAt     DateTime @default(now())
 
   @@unique([userId, courseId])
+}
+
+model UserBadge {
+  id       Int           @id @default(autoincrement())
+  userId   Int
+  user     User          @relation(fields: [userId], references: [id])
+  badgeKey String
+  category BadgeCategory
+  earnedAt DateTime      @default(now())
+
+  @@unique([userId, badgeKey])
 }
 
 // ─── Video Service ─────────────────────────────────────────────────────────────
