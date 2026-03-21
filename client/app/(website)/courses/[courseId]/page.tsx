@@ -348,6 +348,7 @@ export default function CourseDetailPage() {
     const [showCertModal, setShowCertModal] = useState(false);
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+    const clientUrl = process.env.NEXT_PUBLIC_CLIENT_URL || 'http://localhost:3000';
 
     // Load overview (learner API)
     const loadOverview = useCallback(async () => {
@@ -567,7 +568,7 @@ export default function CourseDetailPage() {
                                             <Award className="size-3" /> View
                                         </button>
                                         <a
-                                            href={`${apiUrl}/certificates/verify/${certificate.uid}`}
+                                            href={`${clientUrl}/verify/${certificate.uid}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted hover:bg-muted/80 border border-border rounded-md px-3 py-1.5 transition-colors"
@@ -685,7 +686,7 @@ export default function CourseDetailPage() {
                                         {/* Share / copy link */}
                                         <button
                                             onClick={() => {
-                                                navigator.clipboard.writeText(`${apiUrl}/certificates/verify/${certificate.uid}`);
+                                                navigator.clipboard.writeText(`${clientUrl}/verify/${certificate.uid}`);
                                                 toast.success('Verification link copied to clipboard');
                                             }}
                                             className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg border border-border/70 hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -697,7 +698,7 @@ export default function CourseDetailPage() {
 
                                         {/* Open full size */}
                                         <a
-                                            href={`${apiUrl}/certificates/view/${certificate.uid}`}
+                                            href={`${clientUrl}/verify/${certificate.uid}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg border border-border/70 hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -745,7 +746,7 @@ export default function CourseDetailPage() {
                                     </span>
                                     {/* Mobile-only action links */}
                                     <a
-                                        href={`${apiUrl}/certificates/view/${certificate.uid}`}
+                                        href={`${clientUrl}/verify/${certificate.uid}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="sm:hidden inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
