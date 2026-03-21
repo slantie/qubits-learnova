@@ -90,7 +90,7 @@ export function ContactAttendeesModal({ courseId, onClose }: ContactAttendeesMod
                     ) : (
                         <>
                             <div className="rounded-lg border bg-muted/30 px-4 py-6 text-center">
-                                <p className="text-2xl font-semibold">{sentCount}</p>
+                                <p className="text-2xl font-normal">{sentCount}</p>
                                 <p className="text-sm text-muted-foreground mt-1">
                                     {sentCount === 1 ? 'learner' : 'learners'} received your message
                                 </p>

@@ -407,7 +407,7 @@ export default function CourseEditPage() {
                     <div className="flex flex-col gap-6 rounded-xl border bg-card p-6">
                         {/* Visibility */}
                         <div className="flex flex-col gap-3">
-                            <p className="text-sm font-semibold">Visibility</p>
+                            <p className="text-sm font-normal">Visibility</p>
                             <div className="flex flex-col gap-2">
                                 {([
                                     { value: 'EVERYONE', label: 'Everyone', desc: 'Visible to all visitors' },
@@ -440,7 +440,7 @@ export default function CourseEditPage() {
 
                         {/* Access Rule */}
                         <div className="flex flex-col gap-3">
-                            <p className="text-sm font-semibold">Access Rule</p>
+                            <p className="text-sm font-normal">Access Rule</p>
                             <div className="flex flex-col gap-2">
                                 {([
                                     { value: 'OPEN', label: 'Open', desc: 'Anyone can enroll freely' },

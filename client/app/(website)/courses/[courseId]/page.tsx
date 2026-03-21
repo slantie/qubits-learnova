@@ -553,7 +553,7 @@ export default function CourseDetailPage() {
                                     <div className="flex items-center gap-2 mb-3">
                                         <SealCheck className="size-4 text-primary shrink-0" />
                                         <div className="min-w-0 flex-1">
-                                            <p className="text-xs font-semibold text-foreground leading-tight">Certificate Earned</p>
+                                            <p className="text-xs font-normal text-foreground leading-tight">Certificate Earned</p>
                                             <p className="text-[11px] text-muted-foreground tabular-nums">
                                                 {new Date(certificate.issuedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
                                                 {certificate.pointsEarned > 0 && <> · {certificate.pointsEarned} pts</>}
@@ -613,7 +613,7 @@ export default function CourseDetailPage() {
                                 <>
                                     <div className="flex items-center gap-2 px-5 py-2 mt-1 border-t border-border/50">
                                         <ClipboardText className="size-3 text-muted-foreground" />
-                                        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Quizzes</span>
+                                        <span className="text-[11px] font-normal uppercase tracking-wide text-muted-foreground">Quizzes</span>
                                     </div>
                                     {quizzes.map(q => (
                                         <Link key={q.id} href={`/courses/${courseId}/quiz/${q.id}`}
@@ -674,7 +674,7 @@ export default function CourseDetailPage() {
                                             <Medal className="size-4 text-amber-600 dark:text-amber-400" />
                                         </div>
                                         <div className="min-w-0">
-                                            <p className="text-sm font-semibold leading-tight truncate">Your Certificate</p>
+                                            <p className="text-sm font-normal leading-tight truncate">Your Certificate</p>
                                             <p className="text-[11px] text-muted-foreground leading-tight">
                                                 Issued {new Date(certificate.issuedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
                                             </p>
@@ -714,7 +714,7 @@ export default function CourseDetailPage() {
                                                 const w = window.open('', '_blank');
                                                 if (w && certHtml) { w.document.write(certHtml); w.document.close(); w.print(); }
                                             }}
-                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            className="inline-flex items-center gap-1.5 text-xs font-normal text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                             aria-label="Print or save certificate as PDF"
                                         >
                                             <Printer className="size-3" />

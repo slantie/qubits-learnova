@@ -41,7 +41,7 @@ export function BadgesGrid({ badges, compact = false }: BadgesGridProps) {
           <BadgeIcon key={b.key} badgeKey={b.key} size="sm" />
         ))}
         {extra > 0 && (
-          <div className="size-12 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground">
+          <div className="size-12 rounded-full bg-muted flex items-center justify-center text-xs font-normal text-muted-foreground">
             +{extra}
           </div>
         )}

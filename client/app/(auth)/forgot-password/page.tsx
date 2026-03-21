@@ -138,7 +138,7 @@ export default function ForgotPasswordPage() {
                                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                                 required
                                 placeholder="123456"
-                                className="text-center text-xl tracking-[0.3em] font-semibold"
+                                className="text-center text-xl tracking-[0.3em] font-normal"
                                 autoFocus
                             />
                         </div>

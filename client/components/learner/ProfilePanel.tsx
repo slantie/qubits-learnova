@@ -57,11 +57,11 @@ export function ProfilePanel() {
       {/* Header */}
       <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6">
         <div className="flex items-center gap-3">
-          <div className="size-14 rounded-full bg-primary/15 flex items-center justify-center text-primary font-semibold text-lg ring-2 ring-primary/20">
+          <div className="size-14 rounded-full bg-primary/15 flex items-center justify-center text-primary font-normal text-lg ring-2 ring-primary/20">
             {initials}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-base truncate">{profile.user.name}</p>
+            <p className="font-normal text-base truncate">{profile.user.name}</p>
             <p className="text-xs text-muted-foreground truncate">{profile.user.email}</p>
           </div>
         </div>
@@ -73,7 +73,7 @@ export function ProfilePanel() {
         <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/8 border border-amber-500/15">
           <Trophy className="size-5 text-amber-500 shrink-0" />
           <div>
-            <p className="text-sm font-semibold">{profile.totalPoints} Points</p>
+            <p className="text-sm font-normal">{profile.totalPoints} Points</p>
             {profile.currentBadge && (
               <p className="text-xs text-muted-foreground">Badge: {profile.currentBadge}</p>
             )}
@@ -85,14 +85,14 @@ export function ProfilePanel() {
           <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
             <BookOpen className="size-4 text-primary shrink-0" />
             <div>
-              <p className="text-sm font-semibold">{profile.enrollmentCount}</p>
+              <p className="text-sm font-normal">{profile.enrollmentCount}</p>
               <p className="text-[11px] text-muted-foreground">Enrolled</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
             <CheckCircle className="size-4 text-emerald-500 shrink-0" />
             <div>
-              <p className="text-sm font-semibold">{profile.completedCount}</p>
+              <p className="text-sm font-normal">{profile.completedCount}</p>
               <p className="text-[11px] text-muted-foreground">Completed</p>
             </div>
           </div>

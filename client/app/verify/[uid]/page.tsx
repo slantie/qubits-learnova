@@ -109,7 +109,7 @@ export default function VerifyPage() {
       {/* Header bar */}
       <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-6 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-sm font-semibold">
+          <Link href="/" className="flex items-center gap-2 text-sm font-normal">
             <Medal className="size-5 text-primary" />
             <span>Learnova</span>
           </Link>
@@ -122,7 +122,7 @@ export default function VerifyPage() {
         <div className="flex items-center justify-center mb-8">
           <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800">
             <ShieldCheck className="size-5 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+            <span className="text-sm font-normal text-emerald-700 dark:text-emerald-400">
               This certificate is verified and valid
             </span>
           </div>
@@ -203,7 +203,7 @@ export default function VerifyPage() {
               <div className="px-5 py-3 border-b bg-muted/30 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Medal className="size-4 text-primary" />
-                  <span className="text-sm font-semibold">Certificate Preview</span>
+                  <span className="text-sm font-normal">Certificate Preview</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button

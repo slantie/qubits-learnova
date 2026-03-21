@@ -106,7 +106,7 @@ export default function ProfilePage() {
               <p className="text-sm text-muted-foreground">{profile.user.email}</p>
             </div>
             {profile.currentBadge && (
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+              <span className="text-xs font-normal px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
                 {profile.currentBadge}
               </span>
             )}

@@ -98,15 +98,15 @@ export function AddAttendeesModal({ courseId, onClose }: AddAttendeesModalProps)
                                 <div className="rounded-lg border bg-muted/30 divide-y">
                                     <div className="flex items-center justify-between px-4 py-3 text-sm">
                                         <span className="text-muted-foreground">Enrolled</span>
-                                        <span className="font-semibold text-green-600">{result.enrolled}</span>
+                                        <span className="font-normal text-green-600">{result.enrolled}</span>
                                     </div>
                                     <div className="flex items-center justify-between px-4 py-3 text-sm">
                                         <span className="text-muted-foreground">Already enrolled</span>
-                                        <span className="font-semibold">{result.alreadyEnrolled}</span>
+                                        <span className="font-normal">{result.alreadyEnrolled}</span>
                                     </div>
                                     <div className="flex items-center justify-between px-4 py-3 text-sm">
                                         <span className="text-muted-foreground">Invited (new users)</span>
-                                        <span className="font-semibold text-blue-600">{result.invited}</span>
+                                        <span className="font-normal text-blue-600">{result.invited}</span>
                                     </div>
                                 </div>
                                 {result.emailErrors.length > 0 && (

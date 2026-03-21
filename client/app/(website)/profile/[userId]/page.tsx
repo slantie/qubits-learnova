@@ -95,7 +95,7 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <h1 className="text-xl ">{profile.user.name ?? 'Learner'}</h1>
             {profile.currentBadge && (
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
+              <span className="text-xs font-normal px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
                 {profile.currentBadge}
               </span>
             )}

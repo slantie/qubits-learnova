@@ -318,7 +318,7 @@ function LearningCard() {
             <CircleProgress value={overallProgress} size={52} strokeWidth={5} />
             {/* Percentage label centered in ring */}
             <span
-              className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-foreground"
+              className="absolute inset-0 flex items-center justify-center text-xs font-normal text-foreground"
               aria-hidden
             >
               {overallProgress}%
@@ -512,7 +512,7 @@ function FeatureCard({ icon: Icon, title, body, stat, statLabel }: FeatureCardPr
 
       {/* Stat — prominent number, weight 700, 24px */}
       <div>
-        <p className="text-2xl font-semibold text-foreground tracking-tight">{stat}</p>
+        <p className="text-2xl font-normal text-foreground tracking-tight">{stat}</p>
         <p className="text-xs text-muted-foreground font-medium mt-0.5">{statLabel}</p>
       </div>
 
@@ -633,7 +633,7 @@ function WeeklyProgressCard() {
           { value: "47", label: "Problems solved" },
         ].map(({ value, label }) => (
           <div key={label} className="text-center p-3 bg-muted/50 rounded-md">
-            <p className="text-lg font-semibold text-foreground">{value}</p>
+            <p className="text-lg font-normal text-foreground">{value}</p>
             <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
           </div>
         ))}
@@ -649,7 +649,7 @@ function WeeklyProgressCard() {
               <p className="text-sm font-medium text-foreground">{name}</p>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">{hours}h</span>
-                <span className="text-xs font-semibold text-foreground">{progress}%</span>
+                <span className="text-xs font-normal text-foreground">{progress}%</span>
               </div>
             </div>
             <ProgressBar
@@ -694,7 +694,7 @@ function Stats() {
               role="listitem"
               className="space-y-1 text-center md:text-left"
             >
-              <p className="text-3xl font-semibold text-foreground tracking-tight">
+              <p className="text-3xl font-normal text-foreground tracking-tight">
                 {value}
               </p>
               <p className="text-sm font-medium text-foreground">{label}</p>

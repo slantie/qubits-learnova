@@ -186,7 +186,7 @@ function ReviewCard({ review, isOwn }: { review: ReviewData; isOwn: boolean }) {
 
   return (
     <div className={`flex gap-3 p-4 rounded-lg border ${isOwn ? 'bg-primary/5 border-primary/15' : 'bg-card'}`}>
-      <div className="size-9 rounded-full bg-muted flex items-center justify-center text-xs font-semibold shrink-0">
+      <div className="size-9 rounded-full bg-muted flex items-center justify-center text-xs font-normal shrink-0">
         {initials}
       </div>
       <div className="flex-1 min-w-0">

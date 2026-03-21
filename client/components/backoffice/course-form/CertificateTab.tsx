@@ -139,7 +139,7 @@ function FullPreviewModal({
         <div className="flex items-center justify-between px-5 py-3 border-b bg-card">
           <div className="flex items-center gap-2">
             <Medal className="size-4 text-primary" />
-            <span className="text-sm font-semibold">{templateName}</span>
+            <span className="text-sm font-normal">{templateName}</span>
             <Badge variant="neutral" className="text-xs">
               Preview
             </Badge>

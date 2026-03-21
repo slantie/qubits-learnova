@@ -283,7 +283,7 @@ export default function LearnerQuizPage() {
                         </div>
                         <div className="flex flex-col gap-3 flex-1">
                             <div>
-                                <p className="text-xl font-semibold">
+                                <p className="text-xl font-normal">
                                     {result.scorePercentage >= 80
                                         ? 'Great job!'
                                         : result.scorePercentage >= 50
@@ -297,7 +297,7 @@ export default function LearnerQuizPage() {
 
                             <div className="flex items-center gap-2 flex-wrap">
                                 {result.pointsEarned > 0 && (
-                                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+                                    <span className="inline-flex items-center gap-1.5 text-sm font-normal text-primary bg-primary/10 px-3 py-1 rounded-full">
                                         <Trophy className="size-3.5" />
                                         +{result.pointsEarned} points earned
                                     </span>
@@ -345,7 +345,7 @@ export default function LearnerQuizPage() {
                         >
                             {/* Question header */}
                             <div className="flex items-start gap-3">
-                                <span className="shrink-0 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-semibold text-muted-foreground">
+                                <span className="shrink-0 w-7 h-7 rounded-full bg-muted flex items-center justify-center text-xs font-normal text-muted-foreground">
                                     {qIdx + 1}
                                 </span>
                                 <p className="text-sm font-medium leading-relaxed pt-0.5 flex-1">{q.text}</p>
@@ -478,7 +478,7 @@ export default function LearnerQuizPage() {
                                             #{a.attemptNumber}
                                         </td>
                                         <td className="px-4 py-2.5">
-                                            <span className="inline-flex items-center gap-1 text-primary font-semibold">
+                                            <span className="inline-flex items-center gap-1 text-primary font-normal">
                                                 <Trophy className="size-3.5" />
                                                 {a.pointsEarned} pts
                                             </span>

@@ -236,13 +236,13 @@ export default function ReportingPage() {
           <table className="w-full text-sm text-left">
             <thead>
               <tr className="bg-muted/30 border-b border-border">
-                <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-12">
+                <th className="px-4 py-3 text-xs font-normal text-muted-foreground uppercase tracking-wide w-12">
                   Sr. No.
                 </th>
                 {visibleColumns.map((col) => (
                   <th
                     key={col.key}
-                    className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap"
+                    className="px-4 py-3 text-xs font-normal text-muted-foreground uppercase tracking-wide whitespace-nowrap"
                   >
                     {col.label}
                   </th>
@@ -329,8 +329,8 @@ export default function ReportingPage() {
               Prev
             </button>
             <p className="text-sm text-muted-foreground">
-              Page <span className="font-semibold text-foreground">{page}</span> of{' '}
-              <span className="font-semibold text-foreground">{totalPages}</span>
+              Page <span className="font-normal text-foreground">{page}</span> of{' '}
+              <span className="font-normal text-foreground">{totalPages}</span>
             </p>
             <button
               type="button"

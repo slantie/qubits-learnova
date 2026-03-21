@@ -203,7 +203,7 @@ export default function QuizAttemptsPage() {
                 {/* Learner header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
                   <div>
-                    <p className="text-sm font-semibold">{user.name}</p>
+                    <p className="text-sm font-normal">{user.name}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                   <div className="text-right">

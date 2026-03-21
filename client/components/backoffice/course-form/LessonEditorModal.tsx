@@ -55,7 +55,7 @@ function SectionHeader({
         <button
             type="button"
             onClick={onToggle}
-            className="w-full flex items-center gap-2 py-2.5 text-sm font-semibold hover:text-primary transition-colors"
+            className="w-full flex items-center gap-2 py-2.5 text-sm font-normal hover:text-primary transition-colors"
         >
             {open ? <CaretDown className="size-4 text-muted-foreground" /> : <CaretRight className="size-4 text-muted-foreground" />}
             <Icon className="size-4" />

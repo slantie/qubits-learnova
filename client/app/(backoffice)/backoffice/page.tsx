@@ -39,7 +39,7 @@ function StatCard({
                 <Icon className="size-5" />
             </div>
             <div>
-                <p className="text-2xl font-semibold tabular-nums">{value}</p>
+                <p className="text-2xl font-normal tabular-nums">{value}</p>
                 <p className="text-sm font-medium mt-0.5">{label}</p>
                 {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
             </div>
@@ -121,7 +121,7 @@ export default function BackofficeDashboard() {
                     </p>
                 </div>
                 <Link href="/backoffice/courses">
-                    <Button size="sm" className="gap-2">
+                    <Button size="sm" className="gap-2 h-8 ">
                         <Plus className="size-4" />
                         New Course
                     </Button>

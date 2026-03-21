@@ -119,7 +119,7 @@ export function PaymentModal({
               <CheckCircle className="size-9 text-emerald-500" />
             </div>
             <div>
-              <p className="text-lg font-semibold">Payment Successful!</p>
+              <p className="text-lg font-normal">Payment Successful!</p>
               <p className="text-sm text-muted-foreground mt-1">
                 You have been enrolled in <span className="font-medium text-foreground">{courseTitle}</span>
               </p>
