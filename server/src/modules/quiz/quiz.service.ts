@@ -1,5 +1,6 @@
 import prisma from '../../lib/prisma';
 import { AppError } from '../../config/AppError';
+import { evaluate as evaluateBadges } from '../badges/badge.service';
 import type {
   CreateQuizInput,
   UpdateQuizInput,
@@ -364,6 +365,7 @@ export const submitAttempt = async (
       quizId,
       attemptNumber,
       pointsEarned,
+      scorePercent: scorePercentage,
       answers: data.answers as object,
     },
   });
@@ -375,6 +377,9 @@ export const submitAttempt = async (
       data: { totalPoints: { increment: pointsEarned } },
     });
   }
+
+  // Evaluate badges (fire-and-forget)
+  evaluateBadges(userId, { quizId }).catch(() => {});
 
   return {
     id: attempt.id,
