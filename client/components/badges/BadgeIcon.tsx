@@ -688,7 +688,7 @@ export function BadgeIcon({
     <div
       className={cn(
         'flex flex-col items-center gap-1.5',
-        locked && 'opacity-35 grayscale',
+        locked && 'opacity-40',
       )}
     >
       {/* Outer ring */}
