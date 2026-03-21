@@ -35,3 +35,6 @@ Thumbs.db
 *.avi
 *.mov
 tmp/
+
+# Dev startup logs
+logs/
