@@ -257,7 +257,7 @@
 
   h1, h2 {
     font-family: var(--font-season, var(--font-matter, ui-sans-serif, system-ui, sans-serif));
-    font-weight: 400;
+    font-weight: 400 !important;
     line-height: 1.2;
     letter-spacing: -0.02em;
     color: var(--foreground);
