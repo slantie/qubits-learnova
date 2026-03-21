@@ -347,7 +347,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                     )}
                                     {videoState.phase === 'ready' && (
                                         <>
-                                            <div className="flex items-center gap-2 text-sm text-green-600">
+                                            <div className="flex items-center gap-2 text-sm text-primary">
                                                 <CheckCircle className="size-4" /> Video ready
                                             </div>
                                             <VideoPlayer ref={videoPlayerRef} src={videoState.streamUrl} poster={videoState.thumbnailUrl} timestamps={timestamps} />

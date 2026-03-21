@@ -80,7 +80,7 @@ export function ListView({ courses, onDelete }: { courses: Course[]; onDelete: (
                                 <TableCell>{formatDuration(course.totalDuration)}</TableCell>
                                 <TableCell>
                                     {course.isPublished ? (
-                                        <Badge variant="success" className="bg-green-500 hover:bg-green-600">Published</Badge>
+                                        <Badge variant="primary">Published</Badge>
                                     ) : (
                                         <Badge variant="neutral">Draft</Badge>
                                     )}

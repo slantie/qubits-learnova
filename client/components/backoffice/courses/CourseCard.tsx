@@ -45,7 +45,7 @@ export function CourseCard({ course, onDelete }: { course: Course; onDelete: () 
                     </div>
                 )}
                 {course.isPublished && (
-                    <Badge className="absolute top-2 right-2 bg-green-500 hover:bg-green-600">Published</Badge>
+                    <Badge variant="primary" className="absolute top-2 right-2">Published</Badge>
                 )}
             </div>
 

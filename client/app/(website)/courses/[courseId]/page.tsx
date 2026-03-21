@@ -259,7 +259,7 @@ function LessonContent({
                 <div className="flex items-center gap-3">
                     {isCompleted ? (
                         <>
-                            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                            <div className="flex items-center gap-2 text-primary">
                                 <CheckCircle className="size-5" />
                                 <span className="text-sm font-medium">Lesson completed</span>
                             </div>
@@ -538,10 +538,10 @@ export default function CourseDetailPage() {
                                         <span className="font-medium tabular-nums">{completedIds.size}/{courseView?.lessons.length}</span>
                                     </div>
                                     <div className="h-2 bg-muted rounded-full overflow-hidden">
-                                        <div className={cn('h-full rounded-full transition-all duration-500', progressPct >= 100 ? 'bg-green-500' : 'bg-primary')} style={{ width: `${progressPct}%` }} />
+                                        <div className="h-full rounded-full transition-all duration-500 bg-primary" style={{ width: `${progressPct}%` }} />
                                     </div>
                                     {progressPct >= 100 && (
-                                        <div className="flex items-center gap-1.5 mt-2 text-xs text-green-600 dark:text-green-400 font-medium">
+                                        <div className="flex items-center gap-1.5 mt-2 text-xs text-primary font-medium">
                                             <Trophy className="size-3.5" /> Course completed!
                                         </div>
                                     )}
@@ -593,7 +593,7 @@ export default function CourseDetailPage() {
                                             isProcessing && 'opacity-60 cursor-not-allowed',
                                         )}
                                     >
-                                        <span className={cn('mt-0.5 shrink-0', isDone ? 'text-green-500' : isActive ? 'text-primary' : 'text-muted-foreground')}>
+                                        <span className={cn('mt-0.5 shrink-0', isDone ? 'text-primary' : isActive ? 'text-primary' : 'text-muted-foreground')}>
                                             {isDone ? <CheckCircle className="size-4" /> : <Circle className="size-4" />}
                                         </span>
                                         <span className="flex-1 min-w-0">

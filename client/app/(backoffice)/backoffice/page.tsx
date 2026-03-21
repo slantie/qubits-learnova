@@ -143,7 +143,7 @@ export default function BackofficeDashboard() {
                     label="Published"
                     value={stats?.publishedCourses ?? '—'}
                     sub="Live on platform"
-                    color="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    color="bg-primary/15 text-primary dark:bg-primary/25 dark:text-primary"
                 />
                 <StatCard
                     icon={Users}
@@ -208,7 +208,7 @@ export default function BackofficeDashboard() {
                                     <span className={cn(
                                         'text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0',
                                         course.isPublished
-                                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                            ? 'bg-primary/15 text-primary dark:bg-primary/25 dark:text-primary'
                                             : 'bg-muted text-muted-foreground',
                                     )}>
                                         {course.isPublished ? 'Published' : 'Draft'}

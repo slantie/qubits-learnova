@@ -42,7 +42,7 @@ interface AttendeesTabProps {
 const STATUS_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string; badgeVariant: 'neutral' | 'warning' | 'info' | 'success' }> = {
     NOT_STARTED: { label: 'Not Started', icon: CircleDashed, color: 'text-muted-foreground', badgeVariant: 'neutral' },
     IN_PROGRESS: { label: 'In Progress', icon: CircleHalf, color: 'text-blue-500', badgeVariant: 'info' },
-    COMPLETED: { label: 'Completed', icon: CheckCircle, color: 'text-green-500', badgeVariant: 'success' },
+    COMPLETED: { label: 'Completed', icon: CheckCircle, color: 'text-primary', badgeVariant: 'success' },
 };
 
 function formatDate(dateStr: string | null): string {
@@ -239,7 +239,7 @@ export function AttendeesTab({ courseId, onAddAttendees, onContactAttendees }: A
                                                         <div
                                                             className={cn(
                                                                 'h-full rounded-full transition-all',
-                                                                e.completionPct >= 100 ? 'bg-green-500' : e.completionPct > 0 ? 'bg-blue-500' : 'bg-muted-foreground/20',
+                                                                e.completionPct >= 100 ? 'bg-primary' : e.completionPct > 0 ? 'bg-primary/60' : 'bg-muted-foreground/20',
                                                             )}
                                                             style={{ width: `${Math.min(100, e.completionPct)}%` }}
                                                         />

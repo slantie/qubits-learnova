@@ -358,7 +358,7 @@ function ModuleRow({ title, progress, status, lessons }: ModuleRowProps) {
   const statusConfig = {
     complete: {
       badge: <Badge variant="success">Complete</Badge>,
-      icon: <CheckCircle2 className="size-4 text-green-600 dark:text-green-500 shrink-0" aria-hidden />,
+      icon: <CheckCircle2 className="size-4 text-primary shrink-0" aria-hidden />,
     },
     "in-progress": {
       badge: <Badge variant="warning">In progress</Badge>,
@@ -561,7 +561,7 @@ function ProgressDemo() {
               {[
                 {
                   icon: CheckCircle2,
-                  color: "text-green-600 dark:text-green-500",
+                  color: "text-primary",
                   title: "Completion states",
                   desc: "Done items are muted — remaining work stands out immediately.",
                 },

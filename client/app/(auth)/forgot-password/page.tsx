@@ -208,8 +208,8 @@ export default function ForgotPasswordPage() {
             {/* Step: Done */}
             {step === 'done' && (
                 <div className="flex flex-col items-center gap-4 py-4 text-center">
-                    <div className="size-16 rounded-full bg-green-500/10 flex items-center justify-center">
-                        <CheckCircle className="size-8 text-green-600 dark:text-green-400" />
+                    <div className="size-16 rounded-full bg-primary/10 flex items-center justify-center">
+                        <CheckCircle className="size-8 text-primary" />
                     </div>
                     <h1 className="text-2xl font-medium">Password reset!</h1>
                     <p className="text-sm text-muted-foreground">

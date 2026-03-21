@@ -358,7 +358,7 @@ export default function LearnerQuizPage() {
                                         sel.length === correct.length &&
                                         sel.every((v, i) => v === correct[i]);
                                     return isCorrect
-                                        ? <CheckCircle className="size-5 text-green-500 shrink-0" />
+                                        ? <CheckCircle className="size-5 text-primary shrink-0" />
                                         : <XCircle className="size-5 text-destructive shrink-0" />;
                                 })()}
                             </div>
@@ -373,7 +373,7 @@ export default function LearnerQuizPage() {
                                     let optClass = '';
                                     if (isResult) {
                                         if (isCorrectOpt) {
-                                            optClass = 'border-green-400 bg-green-50/50 dark:bg-green-950/20';
+                                            optClass = 'border-primary/50 bg-primary/5 dark:bg-primary/10';
                                         } else if (isSelected && !isCorrectOpt) {
                                             optClass = 'border-destructive/50 bg-destructive/5';
                                         }
@@ -398,7 +398,7 @@ export default function LearnerQuizPage() {
                                             <div className={cn(
                                                 'size-4 rounded border-2 shrink-0 flex items-center justify-center transition-colors',
                                                 isSelected && !isResult ? 'bg-primary border-primary' : 'border-muted-foreground/40',
-                                                isResult && isCorrectOpt ? 'bg-green-500 border-green-500' : '',
+                                                isResult && isCorrectOpt ? 'bg-primary border-primary' : '',
                                                 isResult && isSelected && !isCorrectOpt ? 'bg-destructive border-destructive' : '',
                                             )}>
                                                 {(isSelected || (isResult && isCorrectOpt)) && (
@@ -409,7 +409,7 @@ export default function LearnerQuizPage() {
                                             </div>
                                             <span className="text-sm flex-1">{opt}</span>
                                             {isResult && isCorrectOpt && (
-                                                <span className="text-xs font-medium text-green-600 shrink-0">Correct</span>
+                                                <span className="text-xs font-medium text-primary shrink-0">Correct</span>
                                             )}
                                         </label>
                                     );

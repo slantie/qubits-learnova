@@ -98,7 +98,7 @@ export function AddAttendeesModal({ courseId, onClose }: AddAttendeesModalProps)
                                 <div className="rounded-lg border bg-muted/30 divide-y">
                                     <div className="flex items-center justify-between px-4 py-3 text-sm">
                                         <span className="text-muted-foreground">Enrolled</span>
-                                        <span className="font-normal text-green-600">{result.enrolled}</span>
+                                        <span className="font-normal text-primary">{result.enrolled}</span>
                                     </div>
                                     <div className="flex items-center justify-between px-4 py-3 text-sm">
                                         <span className="text-muted-foreground">Already enrolled</span>

@@ -125,7 +125,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
         <h2 className="text-lg text-foreground">Question</h2>
         <div className="flex items-center gap-3">
           {saved && (
-            <span className="flex items-center gap-1 text-xs text-green-600 font-medium">
+            <span className="flex items-center gap-1 text-xs text-primary font-medium">
               <Check className="w-3.5 h-3.5" />
               Saved
             </span>
@@ -166,7 +166,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
                 type="checkbox"
                 checked={correctOptions.includes(idx)}
                 onChange={() => handleCorrectToggle(idx)}
-                className="w-4 h-4 accent-green-600 cursor-pointer"
+                className="w-4 h-4 accent-primary cursor-pointer"
               />
               <span className="text-xs text-muted-foreground sr-only">Correct</span>
             </label>
@@ -187,7 +187,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
 
             {/* Correct label */}
             {correctOptions.includes(idx) && (
-              <span className="text-xs text-green-600 font-medium shrink-0">Correct</span>
+              <span className="text-xs text-primary font-medium shrink-0">Correct</span>
             )}
 
             {/* Delete option */}

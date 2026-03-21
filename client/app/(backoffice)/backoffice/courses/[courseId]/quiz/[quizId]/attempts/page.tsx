@@ -44,7 +44,7 @@ interface Analytics {
 
 function ScoreBadge({ pct }: { pct: number }) {
   const color =
-    pct >= 80 ? 'text-green-700 bg-green-50 border-green-200' :
+    pct >= 80 ? 'text-primary bg-primary/15 border-primary/25' :
     pct >= 50 ? 'text-amber-700 bg-amber-50 border-amber-200' :
                 'text-red-700 bg-red-50 border-red-200';
   return (
@@ -299,7 +299,7 @@ export default function QuizAttemptsPage() {
                     <div
                       className={cn(
                         'h-full rounded-full transition-all',
-                        q.correctRate >= 80 ? 'bg-green-500' :
+                        q.correctRate >= 80 ? 'bg-primary' :
                         q.correctRate >= 50 ? 'bg-amber-400' : 'bg-red-400',
                       )}
                       style={{ width: `${q.correctRate}%` }}

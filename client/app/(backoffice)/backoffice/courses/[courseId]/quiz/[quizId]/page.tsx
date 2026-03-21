@@ -206,7 +206,7 @@ export default function QuizBuilderPage() {
               <Trophy className="w-3.5 h-3.5" />
               Rewards
               {quiz.rewards && (
-                <span className="ml-auto text-xs text-green-600 font-medium">Set</span>
+                <span className="ml-auto text-xs text-primary font-medium">Set</span>
               )}
             </Button>
             <Link

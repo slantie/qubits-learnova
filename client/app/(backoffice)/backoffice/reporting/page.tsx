@@ -32,7 +32,7 @@ function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
     NOT_STARTED: { label: 'Not Started', cls: 'bg-muted text-muted-foreground border-border' },
     IN_PROGRESS:  { label: 'In Progress', cls: 'bg-primary/10 text-primary border-primary/20'  },
-    COMPLETED:    { label: 'Completed',   cls: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-400 dark:border-green-800/50' },
+    COMPLETED:    { label: 'Completed',   cls: 'bg-primary/15 text-primary border-primary/25 dark:bg-primary/25 dark:text-primary dark:border-primary/35' },
   };
   const { label, cls } = map[status] ?? { label: status, cls: 'bg-muted text-muted-foreground border-border' };
   return (

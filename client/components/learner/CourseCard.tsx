@@ -120,7 +120,7 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
                 ? 'bg-primary text-primary-foreground border-primary/20'
                 : 'border-border text-foreground bg-muted',
               course.accessRule === 'ON_PAYMENT' && !enrollment && 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/50',
-              enrollment?.status === 'COMPLETED' && 'bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-400 dark:border-green-800/50',
+              enrollment?.status === 'COMPLETED' && 'bg-primary/15 text-primary border-primary/25',
             )}>
               {getCtaLabel()}
             </span>
