@@ -431,6 +431,42 @@ export const getProfile = async (userId: number) => {
   };
 };
 
+// ─── Public Profile ───────────────────────────────────────────────────────────
+
+export const getPublicProfile = async (userId: number) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, name: true, totalPoints: true, currentBadge: true, createdAt: true },
+  });
+  if (!user) {
+    throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
+  }
+
+  const enrollmentCount = await prisma.enrollment.count({ where: { userId } });
+  const completedCount = await prisma.enrollment.count({
+    where: { userId, status: 'COMPLETED' },
+  });
+
+  const earnedBadges = await prisma.userBadge.findMany({
+    where: { userId },
+    select: { badgeKey: true, earnedAt: true },
+    orderBy: { earnedAt: 'asc' },
+  });
+
+  return {
+    user: {
+      id: user.id,
+      name: user.name,
+      createdAt: user.createdAt.toISOString(),
+    },
+    totalPoints: user.totalPoints,
+    currentBadge: user.currentBadge,
+    enrollmentCount,
+    completedCount,
+    badges: earnedBadges.map(b => ({ badgeKey: b.badgeKey, earnedAt: b.earnedAt.toISOString() })),
+  };
+};
+
 // ─── Mock payment ─────────────────────────────────────────────────────────────
 
 export const mockPayment = async (userId: number, courseId: number) => {
