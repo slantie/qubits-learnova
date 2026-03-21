@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { ContentTab } from '@/components/backoffice/course-form/ContentTab';
 import { QuizTab } from '@/components/backoffice/course-form/QuizTab';
 import { AttendeesTab } from '@/components/backoffice/course-form/AttendeesTab';
+import { CertificateTab } from '@/components/backoffice/course-form/CertificateTab';
 import { AddAttendeesModal } from '@/components/backoffice/course-form/AddAttendeesModal';
 import { ContactAttendeesModal } from '@/components/backoffice/course-form/ContactAttendeesModal';
 import {
@@ -362,6 +363,7 @@ export default function CourseEditPage() {
                     <TabsTrigger value="description">Description</TabsTrigger>
                     <TabsTrigger value="options">Options</TabsTrigger>
                     <TabsTrigger value="quiz">Quiz</TabsTrigger>
+                    <TabsTrigger value="certificate">Certificate</TabsTrigger>
                 </TabsList>
 
                 {/* Content Tab */}
@@ -498,6 +500,19 @@ export default function CourseEditPage() {
                 {/* Quiz Tab */}
                 <TabsContent value="quiz" className="mt-4">
                     <QuizTab courseId={courseId} />
+                </TabsContent>
+
+                {/* Certificate Tab */}
+                <TabsContent value="certificate" className="mt-4">
+                    <CertificateTab
+                        courseId={courseId}
+                        currentTemplate={course.certificateTemplate ?? null}
+                        onTemplateChange={(tpl) =>
+                            setCourse((prev) =>
+                                prev ? { ...prev, certificateTemplate: tpl } : prev,
+                            )
+                        }
+                    />
                 </TabsContent>
             </Tabs>
 

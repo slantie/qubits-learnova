@@ -3,6 +3,7 @@ import { sendMail } from '../../lib/mailer';
 import { hashPassword } from '../../lib/hash';
 import { AppError } from '../../config/AppError';
 import { v4 as uuidv4 } from 'uuid';
+import { issueCertificate } from '../certificates/certificate.service';
 import type {
   CreateCourseInput,
   UpdateCourseInput,
@@ -300,6 +301,23 @@ export const markLessonComplete = async (
       where: { id: enrollment.id },
       data: { status: 'COMPLETED', completedAt: new Date() },
     });
+
+    // Auto-issue certificate if at least 1 quiz has been attempted
+    try {
+      const quizzes = await prisma.quiz.findMany({ where: { courseId }, select: { id: true } });
+      let eligible = true;
+      if (quizzes.length > 0) {
+        const attemptCount = await prisma.quizAttempt.count({
+          where: { userId, quizId: { in: quizzes.map(q => q.id) } },
+        });
+        if (attemptCount === 0) eligible = false;
+      }
+      if (eligible) {
+        const courseData = await prisma.course.findUnique({ where: { id: courseId }, select: { certificateTemplate: true } });
+        const tplKey = courseData?.certificateTemplate || 'classic-gold';
+        await issueCertificate(userId, courseId, tplKey);
+      }
+    } catch { /* certificate issuance is non-fatal */ }
   }
 
   return { progress, completedCount, totalLessons };

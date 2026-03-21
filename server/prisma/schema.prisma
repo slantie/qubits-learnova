@@ -78,6 +78,7 @@ model User {
   quizAttempts     QuizAttempt[]
   reviews          Review[]
   lessonProgresses LessonProgress[]
+  certificates     Certificate[]
 }
 
 model Course {
@@ -92,6 +93,8 @@ model Course {
   price        Decimal?   @db.Decimal(10, 2)
   websiteUrl   String?
 
+  certificateTemplate String?
+
   instructorId  Int
   instructor    User  @relation("CourseInstructor", fields: [instructorId], references: [id])
   courseAdminId Int?
@@ -100,10 +103,11 @@ model Course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  lessons     Lesson[]
-  quizzes     Quiz[]
-  enrollments Enrollment[]
-  reviews     Review[]
+  lessons      Lesson[]
+  quizzes      Quiz[]
+  enrollments  Enrollment[]
+  reviews      Review[]
+  certificates Certificate[]
 }
 
 model Lesson {
@@ -234,6 +238,21 @@ model Review {
   rating     Int
   reviewText String?
   createdAt  DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model Certificate {
+  id           Int      @id @default(autoincrement())
+  uid          String   @unique @default(uuid())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id])
+  courseId     Int
+  course       Course   @relation(fields: [courseId], references: [id])
+  templateKey  String
+  scorePercent Int
+  pointsEarned Int      @default(0)
+  issuedAt     DateTime @default(now())
 
   @@unique([userId, courseId])
 }

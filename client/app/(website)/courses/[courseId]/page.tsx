@@ -22,7 +22,8 @@ import {
     Clock, BookOpen, ChevronLeft, Loader2,
     Link2, FileDown, X, ChevronRight, Download,
     CheckCircle, Circle, Trophy, ArrowRight,
-    Users, Lock,
+    Users, Lock, Award, ExternalLink, Printer,
+    Share2, Copy, BadgeCheck, Star,
 } from 'lucide-react';
 import { LessonType } from '@/types';
 
@@ -341,6 +342,13 @@ export default function CourseDetailPage() {
     const [lessonLoading, setLessonLoading] = useState(false);
     const [marking, setMarking] = useState(false);
 
+    // Certificate
+    const [certificate, setCertificate] = useState<{ uid: string; pointsEarned: number; issuedAt: string } | null>(null);
+    const [certHtml, setCertHtml] = useState<string | null>(null);
+    const [showCertModal, setShowCertModal] = useState(false);
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+
     // Load overview (learner API)
     const loadOverview = useCallback(async () => {
         try {
@@ -373,8 +381,21 @@ export default function CourseDetailPage() {
         } catch { /* non-fatal */ }
     }, [courseId]);
 
+    const loadCertificate = useCallback(async () => {
+        try {
+            const data = await api.get(`/certificates/course/${courseId}`);
+            const cert = data.certificate;
+            if (cert) {
+                setCertificate(cert);
+                const htmlRes = await fetch(`${apiUrl}/certificates/view/${cert.uid}`);
+                if (htmlRes.ok) setCertHtml(await htmlRes.text());
+            }
+        } catch { /* no certificate yet */ }
+    }, [courseId, apiUrl]);
+
     useEffect(() => { loadOverview(); }, [loadOverview]);
     useEffect(() => { if (isAuthenticated) loadCourseView(); }, [isAuthenticated, loadCourseView]);
+    useEffect(() => { if (isAuthenticated) loadCertificate(); }, [isAuthenticated, loadCertificate]);
 
     // Load lesson detail
     useEffect(() => {
@@ -525,6 +546,37 @@ export default function CourseDetailPage() {
                                     )}
                                 </div>
                             )}
+
+                            {certificate && (
+                                <div className="mt-4 rounded-lg border border-border bg-muted/30 p-3">
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <BadgeCheck className="size-4 text-primary shrink-0" />
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-xs font-semibold text-foreground leading-tight">Certificate Earned</p>
+                                            <p className="text-[11px] text-muted-foreground tabular-nums">
+                                                {new Date(certificate.issuedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                {certificate.pointsEarned > 0 && <> · {certificate.pointsEarned} pts</>}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setShowCertModal(true)}
+                                            className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md px-3 py-1.5 transition-colors"
+                                        >
+                                            <Award className="size-3" /> View
+                                        </button>
+                                        <a
+                                            href={`${apiUrl}/certificates/verify/${certificate.uid}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex-1 inline-flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground bg-muted hover:bg-muted/80 border border-border rounded-md px-3 py-1.5 transition-colors"
+                                        >
+                                            <ExternalLink className="size-3" /> Verify
+                                        </a>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <nav className="flex-1 py-2">
@@ -592,6 +644,158 @@ export default function CourseDetailPage() {
                         )}
                     </main>
                 </div>
+
+                {/* ── Certificate modal ── */}
+                {showCertModal && certificate && (
+                    <div
+                        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Certificate viewer"
+                    >
+                        {/* Backdrop */}
+                        <div
+                            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                            onClick={() => setShowCertModal(false)}
+                            aria-hidden="true"
+                        />
+
+                        {/* Panel */}
+                        <div className="relative z-10 w-full sm:w-[95vw] sm:max-w-[980px] h-[96dvh] sm:h-[88vh] flex flex-col bg-background rounded-t-2xl sm:rounded-2xl border border-border/60 shadow-2xl overflow-hidden">
+
+                            {/* ── Modal header ── */}
+                            <div className="shrink-0 flex flex-col gap-0 border-b bg-card">
+                                {/* Top bar: title + actions */}
+                                <div className="flex items-center justify-between px-5 py-3 gap-3">
+                                    {/* Left: icon + label */}
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                        <div className="size-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0">
+                                            <Award className="size-4 text-amber-600 dark:text-amber-400" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-semibold leading-tight truncate">Your Certificate</p>
+                                            <p className="text-[11px] text-muted-foreground leading-tight">
+                                                Issued {new Date(certificate.issuedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Right: action group */}
+                                    <div className="flex items-center gap-1.5 shrink-0">
+                                        {/* Share / copy link */}
+                                        <button
+                                            onClick={() => {
+                                                navigator.clipboard.writeText(`${apiUrl}/certificates/verify/${certificate.uid}`);
+                                                toast.success('Verification link copied to clipboard');
+                                            }}
+                                            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg border border-border/70 hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            aria-label="Copy verification link to clipboard"
+                                        >
+                                            <Copy className="size-3" />
+                                            Copy Link
+                                        </button>
+
+                                        {/* Open full size */}
+                                        <a
+                                            href={`${apiUrl}/certificates/view/${certificate.uid}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground px-3 py-1.5 rounded-lg border border-border/70 hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            aria-label="Open certificate in full size in a new tab"
+                                        >
+                                            <ExternalLink className="size-3" />
+                                            Full Size
+                                        </a>
+
+                                        {/* Primary: Print / Download */}
+                                        <button
+                                            onClick={() => {
+                                                const w = window.open('', '_blank');
+                                                if (w && certHtml) { w.document.write(certHtml); w.document.close(); w.print(); }
+                                            }}
+                                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            aria-label="Print or save certificate as PDF"
+                                        >
+                                            <Printer className="size-3" />
+                                            <span className="hidden sm:inline">Print / </span>PDF
+                                        </button>
+
+                                        {/* Close */}
+                                        <button
+                                            onClick={() => setShowCertModal(false)}
+                                            className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            aria-label="Close certificate viewer"
+                                        >
+                                            <X className="size-4" />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Metadata chips row */}
+                                <div className="flex items-center gap-2 px-5 pb-3 flex-wrap">
+                                    {/* Points chip */}
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted/60 border border-border/50 rounded-full px-2.5 py-0.5">
+                                        <Star className="size-3" />
+                                        {certificate.pointsEarned} pts earned
+                                    </span>
+                                    {/* UID chip */}
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground bg-muted/60 border border-border/50 rounded-full px-2.5 py-0.5 font-mono tracking-tight">
+                                        <BadgeCheck className="size-3 shrink-0" />
+                                        {certificate.uid}
+                                    </span>
+                                    {/* Mobile-only action links */}
+                                    <a
+                                        href={`${apiUrl}/certificates/view/${certificate.uid}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="sm:hidden inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-foreground"
+                                        aria-label="Open certificate full size"
+                                    >
+                                        <ExternalLink className="size-3" />
+                                        Full Size
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* ── Certificate display area ── */}
+                            <div className="flex-1 overflow-auto bg-zinc-100 dark:bg-zinc-900 p-4 sm:p-8 flex items-start justify-center">
+                                {certHtml ? (
+                                    /*
+                                     * Physical document treatment:
+                                     * - Slight drop shadow at multiple levels to simulate paper depth
+                                     * - Subtle warm tint on the outer container echoes the parchment feel
+                                     * - No rotation on mobile (too disorienting in tight space)
+                                     */
+                                    <div className="w-full max-w-[880px] sm:rotate-[-0.4deg] transition-transform duration-300 hover:rotate-0">
+                                        <div className="rounded-lg overflow-hidden shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_30px_-5px_rgba(0,0,0,0.2),0_20px_60px_-10px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
+                                            <iframe
+                                                srcDoc={certHtml}
+                                                className="w-full bg-white"
+                                                style={{ minHeight: '560px', height: '62vh', display: 'block' }}
+                                                title="Certificate of completion"
+                                                sandbox=""
+                                                aria-label="Certificate document preview"
+                                            />
+                                        </div>
+                                        {/* Subtle base shadow to complete the "lifted paper" effect */}
+                                        <div className="h-2 mx-6 rounded-b-full bg-black/10 dark:bg-black/30 blur-md -mt-1" aria-hidden="true" />
+                                    </div>
+                                ) : (
+                                    /* Loading state */
+                                    <div className="flex flex-col items-center justify-center gap-4 text-muted-foreground py-24" aria-live="polite" aria-busy="true">
+                                        <div className="size-14 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                                            <Loader2 className="size-6 animate-spin text-amber-500" />
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="text-sm font-medium text-foreground">Preparing your certificate</p>
+                                            <p className="text-xs text-muted-foreground mt-1">This should only take a moment</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }

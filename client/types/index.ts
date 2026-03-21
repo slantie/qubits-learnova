@@ -30,6 +30,7 @@ export interface CourseDetail {
   isPublished: boolean;
   coverImage: string | null;
   websiteUrl: string | null;
+  certificateTemplate: string | null;
   visibility: Visibility;
   accessRule: AccessRule;
   instructorId: number;

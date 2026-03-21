@@ -46,7 +46,7 @@ echo [learnova] Starting video-service worker (transcoder)...
 start "learnova: video-worker" /D "%VIDEO_SERVICE%" cmd /c "npm run dev:worker > "%LOGS%\video-worker.log" 2>&1"
 
 :: ── 4. Server (main API) ──────────────────────────────────────────────────────
-echo [learnova] Starting server (port 3001)...
+echo [learnova] Starting server (port 4000)...
 start "learnova: server" /D "%SERVER%" cmd /c "npm run dev > "%LOGS%\server.log" 2>&1"
 
 :: ── 5. Client (Next.js) ───────────────────────────────────────────────────────
@@ -58,7 +58,7 @@ echo.
 echo  [learnova] All services started!
 echo.
 echo    Client        -^> http://localhost:3000
-echo    Server API    -^> http://localhost:3001/api
+echo    Server API    -^> http://localhost:4000/api
 echo    Video Service -^> http://localhost:4001/api
 echo    MinIO Console -^> http://localhost:9001  (minioadmin / minioadmin)
 echo    Redis         -^> localhost:6379
