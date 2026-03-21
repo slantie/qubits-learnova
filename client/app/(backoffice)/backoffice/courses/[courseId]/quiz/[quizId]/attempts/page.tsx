@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { ArrowLeft, Users, BarChart3, Trophy, Target, TrendingUp } from 'lucide-react';
+import { DotsLoader } from '@/components/ui/dots-loader';
 import { cn } from '@/lib/utils';
 
 interface Attempt {
@@ -93,8 +94,8 @@ export default function QuizAttemptsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-64px)] text-muted-foreground text-sm">
-        Loading…
+      <div className="flex items-center justify-center h-[calc(100vh-64px)]">
+        <DotsLoader label="Loading attempts…" />
       </div>
     );
   }

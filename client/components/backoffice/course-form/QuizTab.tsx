@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Pencil, Trash2, ClipboardList } from 'lucide-react';
+import { DotsLoader } from '@/components/ui/dots-loader';
 import { toast } from 'sonner';
 
 interface QuizRewards {
@@ -83,7 +84,7 @@ export function QuizTab({ courseId }: QuizTabProps) {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+                <DotsLoader size="sm" />
             </div>
         );
     }

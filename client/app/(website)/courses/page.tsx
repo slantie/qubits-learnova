@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { api } from '@/lib/api';
-import { BookOpen, Clock, Users, Search, ArrowRight, GraduationCap } from 'lucide-react';
+import { BookOpen, Clock, Search, ArrowRight, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -60,7 +60,7 @@ export default function CoursesPage() {
     }, [search]);
 
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+        <div className="mx-auto px-4 sm:px-6 py-12">
             {/* Header */}
             <div className="mb-10">
                 {!isLoading && user && (
@@ -118,7 +118,7 @@ export default function CoursesPage() {
                     {courses.map((course) => (
                         <article key={course.id} className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 flex flex-col">
                             {/* Cover */}
-                            <div className="h-44 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                            <div className="h-44 bg-linear-to-br from-primary/10 to-primary/5 flex items-center justify-center">
                                 {course.coverImage ? (
                                     <img
                                         src={course.coverImage}

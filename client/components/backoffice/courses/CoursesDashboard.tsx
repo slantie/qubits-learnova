@@ -9,6 +9,7 @@ import { CreateCourseModal } from './CreateCourseModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { LayoutGrid, List, Search, Plus } from 'lucide-react';
+import { DotsLoader } from '@/components/ui/dots-loader';
 
 export function CoursesDashboard() {
     const [view, setView] = useState<'kanban' | 'list'>('kanban');
@@ -79,7 +80,7 @@ export function CoursesDashboard() {
             <div>
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <DotsLoader />
                     </div>
                 ) : view === 'kanban' ? (
                     <KanbanView courses={courses} onRefresh={fetchCourses} />

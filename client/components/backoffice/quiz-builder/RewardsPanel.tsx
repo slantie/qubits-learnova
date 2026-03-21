@@ -5,16 +5,18 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 
+interface RewardShape {
+  attempt1Points: number;
+  attempt2Points: number;
+  attempt3Points: number;
+  attempt4PlusPoints: number;
+}
+
 interface RewardsPanelProps {
-  reward: {
-    attempt1Points: number;
-    attempt2Points: number;
-    attempt3Points: number;
-    attempt4PlusPoints: number;
-  } | null;
+  reward: RewardShape | null;
   courseId: string;
   quizId: string;
-  onSave: (reward: string) => void;
+  onSave: (reward: RewardShape) => void;
   onClose: () => void;
 }
 

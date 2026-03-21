@@ -23,7 +23,7 @@ import {
     Link2, FileDown, X, ChevronRight, Download,
     CheckCircle, Circle, Trophy, ArrowRight,
     Users, Lock, Award, ExternalLink, Printer,
-    Share2, Copy, BadgeCheck, Star,
+    Copy, BadgeCheck, Star,
 } from 'lucide-react';
 import { LessonType } from '@/types';
 
@@ -113,8 +113,8 @@ function LessonContent({
         if (visibleTabs.length > 0 && !visibleTabs.find(t => t.key === activeTab)) {
             setActiveTab(visibleTabs[0].key);
         }
-        setLightboxIndex(null);
-    }, [lesson.id]);
+    }, [visibleTabs, activeTab]);
+    
 
     useEffect(() => {
         if (lightboxIndex === null) return;
@@ -147,7 +147,7 @@ function LessonContent({
 
             {/* Image lesson */}
             {lesson.type === 'IMAGE' && lesson.filePath && (
-                <img src={lesson.filePath} alt={lesson.title} className="w-full rounded-xl object-contain max-h-[500px] border" />
+                <img src={lesson.filePath} alt={lesson.title} className="w-full rounded-xl object-contain max-h-125 border" />
             )}
 
             {/* Document lesson */}
@@ -193,14 +193,14 @@ function LessonContent({
                             </button>
                         ))}
                     </div>
-                    <div className="min-h-[120px]">
+                    <div className="min-h-30">
                         {activeTab === 'description' && lesson.description && (
                             <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground leading-relaxed" dangerouslySetInnerHTML={{ __html: lesson.description }} />
                         )}
                         {activeTab === 'images' && images.length > 0 && (
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                 {images.map((a, i) => (
-                                    <button key={a.id} onClick={() => setLightboxIndex(i)} className="rounded-xl overflow-hidden border bg-muted/30 aspect-[4/3] group cursor-pointer">
+                                    <button key={a.id} onClick={() => setLightboxIndex(i)} className="rounded-xl overflow-hidden border bg-muted/30 aspect-4/3 group cursor-pointer">
                                         <img src={a.filePath!} alt={a.label} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                                     </button>
                                 ))}
@@ -227,7 +227,7 @@ function LessonContent({
                                     const label = h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
                                     return (
                                         <div key={i} className="flex items-start gap-4 px-4 py-3 hover:bg-muted/40 transition-colors">
-                                            <span className="font-mono text-xs tabular-nums text-primary pt-0.5 shrink-0 min-w-[48px]">{label}</span>
+                                            <span className="font-mono text-xs tabular-nums text-primary pt-0.5 shrink-0 min-w-12">{label}</span>
                                             <div className="flex flex-col min-w-0">
                                                 <span className="text-sm font-medium">{ts.label}</span>
                                                 {ts.description && <span className="text-xs text-muted-foreground mt-0.5">{ts.description}</span>}
@@ -293,7 +293,7 @@ function LessonContent({
             {/* Lightbox */}
             {lightboxIndex !== null && images[lightboxIndex] && (
                 <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightboxIndex(null)}>
-                    <button onClick={() => setLightboxIndex(null)} className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10"><X className="size-5" /></button>
+                    <Button onClick={() => setLightboxIndex(null)} className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10"><X className="size-5" /></Button>
                     <span className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-sm font-mono">{lightboxIndex + 1} / {images.length}</span>
                     {lesson.allowDownload && (
                         <a href={getDownloadUrl(images[lightboxIndex].filePath!, images[lightboxIndex].label)} download={images[lightboxIndex].label} onClick={e => e.stopPropagation()} className="absolute top-4 right-16 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
@@ -301,14 +301,14 @@ function LessonContent({
                         </a>
                     )}
                     {lightboxIndex > 0 && (
-                        <button onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
+                        <Button onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }} className="absolute left-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
                             <ChevronLeft className="size-6" />
-                        </button>
+                        </Button>
                     )}
                     {lightboxIndex < images.length - 1 && (
-                        <button onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
+                        <Button onClick={e => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }} className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
                             <ChevronRight className="size-6" />
-                        </button>
+                        </Button>
                     )}
                     <img src={images[lightboxIndex].filePath!} alt={images[lightboxIndex].label} className="max-w-[90vw] max-h-[85vh] object-contain rounded-lg shadow-2xl" onClick={e => e.stopPropagation()} />
                     <p className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white/80 text-sm bg-black/50 px-3 py-1.5 rounded-lg backdrop-blur-sm max-w-[80vw] truncate">{images[lightboxIndex].label}</p>
@@ -434,8 +434,10 @@ export default function CourseDetailPage() {
             await enrollInCourse(Number(courseId));
             toast.success('Enrolled successfully!');
             await Promise.all([loadOverview(), loadCourseView()]);
-        } catch (err: any) {
-            toast.error(err?.data?.message || 'Enrollment failed');
+        } catch (err) {
+            const error = err as { data?: { message?: string } } | Error;
+            const message = typeof error === 'object' && 'data' in error ? (error as { data?: { message?: string } }).data?.message : undefined;
+            toast.error(message || 'Enrollment failed');
         } finally { setEnrolling(false); }
     };
 
@@ -662,7 +664,7 @@ export default function CourseDetailPage() {
                         />
 
                         {/* Panel */}
-                        <div className="relative z-10 w-full sm:w-[95vw] sm:max-w-[980px] h-[96dvh] sm:h-[88vh] flex flex-col bg-background rounded-t-2xl sm:rounded-2xl border border-border/60 shadow-2xl overflow-hidden">
+                        <div className="relative z-10 w-full sm:w-[95vw] sm:max-w-245 h-[96dvh] sm:h-[88vh] flex flex-col bg-background rounded-t-2xl sm:rounded-2xl border border-border/60 shadow-2xl overflow-hidden">
 
                             {/* ── Modal header ── */}
                             <div className="shrink-0 flex flex-col gap-0 border-b bg-card">
@@ -711,8 +713,12 @@ export default function CourseDetailPage() {
                                         {/* Primary: Print / Download */}
                                         <button
                                             onClick={() => {
-                                                const w = window.open('', '_blank');
-                                                if (w && certHtml) { w.document.write(certHtml); w.document.close(); w.print(); }
+                                                if (certHtml) {
+                                                    const blob = new Blob([certHtml], { type: 'text/html' });
+                                                    const url = URL.createObjectURL(blob);
+                                                    const w = window.open(url, '_blank');
+                                                    if (w) { w.onload = () => { w.print(); URL.revokeObjectURL(url); }; }
+                                                }
                                             }}
                                             className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/90 px-3 py-1.5 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                                             aria-label="Print or save certificate as PDF"
@@ -767,7 +773,7 @@ export default function CourseDetailPage() {
                                      * - Subtle warm tint on the outer container echoes the parchment feel
                                      * - No rotation on mobile (too disorienting in tight space)
                                      */
-                                    <div className="w-full max-w-[880px] sm:rotate-[-0.4deg] transition-transform duration-300 hover:rotate-0">
+                                    <div className="w-full max-w-220 sm:rotate-[-0.4deg] transition-transform duration-300 hover:rotate-0">
                                         <div className="rounded-lg overflow-hidden shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_10px_30px_-5px_rgba(0,0,0,0.2),0_20px_60px_-10px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
                                             <iframe
                                                 srcDoc={certHtml}

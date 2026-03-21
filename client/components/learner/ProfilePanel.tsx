@@ -45,7 +45,7 @@ export function ProfilePanel() {
   return (
     <div className="rounded-xl border bg-card overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6">
+      <div className="bg-linear-to-br from-primary/10 via-primary/5 to-transparent p-6">
         <div className="flex items-center gap-3">
           <div className="size-14 rounded-full bg-primary/15 flex items-center justify-center text-primary font-semibold text-lg ring-2 ring-primary/20">
             {initials}

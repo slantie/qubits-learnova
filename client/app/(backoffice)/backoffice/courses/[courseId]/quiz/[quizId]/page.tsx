@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { QuestionEditor } from '@/components/backoffice/quiz-builder/QuestionEditor';
 import { RewardsPanel } from '@/components/backoffice/quiz-builder/RewardsPanel';
 import { ArrowLeft, Plus, Trophy, FileQuestion, BarChart3 } from 'lucide-react';
+import { DotsLoader } from '@/components/ui/dots-loader';
 
 interface Question {
   id: number;
@@ -114,8 +115,8 @@ export default function QuizBuilderPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-1 items-center justify-center text-muted-foreground">
-        Loading quiz…
+      <div className="flex flex-1 items-center justify-center">
+        <DotsLoader label="Loading quiz…" />
       </div>
     );
   }

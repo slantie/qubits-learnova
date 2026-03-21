@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
+import { DotsLoader } from '@/components/ui/dots-loader';
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -96,7 +97,7 @@ export function ContentTab({ courseId }: ContentTabProps) {
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
+                <DotsLoader size="sm" />
             </div>
         );
     }

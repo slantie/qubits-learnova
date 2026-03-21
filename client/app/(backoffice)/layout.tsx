@@ -4,6 +4,7 @@ import { ReactNode, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { PageLoader } from '@/components/ui/page-loader';
 import Image from 'next/image';
 import {
     LogOut, BookOpen, BarChart3, LayoutDashboard,
@@ -77,19 +78,7 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
     }, [router]);
 
     if (isLoading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-background">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="relative">
-                        <Image src="/learnova.svg" alt="Learnova" width={64} height={64} className="size-16 object-contain animate-pulse" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-base font-semibold text-foreground">Learnova</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">Loading your panel…</p>
-                    </div>
-                </div>
-            </div>
-        );
+        return <PageLoader label="Loading your panel…" />;
     }
 
     if (!user || (role !== 'ADMIN' && role !== 'INSTRUCTOR')) return null;

@@ -9,6 +9,7 @@ import { CourseCard } from '@/components/learner/CourseCard';
 import { ProfilePanel } from '@/components/learner/ProfilePanel';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { DotsLoader } from '@/components/ui/dots-loader';
 import { Search, GraduationCap, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -45,7 +46,7 @@ export default function MyCoursesPage() {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="size-7 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        <DotsLoader />
       </div>
     );
   }

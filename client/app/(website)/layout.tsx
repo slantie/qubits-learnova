@@ -39,7 +39,7 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                 <div className="size-7 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold">
                     {initials}
                 </div>
-                <span className="hidden sm:block text-sm font-medium max-w-[120px] truncate">
+                <span className="hidden sm:block text-sm font-medium max-w-30 truncate">
                     {user?.name?.split(' ')[0] ?? 'You'}
                 </span>
                 {(user?.totalPoints ?? 0) > 0 && (

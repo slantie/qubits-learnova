@@ -42,7 +42,7 @@ export function CourseCard({ course, showProgress = true }: CourseCardProps) {
     <Link href={`/courses/${course.id}`} className="block">
       <article className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col group h-full">
         {/* Cover image */}
-        <div className="relative h-40 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center overflow-hidden">
+        <div className="relative h-40 bg-linear-to-br from-primary/10 to-primary/5 flex items-center justify-center overflow-hidden">
           {course.coverImage ? (
             <img
               src={course.coverImage}

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 interface LeaderboardEntry {
     rank: number;
-    userId: string;
+    userId: number;
     name: string;
     email: string;
     totalPoints: number;

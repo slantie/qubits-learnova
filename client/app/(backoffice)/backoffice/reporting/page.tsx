@@ -44,7 +44,7 @@ function StatusBadge({ status }: { status: string }) {
 
 function CompletionCell({ pct }: { pct: number }) {
   return (
-    <div className="flex items-center gap-2 min-w-[80px]">
+    <div className="flex items-center gap-2 min-w-20">
       <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
         <div
           className="h-full rounded-full bg-primary transition-all"

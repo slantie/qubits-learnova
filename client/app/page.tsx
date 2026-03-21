@@ -18,7 +18,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import React, { useEffect, useState } from "react"
+import React, { useLayoutEffect, useState } from "react"
 import {
   Brain,
   Code2,
@@ -42,16 +42,26 @@ import { useAuth } from "@/hooks/useAuth"
 import Link from "next/link"
 import Image from "next/image"
 
-const ButtonAnchor = React.forwardRef<HTMLAnchorElement, React.ComponentProps<"a"> & { variant?: any, size?: any }>(
-  ({ className, variant, size, ...props }, ref) => (
-    <a className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />
-  )
-)
+const ButtonAnchor = React.forwardRef<
+  HTMLAnchorElement,
+  React.ComponentProps<"a"> & { variant?: any; size?: any }
+>(({ className, variant, size, ...props }, ref) => (
+  <a
+    className={cn(buttonVariants({ variant, size, className }))}
+    ref={ref}
+    {...props}
+  />
+))
 ButtonAnchor.displayName = "ButtonAnchor"
 
 function ProgressBar({ value, className }: any) {
   return (
-    <div className={cn("w-full bg-muted rounded-full overflow-hidden h-2", className)}>
+    <div
+      className={cn(
+        "h-2 w-full overflow-hidden rounded-full bg-muted",
+        className
+      )}
+    >
       <div className="am-progress-bar-fill" style={{ width: `${value}%` }} />
     </div>
   )
@@ -63,8 +73,27 @@ function CircleProgress({ value, size, strokeWidth }: any) {
   const dashoffset = dasharray - (dasharray * value) / 100
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <circle className="text-muted" strokeWidth={strokeWidth} stroke="currentColor" fill="transparent" r={radius} cx={size / 2} cy={size / 2} />
-      <circle className="text-primary transition-all" strokeWidth={strokeWidth} strokeDasharray={dasharray} strokeDashoffset={dashoffset} strokeLinecap="round" stroke="currentColor" fill="transparent" r={radius} cx={size / 2} cy={size / 2} />
+      <circle
+        className="text-muted"
+        strokeWidth={strokeWidth}
+        stroke="currentColor"
+        fill="transparent"
+        r={radius}
+        cx={size / 2}
+        cy={size / 2}
+      />
+      <circle
+        className="text-primary transition-all"
+        strokeWidth={strokeWidth}
+        strokeDasharray={dasharray}
+        strokeDashoffset={dashoffset}
+        strokeLinecap="round"
+        stroke="currentColor"
+        fill="transparent"
+        r={radius}
+        cx={size / 2}
+        cy={size / 2}
+      />
     </svg>
   )
 }
@@ -75,7 +104,9 @@ function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  useEffect(() => { setMounted(true) }, [])
+  useLayoutEffect(() => {
+    setMounted(true)
+  }, [])
 
   if (!mounted) {
     // Render placeholder to prevent layout shift
@@ -89,10 +120,11 @@ function ThemeToggle() {
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
     >
-      {resolvedTheme === "dark"
-        ? <Sun className="size-4" />
-        : <Moon className="size-4" />
-      }
+      {resolvedTheme === "dark" ? (
+        <Sun className="size-4" />
+      ) : (
+        <Moon className="size-4" />
+      )}
     </Button>
   )
 }
@@ -105,35 +137,39 @@ function ThemeToggle() {
  * Bottom border is 1px slate — never decorative, always structural.
  */
 function Nav() {
-  const { user, isAuthenticated, role } = useAuth()
-
-  const handleScrollToCTA = () => {
-    document.getElementById("get-started")?.scrollIntoView({ behavior: "smooth" })
-  }
+  const { isAuthenticated, role } = useAuth()
 
   return (
     <nav
-      className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border"
+      className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm"
       aria-label="Main navigation"
     >
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
+      <div className="mx-auto flex h-16 items-center justify-between px-4">
         {/* Wordmark — weight 700, tight tracking */}
-        <div className="flex items-center gap-3">
-          <Image src="/learnova.png" alt="Learnova" width={24} height={24} className="size-6 rounded-md" aria-hidden />
-          <Link href="/" className="text-lg font-medium tracking-tight text-foreground select-none">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/learnova.svg"
+            alt="Learnova"
+            width={36}
+            height={36}
+            className="rounded-md"
+            aria-hidden
+          />
+          <Link
+            href="/"
+            className="text-lg font-medium tracking-tight text-foreground select-none"
+          >
             Learnova
           </Link>
-          <Badge variant="primary" className="hidden sm:inline-flex text-[11px]">
-            Beta
-          </Badge>
         </div>
 
         {/* Nav links — desktop only, weight 500 */}
-        <div className="hidden md:flex items-center gap-8" role="list">
+        <div className="hidden items-center gap-8 md:flex" role="list">
           {[
             { label: "Features", href: "#features" },
             { label: "How it works", href: "#progress-demo" },
             { label: "Stack", href: "#stack" },
+            { label: "Team", href: "/team" },
           ].map(({ label, href }) => (
             <a
               key={href}
@@ -141,7 +177,7 @@ function Nav() {
               role="listitem"
               className={cn(
                 "text-sm font-medium text-muted-foreground",
-                "hover:text-foreground transition-colors duration-150",
+                "transition-colors duration-150 hover:text-foreground"
               )}
             >
               {label}
@@ -154,7 +190,7 @@ function Nav() {
           <ButtonAnchor
             variant="ghost"
             size="icon"
-            href="https://github.com"
+            href="https://github.com/slantie/qubits-learnova"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="View source on GitHub"
@@ -175,12 +211,16 @@ function Nav() {
             </ButtonAnchor>
           ) : (
             <ButtonAnchor
-              href={role === 'ADMIN' || role === 'INSTRUCTOR' ? '/backoffice/courses' : '/courses'}
+              href={
+                role === "ADMIN" || role === "INSTRUCTOR"
+                  ? "/backoffice/courses"
+                  : "/courses"
+              }
               className="ml-2 hidden sm:inline-flex"
               aria-label="Go to Dashboard"
             >
               Dashboard
-              <ArrowRight className="size-4 ml-2" />
+              <ArrowRight className="ml-2 size-4" />
             </ButtonAnchor>
           )}
         </div>
@@ -201,11 +241,10 @@ function Nav() {
 function Hero() {
   return (
     <section
-      className="max-w-6xl mx-auto px-6 pt-20 pb-24 md:pt-28 md:pb-32"
+      className="mx-auto max-w-[80vw] px-6 pt-20 pb-24 md:pt-28 md:pb-32"
       aria-labelledby="hero-heading"
     >
-      <div className="grid lg:grid-cols-2 gap-16 items-center">
-
+      <div className="grid items-center gap-16 lg:grid-cols-2">
         {/* Left: copy — all spacing on 4px grid */}
         <div className="space-y-8">
           {/* Eyebrow — 12px, uppercase, slate, letter-spacing 0.05em */}
@@ -220,7 +259,7 @@ function Hero() {
           <div className="space-y-3">
             <h1
               id="hero-heading"
-              className="text-[48px] font-medium leading-[1.1] tracking-[-0.02em] text-foreground"
+              className="text-[48px] leading-[1.1] font-medium tracking-[-0.02em] text-foreground"
             >
               Learn smarter.
               <br />
@@ -233,14 +272,14 @@ function Hero() {
           </div>
 
           {/* Body copy — 18px, weight 400, max 520px for reading comfort */}
-          <p className="text-[18px] leading-[1.7] text-muted-foreground max-w-130">
+          <p className="max-w-130 text-[18px] leading-[1.7] text-muted-foreground">
             Learnova understands your curriculum, tracks your learning progress,
-            and surfaces insights from your Odoo data — all in a focused,
+            and surfaces insights from your data — all in a focused,
             distraction-free environment built for deep work.
           </p>
 
           {/* CTA row — primary + secondary, gap-3 */}
-          <div id="get-started" className="flex flex-col sm:flex-row gap-3">
+          <div id="get-started" className="flex flex-col gap-3 sm:flex-row">
             <ButtonAnchor size="lg" className="sm:w-auto" href="/signup">
               <Zap className="size-4" />
               Start Learning Free
@@ -257,12 +296,6 @@ function Hero() {
               View on GitHub
             </ButtonAnchor>
           </div>
-
-          {/* Social proof — 13px, muted, no clutter */}
-          <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-            <Star className="size-3.5 fill-amber-400 text-amber-400" aria-hidden />
-            <span>No credit card required — free during beta. <Link href="/login" className="text-primary hover:underline font-medium">Log in here</Link></span>
-          </p>
         </div>
 
         {/* Right: learning progress demo card */}
@@ -281,10 +314,30 @@ function Hero() {
  */
 function LearningCard() {
   const modules = [
-    { title: "Python Fundamentals", progress: 100, status: "complete" as const, lessons: 12 },
-    { title: "Data Structures", progress: 72, status: "in-progress" as const, lessons: 9 },
-    { title: "Algorithms & Complexity", progress: 0, status: "not-started" as const, lessons: 14 },
-    { title: "Odoo Framework Basics", progress: 0, status: "not-started" as const, lessons: 10 },
+    {
+      title: "Python Fundamentals",
+      progress: 100,
+      status: "complete" as const,
+      lessons: 12,
+    },
+    {
+      title: "Data Structures",
+      progress: 72,
+      status: "in-progress" as const,
+      lessons: 9,
+    },
+    {
+      title: "Algorithms & Complexity",
+      progress: 0,
+      status: "not-started" as const,
+      lessons: 14,
+    },
+    {
+      title: "Odoo Framework Basics",
+      progress: 0,
+      status: "not-started" as const,
+      lessons: 10,
+    },
   ]
 
   const overallProgress = Math.round(
@@ -293,16 +346,16 @@ function LearningCard() {
 
   return (
     <div
-      className="am-card w-full max-w-sm p-6 space-y-6"
+      className="am-card w-full max-w-sm space-y-6 p-6"
       aria-label="Learning progress preview"
     >
       {/* Card header: course title + overall ring */}
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
             Current Course
           </p>
-          <h3 className="text-[16px] font-medium text-foreground leading-snug">
+          <h3 className="text-[16px] leading-snug font-medium text-foreground">
             Backend Engineering Path
           </h3>
           {/* Streak — amber, warm accent */}
@@ -313,7 +366,10 @@ function LearningCard() {
         </div>
 
         {/* Overall completion ring — right-aligned */}
-        <div className="flex flex-col items-center gap-1 shrink-0" aria-label={`${overallProgress}% overall complete`}>
+        <div
+          className="flex shrink-0 flex-col items-center gap-1"
+          aria-label={`${overallProgress}% overall complete`}
+        >
           <div className="relative">
             <CircleProgress value={overallProgress} size={52} strokeWidth={5} />
             {/* Percentage label centered in ring */}
@@ -324,7 +380,9 @@ function LearningCard() {
               {overallProgress}%
             </span>
           </div>
-          <p className="text-[11px] text-muted-foreground font-medium">Overall</p>
+          <p className="text-[11px] font-medium text-muted-foreground">
+            Overall
+          </p>
         </div>
       </div>
 
@@ -358,17 +416,27 @@ function ModuleRow({ title, progress, status, lessons }: ModuleRowProps) {
   const statusConfig = {
     complete: {
       badge: <Badge variant="success">Complete</Badge>,
-      icon: <CheckCircle2 className="size-4 text-green-600 dark:text-green-500 shrink-0" aria-hidden />,
+      icon: (
+        <CheckCircle2
+          className="size-4 shrink-0 text-green-600 dark:text-green-500"
+          aria-hidden
+        />
+      ),
     },
     "in-progress": {
       badge: <Badge variant="warning">In progress</Badge>,
-      icon: <Clock3 className="size-4 text-amber-600 dark:text-amber-500 shrink-0" aria-hidden />,
+      icon: (
+        <Clock3
+          className="size-4 shrink-0 text-amber-600 dark:text-amber-500"
+          aria-hidden
+        />
+      ),
     },
     "not-started": {
       badge: null,
       icon: (
         <div
-          className="size-4 rounded-full border-2 border-border shrink-0"
+          className="size-4 shrink-0 rounded-full border-2 border-border"
           aria-hidden
         />
       ),
@@ -379,22 +447,22 @@ function ModuleRow({ title, progress, status, lessons }: ModuleRowProps) {
   const isCompleted = status === "complete"
 
   return (
-    <li
-      className={cn("space-y-2", isCompleted && "am-completed")}
-    >
+    <li className={cn("space-y-2", isCompleted && "am-completed")}>
       <div className="flex items-center gap-3">
         {icon}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <p className={cn(
-              "text-sm font-medium truncate",
-              isCompleted ? "text-muted-foreground" : "text-foreground"
-            )}>
+            <p
+              className={cn(
+                "truncate text-sm font-medium",
+                isCompleted ? "text-muted-foreground" : "text-foreground"
+              )}
+            >
               {title}
             </p>
             {badge}
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             {lessons} lessons
           </p>
         </div>
@@ -458,10 +526,9 @@ function Features() {
       className="border-t border-border"
       aria-labelledby="features-heading"
     >
-      <div className="max-w-6xl mx-auto px-6 py-20 md:py-28">
-
+      <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
         {/* Section header */}
-        <div className="max-w-xl mb-16 space-y-4">
+        <div className="mb-16 max-w-xl space-y-4">
           <p className="am-label">Why Learnova</p>
           <h2
             id="features-heading"
@@ -469,15 +536,15 @@ function Features() {
           >
             Built for learners who move fast
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
-            Four principles that separate a tool people use daily from one
-            they abandon after a week.
+          <p className="text-base leading-relaxed text-muted-foreground">
+            Four principles that separate a tool people use daily from one they
+            abandon after a week.
           </p>
         </div>
 
         {/* Grid — 4 columns desktop, 2 tablet, 1 mobile */}
         <ul
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
           aria-label="Platform features"
         >
           {FEATURES.map((feature) => (
@@ -497,14 +564,18 @@ interface FeatureCardProps {
   statLabel: string
 }
 
-function FeatureCard({ icon: Icon, title, body, stat, statLabel }: FeatureCardProps) {
+function FeatureCard({
+  icon: Icon,
+  title,
+  body,
+  stat,
+  statLabel,
+}: FeatureCardProps) {
   return (
-    <li
-      className="am-card p-6 space-y-5 group"
-    >
+    <li className="am-card group space-y-5 p-6">
       {/* Icon — indigo, 36x36 container, consistent sizing */}
       <div
-        className="size-9 flex items-center justify-center rounded-md bg-primary/10 text-primary"
+        className="flex size-9 items-center justify-center rounded-md bg-primary/10 text-primary"
         aria-hidden
       >
         <Icon className="size-4.5" strokeWidth={2} />
@@ -512,14 +583,20 @@ function FeatureCard({ icon: Icon, title, body, stat, statLabel }: FeatureCardPr
 
       {/* Stat — prominent number, weight 700, 24px */}
       <div>
-        <p className="text-2xl font-semibold text-foreground tracking-tight">{stat}</p>
-        <p className="text-xs text-muted-foreground font-medium mt-0.5">{statLabel}</p>
+        <p className="text-2xl font-semibold tracking-tight text-foreground">
+          {stat}
+        </p>
+        <p className="mt-0.5 text-xs font-medium text-muted-foreground">
+          {statLabel}
+        </p>
       </div>
 
       {/* Title + body */}
       <div className="space-y-2">
-        <h3 className="text-[15px] font-medium text-foreground leading-snug">{title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{body}</p>
+        <h3 className="text-[15px] leading-snug font-medium text-foreground">
+          {title}
+        </h3>
+        <p className="text-sm leading-relaxed text-muted-foreground">{body}</p>
       </div>
     </li>
   )
@@ -539,9 +616,8 @@ function ProgressDemo() {
       className="border-t border-border bg-muted/30"
       aria-labelledby="progress-demo-heading"
     >
-      <div className="max-w-6xl mx-auto px-6 py-20 md:py-28">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-
+      <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
+        <div className="grid items-center gap-16 lg:grid-cols-2">
           {/* Left: explanation */}
           <div className="space-y-6">
             <p className="am-label">How it works</p>
@@ -551,10 +627,10 @@ function ProgressDemo() {
             >
               Progress is built into every pixel
             </h2>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              Every course, module, and lesson surfaces its completion state at a glance.
-              Completed work is visually muted so you instantly see what is done vs.
-              what is left — no hunting, no guessing.
+            <p className="text-base leading-relaxed text-muted-foreground">
+              Every course, module, and lesson surfaces its completion state at
+              a glance. Completed work is visually muted so you instantly see
+              what is done vs. what is left — no hunting, no guessing.
             </p>
 
             <ul className="space-y-4" aria-label="Progress features">
@@ -579,9 +655,14 @@ function ProgressDemo() {
                 },
               ].map(({ icon: Icon, color, title, desc }) => (
                 <li key={title} className="flex gap-3">
-                  <Icon className={cn("size-5 shrink-0 mt-0.5", color)} aria-hidden />
+                  <Icon
+                    className={cn("mt-0.5 size-5 shrink-0", color)}
+                    aria-hidden
+                  />
                   <div>
-                    <p className="text-sm font-medium text-foreground">{title}</p>
+                    <p className="text-sm font-medium text-foreground">
+                      {title}
+                    </p>
                     <p className="text-sm text-muted-foreground">{desc}</p>
                   </div>
                 </li>
@@ -608,14 +689,17 @@ function WeeklyProgressCard() {
   ]
 
   return (
-    <div className="am-card p-6 space-y-6" aria-label="Weekly learning progress">
+    <div
+      className="am-card space-y-6 p-6"
+      aria-label="Weekly learning progress"
+    >
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
             This week
           </p>
-          <h3 className="text-lg font-medium text-foreground mt-0.5">
+          <h3 className="mt-0.5 text-lg font-medium text-foreground">
             Learning summary
           </h3>
         </div>
@@ -632,9 +716,11 @@ function WeeklyProgressCard() {
           { value: "3", label: "Modules done" },
           { value: "47", label: "Problems solved" },
         ].map(({ value, label }) => (
-          <div key={label} className="text-center p-3 bg-muted/50 rounded-md">
+          <div key={label} className="rounded-md bg-muted/50 p-3 text-center">
             <p className="text-lg font-semibold text-foreground">{value}</p>
-            <p className="text-xs text-muted-foreground mt-0.5 leading-tight">{label}</p>
+            <p className="mt-0.5 text-xs leading-tight text-muted-foreground">
+              {label}
+            </p>
           </div>
         ))}
       </div>
@@ -649,7 +735,9 @@ function WeeklyProgressCard() {
               <p className="text-sm font-medium text-foreground">{name}</p>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">{hours}h</span>
-                <span className="text-xs font-semibold text-foreground">{progress}%</span>
+                <span className="text-xs font-semibold text-foreground">
+                  {progress}%
+                </span>
               </div>
             </div>
             <ProgressBar
@@ -667,24 +755,31 @@ function WeeklyProgressCard() {
 /* ─── Stats ───────────────────────────────────────────────────────────────── */
 
 const STATS = [
-  { value: "< 500ms", label: "AI response time", desc: "Edge-deployed inference" },
+  {
+    value: "< 500ms",
+    label: "AI response time",
+    desc: "Edge-deployed inference",
+  },
   { value: "99.9%", label: "Platform uptime", desc: "30-day rolling average" },
   { value: "10k+", label: "API calls / day", desc: "And growing" },
-  { value: "0 bytes", label: "Data retained", desc: "Zero retention on inference" },
+  {
+    value: "0 bytes",
+    label: "Data retained",
+    desc: "Zero retention on inference",
+  },
 ]
 
 function Stats() {
   return (
-    <section
-      className="border-t border-border"
-      aria-labelledby="stats-heading"
-    >
-      <div className="max-w-6xl mx-auto px-6 py-16 md:py-20">
+    <section className="border-t border-border" aria-labelledby="stats-heading">
+      <div className="mx-auto max-w-6xl px-6 py-16 md:py-20">
         {/* Screenreader heading */}
-        <h2 id="stats-heading" className="sr-only">Platform statistics</h2>
+        <h2 id="stats-heading" className="sr-only">
+          Platform statistics
+        </h2>
 
         <div
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4"
+          className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-4"
           role="list"
           aria-label="Platform statistics"
         >
@@ -694,7 +789,7 @@ function Stats() {
               role="listitem"
               className="space-y-1 text-center md:text-left"
             >
-              <p className="text-3xl font-semibold text-foreground tracking-tight">
+              <p className="text-3xl font-semibold tracking-tight text-foreground">
                 {value}
               </p>
               <p className="text-sm font-medium text-foreground">{label}</p>
@@ -710,9 +805,17 @@ function Stats() {
 /* ─── Tech Stack ──────────────────────────────────────────────────────────── */
 
 const STACK = [
-  "Next.js 16", "TypeScript", "Tailwind CSS", "React 19",
-  "Python", "FastAPI", "Odoo 17", "PostgreSQL",
-  "Redis", "Docker", "Prisma", "shadcn/ui",
+  "Next.js 16",
+  "TypeScript",
+  "Tailwind CSS",
+  "React 19",
+  "Python",
+  "FastAPI",
+  "PostgreSQL",
+  "Redis",
+  "Docker",
+  "Prisma",
+  "shadcn/ui",
 ]
 
 /**
@@ -727,8 +830,8 @@ function TechStack() {
       className="border-t border-border bg-muted/30"
       aria-labelledby="stack-heading"
     >
-      <div className="max-w-6xl mx-auto px-6 py-20 md:py-24">
-        <div className="space-y-3 mb-12">
+      <div className="mx-auto max-w-6xl px-6 py-20 md:py-24">
+        <div className="mb-12 space-y-3">
           <p className="am-label">The stack</p>
           <h2
             id="stack-heading"
@@ -748,7 +851,7 @@ function TechStack() {
             <span
               key={tech}
               role="listitem"
-              className="px-3 py-1.5 text-sm font-medium bg-background border border-border rounded-md text-foreground"
+              className="rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground"
             >
               {tech}
             </span>
@@ -768,48 +871,48 @@ function TechStack() {
  */
 function CTABanner() {
   return (
-    <section
-      className="border-t border-border"
-      aria-labelledby="cta-heading"
-    >
-      <div className="max-w-6xl mx-auto px-6 py-20 md:py-28">
+    <section className="border-t border-border" aria-labelledby="cta-heading">
+      <div className="mx-auto max-w-6xl px-6 py-20 md:py-28">
         <div className="max-w-2xl space-y-8">
           <div className="space-y-4">
             <p className="am-label">Ready to start</p>
             <h2
               id="cta-heading"
-              className="text-[40px] font-medium tracking-[-0.02em] text-foreground leading-[1.1]"
+              className="text-[40px] leading-[1.1] font-medium tracking-[-0.02em] text-foreground"
             >
               Your next learning
               <br />
               breakthrough is one click away.
             </h2>
-            <p className="text-base text-muted-foreground leading-relaxed max-w-lg">
-              Join learners who use Learnova to learn faster, retain more,
-              and ship better code — without the noise.
+            <p className="max-w-lg text-base leading-relaxed text-muted-foreground">
+              Join learners who use Learnova to learn faster, retain more, and
+              ship better code — without the noise.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <ButtonAnchor size="lg" href="/signup">
-              <Zap className="size-4 -ml-1" />
+              <Zap className="-ml-1 size-4" />
               Start for free
             </ButtonAnchor>
             <ButtonAnchor
               variant="outline"
               size="lg"
-              href="https://github.com"
+              href="https://github.com/slantie/qubits-learnova"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Github className="size-4 -ml-1" />
+              <Github className="-ml-1 size-4" />
               Star on GitHub
             </ButtonAnchor>
           </div>
 
           <p className="text-sm text-muted-foreground">
             No account needed to explore. Free during beta.{" "}
-            <Link href="/login" className="text-primary hover:underline underline-offset-4 font-medium">
+            <Link
+              href="/login"
+              className="font-medium text-primary underline-offset-4 hover:underline"
+            >
               Log in instead
             </Link>
           </p>
@@ -827,13 +930,21 @@ function Footer() {
       className="border-t border-border bg-muted/20"
       aria-label="Site footer"
     >
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-
+      <div className="mx-auto max-w-[80vw] px-6 py-10">
+        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           {/* Brand */}
           <div className="flex items-center gap-2.5">
-            <Image src="/learnova.png" alt="Learnova" width={20} height={20} className="size-5 rounded" aria-hidden />
-            <span className="text-sm font-medium text-foreground">Learnova</span>
+            <Image
+              src="/learnova.png"
+              alt="Learnova"
+              width={20}
+              height={20}
+              className="size-5 rounded"
+              aria-hidden
+            />
+            <span className="text-sm font-medium text-foreground">
+              Learnova
+            </span>
           </div>
 
           {/* Footer links — weight 500, muted, keyboard navigable */}
@@ -842,12 +953,15 @@ function Footer() {
               {[
                 { label: "Documentation", href: "#" },
                 { label: "API Reference", href: "#" },
-                { label: "GitHub", href: "https://github.com" },
+                {
+                  label: "GitHub",
+                  href: "https://github.com/slantie/qubits-learnova",
+                },
               ].map(({ label, href }) => (
                 <li key={label}>
                   <a
                     href={href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {label}
                   </a>
@@ -858,14 +972,12 @@ function Footer() {
         </div>
 
         {/* Bottom row */}
-        <div className="mt-8 pt-6 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-border pt-6 sm:flex-row sm:items-center">
           <p className="text-xs text-muted-foreground">
             2026 Learnova by Qubits. Built at Hackathon 2026. MIT License.
           </p>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            Press{" "}
-            <kbd>D</kbd>
-            {" "}to toggle dark mode
+          <p className="flex items-center gap-1 text-xs text-muted-foreground">
+            Press <kbd>D</kbd> to toggle dark mode
           </p>
         </div>
       </div>
@@ -877,7 +989,7 @@ function Footer() {
 
 export default function Page() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Nav />
 
       <main id="main-content" className="flex-1" tabIndex={-1}>

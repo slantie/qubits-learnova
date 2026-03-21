@@ -82,7 +82,7 @@ function ScoreRing({ pct }: { pct: number }) {
     const color = pct >= 80 ? '#22c55e' : pct >= 50 ? '#f59e0b' : '#ef4444';
 
     return (
-        <svg width={104} height={104} className="rotate-[-90deg]">
+        <svg width={104} height={104} className="-rotate-90">
             <circle cx={52} cy={52} r={r} strokeWidth={10} stroke="var(--border)" fill="none" />
             <circle
                 cx={52} cy={52} r={r} strokeWidth={10} fill="none"
@@ -97,7 +97,7 @@ function ScoreRing({ pct }: { pct: number }) {
                 fontSize={18}
                 fontWeight={700}
                 fill="currentColor"
-                className="rotate-90 origin-center fill-foreground [transform-origin:52px_52px] [transform:rotate(90deg)]"
+                className="fill-foreground origin-[52px_52px] rotate-90"
             >
                 {pct}%
             </text>
