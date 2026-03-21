@@ -116,7 +116,7 @@ export default function QuizAttemptsPage() {
   const learners = [...learnerMap.values()].sort((a, b) => a.user.name.localeCompare(b.user.name));
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-8 flex flex-col gap-8">
+    <div className="px-6 py-8 flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link

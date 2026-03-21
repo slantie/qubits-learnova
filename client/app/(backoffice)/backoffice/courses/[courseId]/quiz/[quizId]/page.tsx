@@ -114,7 +114,7 @@ export default function QuizBuilderPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-64px)] text-muted-foreground">
+      <div className="flex flex-1 items-center justify-center text-muted-foreground">
         Loading quiz…
       </div>
     );
@@ -122,7 +122,7 @@ export default function QuizBuilderPage() {
 
   if (error || !quiz) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-64px)] text-destructive">
+      <div className="flex flex-1 items-center justify-center text-destructive">
         {error ?? 'Quiz not found.'}
       </div>
     );
@@ -132,7 +132,7 @@ export default function QuizBuilderPage() {
 
   return (
     <>
-      <div className="flex h-[calc(100vh-64px)] overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar */}
         <aside className="w-56 flex flex-col border-r bg-muted/20 shrink-0">
           {/* Back link */}

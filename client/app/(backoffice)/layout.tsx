@@ -1,16 +1,62 @@
 'use client';
 
 import { ReactNode, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { LogOut, Home, BookOpen, BarChart } from 'lucide-react';
+import Image from 'next/image';
+import {
+    LogOut, BookOpen, BarChart3, LayoutDashboard,
+    Users, Settings, ChevronRight, GraduationCap,
+} from 'lucide-react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+import { cn } from '@/lib/utils';
+
+interface NavItem {
+    href: string;
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    adminOnly?: boolean;
+    badge?: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+    { href: '/backoffice', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/backoffice/courses', label: 'Courses', icon: BookOpen },
+    { href: '/backoffice/reporting', label: 'Reporting', icon: BarChart3, adminOnly: true },
+    { href: '/backoffice/users', label: 'Users', icon: Users, adminOnly: true, badge: 'Soon' },
+    { href: '/backoffice/settings', label: 'Settings', icon: Settings, adminOnly: true, badge: 'Soon' },
+];
+
+function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
+    const Icon = item.icon;
+    return (
+        <Link
+            href={item.href}
+            className={cn(
+                'group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all',
+                isActive
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+            )}
+        >
+            <Icon className={cn('size-4 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground')} />
+            <span className="flex-1">{item.label}</span>
+            {item.badge && (
+                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">
+                    {item.badge}
+                </span>
+            )}
+            {isActive && <ChevronRight className="size-3 text-primary" />}
+        </Link>
+    );
+}
 
 export default function BackofficeLayout({ children }: { children: ReactNode }) {
     const { user, isLoading, role, logout } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
 
     const handleLogout = () => {
         api.post('/auth/logout').catch(() => { });
@@ -24,7 +70,6 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
         }
     }, [user, isLoading, role, router]);
 
-    // Handle 401 events (expired token) while on a backoffice page
     useEffect(() => {
         const handleUnauthorized = () => router.push('/login');
         window.addEventListener('auth:unauthorized', handleUnauthorized);
@@ -32,49 +77,103 @@ export default function BackofficeLayout({ children }: { children: ReactNode }) 
     }, [router]);
 
     if (isLoading) {
-        return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-background">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="relative">
+                        <Image src="/learnova.svg" alt="Learnova" width={64} height={64} className="size-16 object-contain animate-pulse" />
+                    </div>
+                    <div className="text-center">
+                        <p className="text-base font-semibold text-foreground">Learnova</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Loading your panel…</p>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
-    if (!user || (role !== 'ADMIN' && role !== 'INSTRUCTOR')) {
-        return null; // Will redirect
-    }
+    if (!user || (role !== 'ADMIN' && role !== 'INSTRUCTOR')) return null;
+
+    const visibleNav = NAV_ITEMS.filter(item => !item.adminOnly || role === 'ADMIN');
+    const initials = user.name
+        ? user.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+        : (user.email?.[0] ?? 'U').toUpperCase();
 
     return (
-        <div className="flex flex-col min-h-screen">
-            {/* Topbar Placeholder */}
-            <header className="h-16 border-b bg-background flex items-center px-6 justify-between shrink-0">
-                <div className="font-semibold text-lg flex items-center gap-4">
-                    <Link href="/" className="text-muted-foreground hover:text-foreground inline-flex items-center gap-2 text-sm font-normal">
-                        <Home className="size-4" /> Home
-                    </Link>
-                    <span className="text-muted-foreground">/</span>
-                    <span>Backoffice</span>
-                </div>
-                <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground">{user.name || user.email}</span>
-                    <Button variant="ghost" size="sm" onClick={handleLogout}>
-                        <LogOut className="size-4 mr-2" /> Logout
-                    </Button>
-                </div>
-            </header>
-            <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar Placeholder */}
-                <aside className="w-64 border-r bg-muted/40 hidden md:block overflow-y-auto">
-                    <nav className="p-4 flex flex-col gap-2">
-                        <Link href="/backoffice/courses" className="text-sm font-medium hover:text-primary transition-colors p-2 rounded-md hover:bg-muted flex items-center gap-2">
-                            <BookOpen className="size-4" /> Courses
-                        </Link>
-                        {role === 'ADMIN' && (
-                            <Link href="/backoffice/reporting" className="text-sm font-medium hover:text-primary transition-colors p-2 rounded-md hover:bg-muted flex items-center gap-2">
-                                <BarChart className="size-4" /> Reporting
-                            </Link>
-                        )}
-                    </nav>
-                </aside>
-                <main className="flex-1 p-6 md:p-8 bg-muted/10 overflow-auto">
-                    <div className="mx-auto max-w-5xl">
-                        {children}
+        <div className="flex min-h-screen bg-background">
+            {/* ── Sidebar ─────────────────────────────────────────────────── */}
+            <aside className="hidden md:flex w-60 flex-col border-r bg-sidebar shrink-0">
+                {/* Brand */}
+                <div className="flex items-center gap-2.5 px-4 h-16 border-b border-sidebar-border shrink-0">
+                    <Image src="/learnova.svg" alt="Learnova" width={36} height={36} className="size-9 object-contain shrink-0" />
+                    <div>
+                        <p className="text-sm font-semibold text-sidebar-foreground leading-none">Learnova</p>
+                        <p className="text-[10px] text-sidebar-foreground/60 mt-0.5 capitalize">
+                            {role?.toLowerCase()} panel
+                        </p>
                     </div>
+                </div>
+
+                {/* Nav */}
+                <nav className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
+                    {visibleNav.map(item => {
+                        const isActive = item.href === '/backoffice'
+                            ? pathname === '/backoffice'
+                            : pathname.startsWith(item.href);
+                        return <NavLink key={item.href} item={item} isActive={isActive} />;
+                    })}
+
+                    <div className="mt-4 pt-4 border-t border-sidebar-border">
+                        <p className="px-3 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/40 mb-2">
+                            Learner View
+                        </p>
+                        <Link
+                            href="/courses"
+                            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
+                        >
+                            <GraduationCap className="size-4 shrink-0" />
+                            View as Learner
+                        </Link>
+                    </div>
+                </nav>
+
+                {/* User footer */}
+                <div className="p-3 border-t border-sidebar-border">
+                    <div className="flex items-center gap-3 px-2 py-1.5">
+                        <div className="size-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold shrink-0">
+                            {initials}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{user.name || 'User'}</p>
+                            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded"
+                            title="Log out"
+                        >
+                            <LogOut className="size-4" />
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            {/* ── Main area ───────────────────────────────────────────────── */}
+            <div className="flex flex-1 flex-col overflow-hidden">
+                {/* Mobile topbar */}
+                <header className="md:hidden h-14 border-b bg-background flex items-center px-4 justify-between shrink-0">
+                    <div className="flex items-center gap-2">
+                        <Image src="/learnova.svg" alt="Learnova" width={32} height={32} className="size-8 object-contain" />
+                        <span className="font-semibold text-sm">Learnova</span>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
+                        <LogOut className="size-4" />
+                    </Button>
+                </header>
+
+                <main className="flex-1 overflow-auto flex flex-col">
+                    {children}
                 </main>
             </div>
         </div>

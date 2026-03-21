@@ -20,7 +20,6 @@
 import { useTheme } from "next-themes"
 import React, { useEffect, useState } from "react"
 import {
-  BookOpen,
   Brain,
   Code2,
   Shield,
@@ -41,6 +40,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
 import Link from "next/link"
+import Image from "next/image"
 
 const ButtonAnchor = React.forwardRef<HTMLAnchorElement, React.ComponentProps<"a"> & { variant?: any, size?: any }>(
   ({ className, variant, size, ...props }, ref) => (
@@ -49,7 +49,7 @@ const ButtonAnchor = React.forwardRef<HTMLAnchorElement, React.ComponentProps<"a
 )
 ButtonAnchor.displayName = "ButtonAnchor"
 
-function ProgressBar({ value, size, label, className }: any) {
+function ProgressBar({ value, className }: any) {
   return (
     <div className={cn("w-full bg-muted rounded-full overflow-hidden h-2", className)}>
       <div className="am-progress-bar-fill" style={{ width: `${value}%` }} />
@@ -119,11 +119,7 @@ function Nav() {
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between h-16">
         {/* Wordmark — weight 700, tight tracking */}
         <div className="flex items-center gap-3">
-          <BookOpen
-            className="size-5 text-primary"
-            aria-hidden
-            strokeWidth={2}
-          />
+          <Image src="/learnova.png" alt="Learnova" width={24} height={24} className="size-6 rounded-md" aria-hidden />
           <Link href="/" className="text-lg font-medium tracking-tight text-foreground select-none">
             Learnova
           </Link>
@@ -836,7 +832,7 @@ function Footer() {
 
           {/* Brand */}
           <div className="flex items-center gap-2.5">
-            <BookOpen className="size-4 text-primary" aria-hidden />
+            <Image src="/learnova.png" alt="Learnova" width={20} height={20} className="size-5 rounded" aria-hidden />
             <span className="text-sm font-medium text-foreground">Learnova</span>
           </div>
 

@@ -418,7 +418,13 @@ function scoreAttempt(
   const totalQuestions = questionMap.size;
   if (totalQuestions === 0) return { correctCount: 0, totalQuestions: 0, scorePercentage: 0 };
 
-  const answers = answersJson as Array<{ questionId: number; selectedOptions: number[] }>;
+  let parsed: unknown = answersJson;
+  if (typeof parsed === 'string') {
+    try { parsed = JSON.parse(parsed); } catch { parsed = []; }
+  }
+  if (!Array.isArray(parsed)) return { correctCount: 0, totalQuestions, scorePercentage: 0 };
+
+  const answers = parsed as Array<{ questionId: number; selectedOptions: number[] }>;
   let correctCount = 0;
 
   for (const answer of answers) {

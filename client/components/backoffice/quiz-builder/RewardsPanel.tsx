@@ -14,7 +14,7 @@ interface RewardsPanelProps {
   } | null;
   courseId: string;
   quizId: string;
-  onSave: (reward: any) => void;
+  onSave: (reward: string) => void;
   onClose: () => void;
 }
 
@@ -56,12 +56,12 @@ export function RewardsPanel({ reward, courseId, quizId, onSave, onClose }: Rewa
       <div className="bg-background border rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Quiz Rewards</h2>
-          <button
+          <Button
             onClick={onClose}
             className="text-muted-foreground hover:text-foreground transition-colors rounded-md p-1 hover:bg-muted"
           >
             <X className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
 
         <p className="text-sm text-muted-foreground mb-5">
@@ -75,6 +75,7 @@ export function RewardsPanel({ reward, courseId, quizId, onSave, onClose }: Rewa
               <input
                 type="number"
                 min={0}
+                placeholder='rowChange'
                 value={row.value}
                 onChange={(e) => row.onChange(Number(e.target.value))}
                 className="w-20 border rounded-md px-2 py-1.5 text-sm text-right bg-background focus:outline-none focus:ring-2 focus:ring-ring"

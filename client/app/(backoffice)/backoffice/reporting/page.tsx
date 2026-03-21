@@ -30,11 +30,11 @@ function formatDate(d: string | null | undefined): string {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { label: string; cls: string }> = {
-    NOT_STARTED: { label: 'Not Started', cls: 'bg-gray-100 text-gray-600' },
-    IN_PROGRESS:  { label: 'In Progress', cls: 'bg-blue-100 text-blue-700'  },
-    COMPLETED:    { label: 'Completed',   cls: 'bg-green-100 text-green-700' },
+    NOT_STARTED: { label: 'Not Started', cls: 'bg-muted text-muted-foreground' },
+    IN_PROGRESS:  { label: 'In Progress', cls: 'bg-primary/10 text-primary'  },
+    COMPLETED:    { label: 'Completed',   cls: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
   };
-  const { label, cls } = map[status] ?? { label: status, cls: 'bg-gray-100 text-gray-500' };
+  const { label, cls } = map[status] ?? { label: status, cls: 'bg-muted text-muted-foreground' };
   return (
     <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${cls}`}>
       {label}
@@ -45,9 +45,9 @@ function StatusBadge({ status }: { status: string }) {
 function CompletionCell({ pct }: { pct: number }) {
   return (
     <div className="flex items-center gap-2 min-w-[80px]">
-      <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
+      <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
         <div
-          className="h-full rounded-full bg-blue-500 transition-all"
+          className="h-full rounded-full bg-primary transition-all"
           style={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
         />
       </div>
@@ -67,14 +67,12 @@ export default function ReportingPage() {
   const [showColPanel, setShowColPanel] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch courses on mount
   useEffect(() => {
     api.get('/reporting/courses').then((res: any) => {
       setCourses(res?.courses ?? []);
     }).catch(() => {});
   }, []);
 
-  // Fetch summary + table whenever filters change
   useEffect(() => {
     let cancelled = false;
     setIsLoading(true);
@@ -113,7 +111,6 @@ export default function ReportingPage() {
 
   function handleCardClick(filter: string | undefined) {
     if (filter === undefined) {
-      // Total card — clear all filters
       setStatusFilter(undefined);
     } else {
       setStatusFilter((prev) => (prev === filter ? undefined : filter));
@@ -138,30 +135,31 @@ export default function ReportingPage() {
   const totalPages: number = tableData?.totalPages ?? 1;
 
   return (
-    <div className="p-6 space-y-6 min-h-screen bg-gray-50">
-      {/* Page title */}
-      <h1 className="text-2xl font-semibold text-gray-900">Reporting</h1>
+    <div className="px-6 py-8 space-y-6">
+      <h1 className="text-2xl font-semibold">Reporting</h1>
 
       {/* Course filter pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
         <button
+          type="button"
           onClick={() => handleCourseClick(undefined)}
           className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
             selectedCourse === undefined
-              ? 'bg-blue-600 text-white border-blue-600'
-              : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400 hover:text-blue-600'
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'bg-card text-foreground border-border hover:border-primary hover:text-primary'
           }`}
         >
           All Courses
         </button>
         {courses.map((course) => (
           <button
+            type="button"
             key={course.id}
             onClick={() => handleCourseClick(course.id)}
             className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
               selectedCourse === course.id
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-blue-400 hover:text-blue-600'
+                ? 'bg-primary text-primary-foreground border-primary'
+                : 'bg-card text-foreground border-border hover:border-primary hover:text-primary'
             }`}
           >
             {course.title}
@@ -175,18 +173,19 @@ export default function ReportingPage() {
           const isActive = card.filter !== undefined && statusFilter === card.filter;
           return (
             <button
+              type="button"
               key={card.key}
               onClick={() => handleCardClick(card.filter)}
-              className={`bg-white border rounded-xl p-4 text-left transition-all ${
+              className={`bg-card border rounded-xl p-4 text-left transition-all ${
                 isActive
-                  ? 'border-blue-500 ring-2 ring-blue-100'
-                  : 'border-gray-200 hover:border-blue-300'
+                  ? 'border-primary ring-2 ring-primary/20'
+                  : 'border-border hover:border-primary/60'
               }`}
             >
-              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">{card.label}</p>
-              <p className="mt-1 text-3xl font-bold text-gray-900">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{card.label}</p>
+              <p className="mt-1 text-3xl font-bold text-foreground">
                 {isLoading ? (
-                  <span className="inline-block h-8 w-12 rounded bg-gray-200 animate-pulse" />
+                  <span className="inline-block h-8 w-12 rounded bg-muted animate-pulse" />
                 ) : (
                   card.value
                 )}
@@ -197,15 +196,16 @@ export default function ReportingPage() {
       </div>
 
       {/* Table section */}
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
         {/* Table toolbar */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <p className="text-sm text-gray-600">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <p className="text-sm text-muted-foreground">
             {isLoading ? 'Loading…' : `${tableData?.total ?? 0} record(s)`}
           </p>
           <button
+            type="button"
             onClick={() => setShowColPanel((v) => !v)}
-            className="flex items-center gap-1.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-medium text-foreground border border-border rounded-lg px-3 py-1.5 hover:bg-muted/40 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
@@ -216,14 +216,14 @@ export default function ReportingPage() {
 
         {/* Column customization panel */}
         {showColPanel && (
-          <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 flex flex-wrap gap-3">
+          <div className="px-4 py-3 border-b border-border bg-muted/30 flex flex-wrap gap-3">
             {COLUMNS.map((col) => (
-              <label key={col.key} className="flex items-center gap-1.5 text-sm text-gray-700 cursor-pointer select-none">
+              <label key={col.key} className="flex items-center gap-1.5 text-sm text-foreground cursor-pointer select-none">
                 <input
                   type="checkbox"
                   checked={visibleCols.has(col.key)}
                   onChange={() => toggleCol(col.key)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-border text-primary focus:ring-primary"
                 />
                 {col.label}
               </label>
@@ -235,30 +235,30 @@ export default function ReportingPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide w-12">
+              <tr className="bg-muted/30 border-b border-border">
+                <th className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide w-12">
                   Sr. No.
                 </th>
                 {visibleColumns.map((col) => (
                   <th
                     key={col.key}
-                    className="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap"
+                    className="px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wide whitespace-nowrap"
                   >
                     {col.label}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border">
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
                     <td className="px-4 py-3">
-                      <span className="inline-block h-4 w-6 rounded bg-gray-200" />
+                      <span className="inline-block h-4 w-6 rounded bg-muted" />
                     </td>
                     {visibleColumns.map((col) => (
                       <td key={col.key} className="px-4 py-3">
-                        <span className="inline-block h-4 w-24 rounded bg-gray-200" />
+                        <span className="inline-block h-4 w-24 rounded bg-muted" />
                       </td>
                     ))}
                   </tr>
@@ -267,15 +267,15 @@ export default function ReportingPage() {
                 <tr>
                   <td
                     colSpan={visibleColumns.length + 1}
-                    className="px-4 py-12 text-center text-gray-400"
+                    className="px-4 py-12 text-center text-muted-foreground"
                   >
                     No data yet
                   </td>
                 </tr>
               ) : (
                 rows.map((row: any, idx: number) => (
-                  <tr key={row.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-400 tabular-nums">
+                  <tr key={row.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-4 py-3 text-muted-foreground tabular-nums">
                       {(page - 1) * 20 + idx + 1}
                     </td>
                     {visibleColumns.map((col) => {
@@ -296,13 +296,13 @@ export default function ReportingPage() {
                       }
                       if (['enrolledDate', 'startDate', 'completedDate'].includes(col.key)) {
                         return (
-                          <td key={col.key} className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                          <td key={col.key} className="px-4 py-3 text-muted-foreground whitespace-nowrap">
                             {formatDate(val)}
                           </td>
                         );
                       }
                       return (
-                        <td key={col.key} className="px-4 py-3 text-gray-800 whitespace-nowrap">
+                        <td key={col.key} className="px-4 py-3 text-foreground whitespace-nowrap">
                           {val ?? '—'}
                         </td>
                       );
@@ -316,25 +316,27 @@ export default function ReportingPage() {
 
         {/* Pagination */}
         {!isLoading && rows.length > 0 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
             <button
+              type="button"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="flex items-center gap-1 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-foreground border border-border rounded-lg px-3 py-1.5 hover:bg-muted/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               Prev
             </button>
-            <p className="text-sm text-gray-600">
-              Page <span className="font-semibold">{page}</span> of{' '}
-              <span className="font-semibold">{totalPages}</span>
+            <p className="text-sm text-muted-foreground">
+              Page <span className="font-semibold text-foreground">{page}</span> of{' '}
+              <span className="font-semibold text-foreground">{totalPages}</span>
             </p>
             <button
+              type="button"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="flex items-center gap-1 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-foreground border border-border rounded-lg px-3 py-1.5 hover:bg-muted/40 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Next
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

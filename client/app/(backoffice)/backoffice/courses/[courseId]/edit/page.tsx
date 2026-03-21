@@ -218,7 +218,7 @@ export default function CourseEditPage() {
     }
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="px-6 py-8 flex flex-col gap-6">
             {/* Page Header */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
                 <div className="flex items-center gap-3">
@@ -314,6 +314,7 @@ export default function CourseEditPage() {
                         ref={coverInputRef}
                         type="file"
                         accept="image/*"
+                        placeholder='coverImage'
                         className="hidden"
                         onChange={handleCoverUpload}
                     />

@@ -37,9 +37,9 @@ export function CoursesDashboard() {
     }, [search]);
 
     return (
-        <div className="flex flex-col gap-6 h-full">
+        <div className="px-6 py-8 flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h1 className="text-3xl font-medium tracking-tight">Courses</h1>
+                <h1 className="text-2xl font-semibold">Courses</h1>
                 <Button onClick={() => setIsCreateModalOpen(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Create Course
@@ -76,7 +76,7 @@ export function CoursesDashboard() {
                 </div>
             </div>
 
-            <div className="flex-1">
+            <div>
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

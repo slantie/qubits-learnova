@@ -180,7 +180,7 @@ export function QuestionEditor({ question, courseId, quizId, onUpdate, onDelete 
               placeholder={`Option ${idx + 1}`}
               className={`flex-1 border rounded-lg px-3 py-2 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground transition-colors ${
                 correctOptions.includes(idx)
-                  ? 'border-green-400 bg-green-50/30'
+                  ? 'border-primary/60 bg-primary/5'
                   : ''
               }`}
             />
