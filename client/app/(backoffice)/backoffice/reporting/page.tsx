@@ -139,11 +139,11 @@ export default function ReportingPage() {
       <h1 className="text-2xl ">Reporting</h1>
 
       {/* Course filter pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => handleCourseClick(undefined)}
-          className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+          className={`rounded-full border px-4 py-1.5 text-sm font-normal transition-colors ${
             selectedCourse === undefined
               ? 'bg-primary text-primary-foreground border-primary'
               : 'bg-card text-foreground border-border hover:border-primary hover:text-primary'
@@ -156,7 +156,7 @@ export default function ReportingPage() {
             type="button"
             key={course.id}
             onClick={() => handleCourseClick(course.id)}
-            className={`shrink-0 rounded-full border px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-full border px-4 py-1.5 text-sm font-normal transition-colors ${
               selectedCourse === course.id
                 ? 'bg-primary text-primary-foreground border-primary'
                 : 'bg-card text-foreground border-border hover:border-primary hover:text-primary'
