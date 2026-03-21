@@ -1,15 +1,3 @@
-/**
- * Root Layout — Learnova by Qubits / Academic Minimal Design System
- *
- * Font strategy:
- *   Matter (Regular 400, Medium 500, SemiBold 600) — body, UI, labels
- *   SeasonMix (Regular 400, Medium 500) — display headings (h1, h2)
- *   Two typefaces max per Academic Minimal principle.
- *   Bold (700) is avoided unless absolutely necessary — the typefaces carry weight through design.
- *
- * ThemeProvider wraps everything for dark mode support.
- * skip-to-content link ensures keyboard accessibility at page top.
- */
 import localFont from "next/font/local"
 import type { Metadata } from "next"
 
@@ -20,7 +8,6 @@ import { AuthProvider } from "@/hooks/useAuth"
 import { Toaster } from "sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
-/* Matter: primary type — body text, UI chrome, labels, sub-headings */
 const matter = localFont({
   src: [
     { path: "../fonts/MatterRegular.woff2", weight: "400", style: "normal" },
@@ -31,7 +18,6 @@ const matter = localFont({
   display: "swap",
 })
 
-/* SeasonMix: display type — h1 and h2 headings only */
 const seasonMix = localFont({
   src: [
     { path: "../fonts/SeasonMix-Regular.woff2", weight: "400", style: "normal" },
@@ -67,13 +53,12 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={cn(
-        "antialiased",
         matter.variable,
         seasonMix.variable,
+        "antialiased",
       )}
     >
-      <body>
-        {/* Skip to main content — WCAG 2.4.1, visible on focus */}
+      <body className={cn(matter.className, "antialiased")}>
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
@@ -84,7 +69,7 @@ export default function RootLayout({
               {children}
             </TooltipProvider>
           </AuthProvider>
-          <Toaster position="bottom-right" />
+          <Toaster position="bottom-right" richColors />
         </ThemeProvider>
       </body>
     </html>
