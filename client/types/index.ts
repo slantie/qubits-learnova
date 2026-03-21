@@ -166,10 +166,41 @@ export interface ReviewsResponse {
   totalCount: number;
 }
 
+export interface EarnedBadge {
+  badgeKey: string;
+  earnedAt: string;
+}
+
 export interface UserProfile {
   user: { id: number; name: string | null; email: string };
   totalPoints: number;
   currentBadge: string | null;
   enrollmentCount: number;
   completedCount: number;
+  badges: EarnedBadge[];
+}
+
+// ─── Badge types ──────────────────────────────────────────────────────────────
+
+export type BadgeCategory =
+  | 'TIER'
+  | 'COURSE_MILESTONE'
+  | 'QUIZ_EXCELLENCE'
+  | 'SPEED'
+  | 'CERTIFICATION'
+  | 'DEDICATION';
+
+export interface BadgeStatusItem {
+  key: string;
+  name: string;
+  category: BadgeCategory;
+  description: string;
+  trigger: string;
+  earned: boolean;
+  earnedAt: string | null;
+  progress?: { current: number; required: number };
+}
+
+export interface BadgeStatusList {
+  badges: BadgeStatusItem[];
 }
