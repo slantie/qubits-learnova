@@ -133,7 +133,7 @@ export default function WebsiteLayout({ children }: { children: ReactNode }) {
                 <div className="flex items-center gap-4">
                     <Link href="/" className="flex items-center gap-2 shrink-0">
                         <Image src="/learnova.svg" alt="Learnova" width={36} height={36} className="size-9 object-contain" />
-                        <span className="font-semibold text-base">Learnova</span>
+                        <span className="font-normal text-base">Learnova</span>
                     </Link>
 
                     {/* Nav links */}
@@ -199,7 +199,7 @@ export default function WebsiteLayout({ children }: { children: ReactNode }) {
                 <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         <Image src="/learnova.svg" alt="Learnova" width={24} height={24} className="size-6 object-contain" />
-                        <span className="text-sm font-medium">Learnova</span>
+                        <span className="text-sm font-normal">Learnova</span>
                     </div>
                     <p className="text-xs text-muted-foreground">
                         &copy; {new Date().getFullYear()} Learnova by Qubits. Built at Hackathon 2026.
