@@ -46,6 +46,12 @@ export interface CourseDetail {
   quizzes: { id: number; title: string }[];
 }
 
+export interface VideoTimestamp {
+  time: number;
+  label: string;
+  description?: string;
+}
+
 export interface Lesson {
   id: number;
   courseId: number;
@@ -60,6 +66,7 @@ export interface Lesson {
   thumbnailUrl: string | null;
   description: string | null;
   content: string | null;
+  timestamps: VideoTimestamp[] | null;
   attachmentsCount: number;
 }
 

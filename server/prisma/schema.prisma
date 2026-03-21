@@ -121,6 +121,7 @@ model Lesson {
   duration      Int?
   filePath      String?
   allowDownload Boolean    @default(false)
+  timestamps    Json?     // Array of { time: number, label: string, description?: string }
   responsibleId Int?
 
   createdAt DateTime @default(now())

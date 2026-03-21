@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { Prisma } from '../../generated/prisma';
 import prisma from '../../lib/prisma';
 import { AppError } from '../../config/AppError';
 import type {
@@ -86,7 +85,15 @@ export const updateLesson = async (
   await assertCourseAccess(courseId, userId, role);
   await assertLessonBelongs(lessonId, courseId);
 
-  return prisma.lesson.update({ where: { id: lessonId }, data });
+  const { timestamps, ...rest } = data;
+  const prismaData: Record<string, unknown> = { ...rest };
+  if (timestamps !== undefined) {
+    prismaData.timestamps = timestamps === null
+      ? Prisma.DbNull
+      : timestamps;
+  }
+
+  return prisma.lesson.update({ where: { id: lessonId }, data: prismaData });
 };
 
 // ─── Delete lesson ────────────────────────────────────────────────────────────
@@ -216,11 +223,6 @@ export const deleteAttachment = async (
   const attachment = await prisma.attachment.findUnique({ where: { id: attachmentId } });
   if (!attachment || attachment.lessonId !== lessonId) {
     throw new AppError(404, 'Attachment not found', 'ATTACHMENT_NOT_FOUND');
-  }
-
-  if (attachment.type === 'FILE' && attachment.filePath) {
-    const fullPath = path.join(process.cwd(), attachment.filePath.replace(/^\//, ''));
-    fs.unlink(fullPath, () => { /* non-fatal */ });
   }
 
   await prisma.attachment.delete({ where: { id: attachmentId } });

@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ContentTab } from '@/components/backoffice/course-form/ContentTab';
 import { QuizTab } from '@/components/backoffice/course-form/QuizTab';
+import { AttendeesTab } from '@/components/backoffice/course-form/AttendeesTab';
 import { AddAttendeesModal } from '@/components/backoffice/course-form/AddAttendeesModal';
 import { ContactAttendeesModal } from '@/components/backoffice/course-form/ContactAttendeesModal';
 import {
@@ -357,6 +358,7 @@ export default function CourseEditPage() {
             <Tabs defaultValue="content">
                 <TabsList>
                     <TabsTrigger value="content">Content</TabsTrigger>
+                    <TabsTrigger value="attendees">Attendees</TabsTrigger>
                     <TabsTrigger value="description">Description</TabsTrigger>
                     <TabsTrigger value="options">Options</TabsTrigger>
                     <TabsTrigger value="quiz">Quiz</TabsTrigger>
@@ -365,6 +367,15 @@ export default function CourseEditPage() {
                 {/* Content Tab */}
                 <TabsContent value="content" className="mt-4">
                     <ContentTab courseId={courseId} />
+                </TabsContent>
+
+                {/* Attendees Tab */}
+                <TabsContent value="attendees" className="mt-4">
+                    <AttendeesTab
+                        courseId={courseId}
+                        onAddAttendees={() => setAttendeesModalOpen(true)}
+                        onContactAttendees={() => setContactModalOpen(true)}
+                    />
                 </TabsContent>
 
                 {/* Description Tab */}
