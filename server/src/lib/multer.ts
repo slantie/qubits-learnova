@@ -15,6 +15,18 @@ const DOCUMENT_MIMES = [
   'text/csv',
 ];
 
+const AUDIO_MIMES = [
+  'audio/mpeg',
+  'audio/mp3',
+  'audio/wav',
+  'audio/wave',
+  'audio/ogg',
+  'audio/mp4',
+  'audio/aac',
+  'audio/flac',
+  'audio/webm',
+];
+
 function createUploader(allowedMimes: string[]) {
   return multer({
     storage: multer.memoryStorage(), // Buffer in memory → stream to Cloudinary
@@ -32,11 +44,11 @@ function createUploader(allowedMimes: string[]) {
 // Cover images (courses)
 export const uploadCover = createUploader(IMAGE_MIMES);
 
-// Lesson content files (images, docs)
-export const uploadLessonFile = createUploader([...IMAGE_MIMES, ...DOCUMENT_MIMES]);
+// Lesson content files (images, docs, audio)
+export const uploadLessonFile = createUploader([...IMAGE_MIMES, ...DOCUMENT_MIMES, ...AUDIO_MIMES]);
 
 // Attachments (all supported types)
-export const uploadAttachment = createUploader([...IMAGE_MIMES, ...DOCUMENT_MIMES]);
+export const uploadAttachment = createUploader([...IMAGE_MIMES, ...DOCUMENT_MIMES, ...AUDIO_MIMES]);
 
 // Avatar images
 export const uploadAvatar = createUploader(IMAGE_MIMES);

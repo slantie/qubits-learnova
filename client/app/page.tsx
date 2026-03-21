@@ -18,7 +18,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import React, { useLayoutEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Brain,
   Code2,
@@ -33,7 +33,6 @@ import {
   TrendingUp,
   Flame,
   ChevronRight,
-  Star,
 } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -42,9 +41,12 @@ import { useAuth } from "@/hooks/useAuth"
 import Link from "next/link"
 import Image from "next/image"
 
+type ButtonVariant = React.ComponentProps<typeof Button>['variant'];
+type ButtonSize = React.ComponentProps<typeof Button>['size'];
+
 const ButtonAnchor = React.forwardRef<
   HTMLAnchorElement,
-  React.ComponentProps<"a"> & { variant?: any; size?: any }
+  React.ComponentProps<"a"> & { variant?: ButtonVariant; size?: ButtonSize }
 >(({ className, variant, size, ...props }, ref) => (
   <a
     className={cn(buttonVariants({ variant, size, className }))}
@@ -54,7 +56,7 @@ const ButtonAnchor = React.forwardRef<
 ))
 ButtonAnchor.displayName = "ButtonAnchor"
 
-function ProgressBar({ value, className }: any) {
+function ProgressBar({ value, className }: { value: number; className?: string; size?: string; label?: string }) {
   return (
     <div
       className={cn(
@@ -67,7 +69,7 @@ function ProgressBar({ value, className }: any) {
   )
 }
 
-function CircleProgress({ value, size, strokeWidth }: any) {
+function CircleProgress({ value, size, strokeWidth }: { value: number; size: number; strokeWidth: number }) {
   const radius = size / 2 - strokeWidth
   const dasharray = 2 * Math.PI * radius
   const dashoffset = dasharray - (dasharray * value) / 100
@@ -104,8 +106,8 @@ function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  useLayoutEffect(() => {
-    setMounted(true)
+  useEffect(() => {
+    setMounted(true) // eslint-disable-line react-hooks/set-state-in-effect
   }, [])
 
   if (!mounted) {

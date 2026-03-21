@@ -75,10 +75,19 @@ export const getCourseDetail = async (courseId: number, userId?: number) => {
     where: { id: courseId },
     include: {
       instructor: { select: { id: true, name: true } },
+      sections: {
+        orderBy: { order: 'asc' },
+        include: {
+          lessons: {
+            orderBy: { order: 'asc' },
+            select: { id: true, title: true, type: true, order: true, sectionId: true, duration: true, thumbnailUrl: true },
+          },
+        },
+      },
       lessons: {
         orderBy: { order: 'asc' },
         select: {
-          id: true, title: true, type: true, order: true,
+          id: true, title: true, type: true, order: true, sectionId: true,
           duration: true, thumbnailUrl: true,
         },
       },
@@ -131,6 +140,20 @@ export const getCourseDetail = async (courseId: number, userId?: number) => {
     isCompleted: completedLessonIds.includes(l.id),
   }));
 
+  const sections = course.sections.map(s => ({
+    id: s.id,
+    title: s.title,
+    order: s.order,
+    isLocked: s.isLocked,
+    lessons: s.lessons.map(l => ({
+      ...l,
+      isCompleted: completedLessonIds.includes(l.id),
+    })),
+  }));
+
+  // All lessons flat (sections + orphans) for total count
+  const allLessons = [...course.sections.flatMap(s => s.lessons), ...course.lessons];
+
   return {
     id: course.id,
     title: course.title,
@@ -141,9 +164,10 @@ export const getCourseDetail = async (courseId: number, userId?: number) => {
     price: course.price ? course.price.toString() : null,
     visibility: course.visibility,
     instructor: course.instructor,
-    lessons,
+    sections,
+    lessons, // orphan lessons (no section)
     quizzes: course.quizzes,
-    _count: { lessons: course.lessons.length, enrollments: course._count.enrollments },
+    _count: { lessons: allLessons.length, enrollments: course._count.enrollments },
     enrollment,
   };
 };

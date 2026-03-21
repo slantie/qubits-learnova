@@ -299,7 +299,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
                     <h2 className="text-lg font-semibold">{isEdit ? 'Edit Lesson' : 'Add Lesson'}</h2>
-                    <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
+                    <button aria-label="Close" onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">
                         <X className="size-5" />
                     </button>
                 </div>
@@ -329,7 +329,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                             <Upload className="size-7 text-muted-foreground/40" />
                                             <p className="text-sm font-medium">Upload Video</p>
                                             <p className="text-xs text-muted-foreground">MP4, MOV, WebM, MKV</p>
-                                            <input ref={videoFileRef} type="file" accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/x-matroska" className="hidden" onChange={handleVideoUpload} />
+                                            <input ref={videoFileRef} aria-label="Upload video file" type="file" accept="video/mp4,video/quicktime,video/webm,video/x-msvideo,video/x-matroska" className="hidden" onChange={handleVideoUpload} />
                                         </div>
                                     )}
                                     {videoState.phase === 'uploading' && (
@@ -398,10 +398,10 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                                 <li key={a.id} className="flex items-center gap-3 px-3 py-2 rounded-lg border bg-muted/20 text-sm">
                                                     <FileText className="size-4 text-muted-foreground shrink-0" />
                                                     <span className="flex-1 truncate">{a.label}</span>
-                                                    <a href={a.filePath!} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline shrink-0">
+                                                    <a href={a.filePath!} target="_blank" rel="noopener noreferrer" aria-label={`Preview ${a.label}`} className="text-primary hover:underline shrink-0">
                                                         <Eye className="size-4" />
                                                     </a>
-                                                    <button onClick={() => handleDeleteAttachment(a.id)} className="text-muted-foreground hover:text-destructive shrink-0">
+                                                    <button aria-label={`Delete ${a.label}`} onClick={() => handleDeleteAttachment(a.id)} className="text-muted-foreground hover:text-destructive shrink-0">
                                                         <Trash2 className="size-4" />
                                                     </button>
                                                 </li>
@@ -414,7 +414,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                             Upload Document
                                         </Button>
                                         <span className="text-xs text-muted-foreground">PDF, DOCX, PPTX, etc.</span>
-                                        <input ref={docInputRef} type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.zip" className="hidden" onChange={handleDocUpload} />
+                                        <input ref={docInputRef} aria-label="Upload document files" type="file" multiple accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.zip" className="hidden" onChange={handleDocUpload} />
                                     </div>
                                 </div>
                             )}
@@ -430,13 +430,13 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                     {imgAttachments.length > 0 && (
                                         <div className="grid grid-cols-3 gap-2">
                                             {imgAttachments.map(a => (
-                                                <div key={a.id} className="relative group rounded-lg overflow-hidden border aspect-[4/3] bg-muted">
+                                                <div key={a.id} className="relative group rounded-lg overflow-hidden border aspect-4/3 bg-muted">
                                                     <img src={a.filePath!} alt={a.label} className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-                                                        <a href={a.filePath!} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-full bg-white/90 text-black hover:bg-white">
+                                                        <a href={a.filePath!} target="_blank" rel="noopener noreferrer" aria-label={`Preview ${a.label}`} className="p-1.5 rounded-full bg-white/90 text-black hover:bg-white">
                                                             <Eye className="size-3.5" />
                                                         </a>
-                                                        <button onClick={() => handleDeleteAttachment(a.id)} className="p-1.5 rounded-full bg-white/90 text-destructive hover:bg-white">
+                                                        <button aria-label={`Delete ${a.label}`} onClick={() => handleDeleteAttachment(a.id)} className="p-1.5 rounded-full bg-white/90 text-destructive hover:bg-white">
                                                             <Trash2 className="size-3.5" />
                                                         </button>
                                                     </div>
@@ -450,7 +450,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                             Upload Image
                                         </Button>
                                         <span className="text-xs text-muted-foreground">JPEG, PNG, WebP, GIF</span>
-                                        <input ref={imgInputRef} type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" className="hidden" onChange={handleImgUpload} />
+                                        <input ref={imgInputRef} aria-label="Upload image files" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" className="hidden" onChange={handleImgUpload} />
                                     </div>
                                 </div>
                             )}
@@ -486,7 +486,7 @@ export function LessonEditorModal({ courseId, lesson, onSave, onClose }: LessonE
                                                     <Link2 className="size-4 text-muted-foreground shrink-0" />
                                                     <span className="flex-1 truncate">{a.label}</span>
                                                     <a href={a.externalUrl!} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline text-xs shrink-0">Open</a>
-                                                    <button onClick={() => handleDeleteAttachment(a.id)} className="text-muted-foreground hover:text-destructive shrink-0">
+                                                    <button aria-label={`Delete ${a.label}`} onClick={() => handleDeleteAttachment(a.id)} className="text-muted-foreground hover:text-destructive shrink-0">
                                                         <Trash2 className="size-4" />
                                                     </button>
                                                 </li>

@@ -84,9 +84,19 @@ export const getCourseDetail = async (courseId: number, userId: number, role: st
   const course = await prisma.course.findUnique({
     where: { id: courseId },
     include: {
-      lessons: {
+      sections: {
         orderBy: { order: 'asc' },
-        select: { id: true, title: true, type: true, order: true, duration: true },
+        include: {
+          lessons: {
+            orderBy: { order: 'asc' },
+            select: { id: true, title: true, type: true, order: true, duration: true, sectionId: true },
+          },
+        },
+      },
+      lessons: {
+        where: { sectionId: null },
+        orderBy: { order: 'asc' },
+        select: { id: true, title: true, type: true, order: true, duration: true, sectionId: true },
       },
       quizzes: { select: { id: true, title: true } },
       _count: { select: { enrollments: true } },
@@ -180,13 +190,30 @@ export const getCourseView = async (courseId: number, userId: number, role: stri
     where: { id: courseId },
     include: {
       instructor: { select: { name: true } },
+      sections: {
+        orderBy: { order: 'asc' },
+        include: {
+          lessons: {
+            orderBy: { order: 'asc' },
+            select: {
+              id: true, title: true, type: true, order: true, sectionId: true,
+              duration: true, description: true,
+              videoUrl: true, videoStatus: true, thumbnailUrl: true,
+              filePath: true, allowDownload: true, iframeUrl: true,
+              richContent: true, quizBlockId: true,
+            },
+          },
+        },
+      },
       lessons: {
+        where: { sectionId: null },
         orderBy: { order: 'asc' },
         select: {
-          id: true, title: true, type: true, order: true,
+          id: true, title: true, type: true, order: true, sectionId: true,
           duration: true, description: true,
           videoUrl: true, videoStatus: true, thumbnailUrl: true,
-          filePath: true, allowDownload: true,
+          filePath: true, allowDownload: true, iframeUrl: true,
+          richContent: true, quizBlockId: true,
         },
       },
     },

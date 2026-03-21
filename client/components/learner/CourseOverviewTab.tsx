@@ -54,10 +54,11 @@ export function CourseOverviewTab({ course, enrollment, onLessonClick }: CourseO
             <BookOpen className="size-4" />
             Course Content
             <Badge variant="neutral" className="text-[10px]">
-              {course.lessons.length} lessons
+              {course._count.lessons} lessons
             </Badge>
           </h3>
           <LessonList
+            sections={course.sections}
             lessons={course.lessons}
             isEnrolled={isEnrolled}
             onLessonClick={onLessonClick}

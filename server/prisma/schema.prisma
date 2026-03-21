@@ -20,6 +20,15 @@ enum LessonType {
   DOCUMENT
   IMAGE
   QUIZ
+  ARTICLE
+  PDF
+  AUDIO
+  QUIZ_BLOCK
+  ASSIGNMENT
+  LINK_BLOCK
+  IFRAME
+  SURVEY
+  FEEDBACK_GATE
 }
 
 enum Visibility {
@@ -94,6 +103,8 @@ model Course {
   websiteUrl   String?
 
   certificateTemplate String?
+  certThreshold       Int?     // min quiz score % needed for cert (null = no threshold)
+  expiryDays          Int?     // days from enrollment before access expires (null = no expiry)
 
   instructorId  Int
   instructor    User  @relation("CourseInstructor", fields: [instructorId], references: [id])
@@ -104,18 +115,38 @@ model Course {
   updatedAt DateTime @updatedAt
 
   lessons      Lesson[]
+  sections     Section[]
   quizzes      Quiz[]
   enrollments  Enrollment[]
   reviews      Review[]
   certificates Certificate[]
 }
 
+model Section {
+  id          Int      @id @default(autoincrement())
+  courseId    Int
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  order       Int
+  isLocked    Boolean  @default(false)
+  description String?
+
+  lessons   Lesson[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([courseId, order])
+}
+
 model Lesson {
   id            Int        @id @default(autoincrement())
   courseId      Int
   course        Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  sectionId     Int?
+  section       Section?   @relation(fields: [sectionId], references: [id], onDelete: SetNull)
   title         String
-  type          LessonType
+  type          LessonType @default(VIDEO)
   order         Int
   description   String?
   videoUrl      String?   // HLS stream URL (from video service)
@@ -126,6 +157,9 @@ model Lesson {
   filePath      String?
   allowDownload Boolean    @default(false)
   timestamps    Json?     // Array of { time: number, label: string, description?: string }
+  richContent   Json?     // ARTICLE html, ASSIGNMENT checklist, SURVEY questions, etc.
+  iframeUrl     String?   // IFRAME embed url
+  quizBlockId   Int?      // QUIZ_BLOCK → references Quiz.id
   responsibleId Int?
 
   createdAt DateTime @default(now())
@@ -135,6 +169,7 @@ model Lesson {
   lessonProgresses LessonProgress[]
 
   @@index([courseId, order])
+  @@index([sectionId])
 }
 
 model Attachment {

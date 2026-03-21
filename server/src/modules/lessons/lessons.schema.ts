@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
+const LESSON_TYPES = [
+  'VIDEO', 'DOCUMENT', 'IMAGE', 'QUIZ',
+  'ARTICLE', 'PDF', 'AUDIO', 'QUIZ_BLOCK',
+  'ASSIGNMENT', 'LINK_BLOCK', 'IFRAME', 'SURVEY', 'FEEDBACK_GATE',
+] as const;
+
 export const createLessonSchema = z.object({
   title: z.string().min(1),
-  type: z.enum(['VIDEO', 'DOCUMENT', 'IMAGE', 'QUIZ']).default('VIDEO'),
+  type: z.enum(LESSON_TYPES).default('VIDEO'),
   order: z.number().int().optional(),
+  sectionId: z.number().int().nullable().optional(),
 });
 
 const timestampSchema = z.object({
@@ -14,7 +21,8 @@ const timestampSchema = z.object({
 
 export const updateLessonSchema = z.object({
   title: z.string().min(1).optional(),
-  type: z.enum(['VIDEO', 'DOCUMENT', 'IMAGE', 'QUIZ']).optional(),
+  type: z.enum(LESSON_TYPES).optional(),
+  sectionId: z.number().int().nullable().optional(),
   videoUrl: z.string().optional(),
   videoId: z.string().optional(),
   videoStatus: z.string().optional(),
@@ -23,6 +31,10 @@ export const updateLessonSchema = z.object({
   allowDownload: z.boolean().optional(),
   description: z.string().nullable().optional(),
   timestamps: z.array(timestampSchema).nullable().optional(),
+  richContent: z.any().nullable().optional(),
+  iframeUrl: z.string().nullable().optional(),
+  quizBlockId: z.number().int().nullable().optional(),
+  filePath: z.string().nullable().optional(),
   responsibleId: z.number().int().nullable().optional(),
 });
 

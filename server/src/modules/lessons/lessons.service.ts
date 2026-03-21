@@ -63,7 +63,9 @@ export const createLesson = async (
     order = (last._max.order ?? 0) + 1;
   }
 
-  return prisma.lesson.create({ data: { courseId, title: data.title, type: data.type, order } });
+  return prisma.lesson.create({
+    data: { courseId, title: data.title, type: data.type, order, sectionId: data.sectionId ?? null },
+  });
 };
 
 // ─── Get single lesson ────────────────────────────────────────────────────────
@@ -85,12 +87,13 @@ export const updateLesson = async (
   await assertCourseAccess(courseId, userId, role);
   await assertLessonBelongs(lessonId, courseId);
 
-  const { timestamps, ...rest } = data;
+  const { timestamps, richContent, ...rest } = data;
   const prismaData: Record<string, unknown> = { ...rest };
   if (timestamps !== undefined) {
-    prismaData.timestamps = timestamps === null
-      ? Prisma.DbNull
-      : timestamps;
+    prismaData.timestamps = timestamps === null ? Prisma.DbNull : timestamps;
+  }
+  if (richContent !== undefined) {
+    prismaData.richContent = richContent === null ? Prisma.DbNull : richContent;
   }
 
   return prisma.lesson.update({ where: { id: lessonId }, data: prismaData });

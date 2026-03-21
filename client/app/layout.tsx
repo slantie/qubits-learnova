@@ -37,10 +37,14 @@ export const metadata: Metadata = {
     "Learnova by Qubits — a full-stack eLearning platform with course management, progress tracking, quizzes, and gamification built for the modern learner.",
   keywords: ["Learnova", "Qubits", "learning", "edtech", "Odoo", "courses", "education"],
   manifest: "/manifest.webmanifest",
+  themeColor: "#3d9970",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Learnova",
+  },
+  icons: {
+    apple: "/learnova.png",
   },
   openGraph: {
     title: "Learnova — Learn Smarter, Build Faster",
@@ -65,11 +69,7 @@ export default function RootLayout({
         "antialiased",
       )}
     >
-      <head>
-        <meta name="theme-color" content="#3d9970" />
-        <link rel="apple-touch-icon" href="/learnova.png" />
-      </head>
-      <body className={cn(matter.className, "antialiased")}>
+<body className={cn(matter.className, "antialiased")} suppressHydrationWarning>
         <Script
           id="sw-register"
           strategy="afterInteractive"

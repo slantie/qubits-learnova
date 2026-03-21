@@ -14,6 +14,8 @@ export const updateCourseSchema = z.object({
   accessRule: z.enum(['OPEN', 'ON_INVITATION', 'ON_PAYMENT']).optional(),
   price: z.number().nonnegative().optional(),
   certificateTemplate: z.string().nullable().optional(),
+  certThreshold: z.number().int().min(0).max(100).nullable().optional(),
+  expiryDays: z.number().int().min(1).nullable().optional(),
 });
 
 export const publishCourseSchema = z.object({

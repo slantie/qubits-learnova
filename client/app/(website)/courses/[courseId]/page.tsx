@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
@@ -23,9 +23,11 @@ import {
     Link2, FileDown, X, ChevronRight, Download,
     CheckCircle, Circle, Trophy, ArrowRight,
     Users, Lock, Award, ExternalLink, Printer,
-    Copy, BadgeCheck, Star,
+    Copy, BadgeCheck, Star, FileAudio, Code2,
+    CheckSquare, BarChart2, MessageSquare,
 } from 'lucide-react';
 import { LessonType } from '@/types';
+import { LiveWaveform } from '@/components/ui/live-waveform';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -52,6 +54,9 @@ interface LessonDetail {
     allowDownload: boolean;
     duration: number | null;
     timestamps: LessonTimestamp[] | null;
+    richContent: unknown | null;
+    iframeUrl: string | null;
+    quizBlockId: number | null;
     attachments: { id: number; type: 'FILE' | 'LINK'; label: string; filePath: string | null; externalUrl: string | null }[];
 }
 
@@ -61,9 +66,19 @@ interface QuizMeta {
     rewards: { attempt1Points: number; attempt2Points: number; attempt3Points: number; attempt4PlusPoints: number } | null;
 }
 
+interface SectionMeta {
+    id: number;
+    title: string;
+    order: number;
+    isLocked: boolean;
+    lessons: LessonMeta[];
+}
+
 interface CourseViewData {
     id: number; title: string; description: string | null; coverImage: string | null;
-    tags: string[]; instructorName: string; lessons: LessonMeta[];
+    tags: string[]; instructorName: string;
+    sections: SectionMeta[];
+    lessons: LessonMeta[];
     completedLessonIds: number[];
 }
 
@@ -73,6 +88,24 @@ type ContentTab = 'description' | 'images' | 'documents' | 'chapters' | 'resourc
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const IMAGE_EXT = /\.(jpg|jpeg|png|gif|webp|svg|bmp|avif)(\?|$)/i;
+
+function lessonTypeIcon(type: LessonType): React.ReactNode {
+    const cls = 'size-3 shrink-0';
+    switch (type) {
+        case 'VIDEO':        return <Play className={cls} />;
+        case 'ARTICLE':      return <FileText className={cls} />;
+        case 'PDF':          return <FileText className={cls} />;
+        case 'IMAGE':        return <ImageIcon className={cls} />;
+        case 'AUDIO':        return <FileAudio className={cls} />;
+        case 'LINK_BLOCK':   return <Link2 className={cls} />;
+        case 'IFRAME':       return <Code2 className={cls} />;
+        case 'QUIZ_BLOCK':   return <ClipboardList className={cls} />;
+        case 'ASSIGNMENT':   return <CheckSquare className={cls} />;
+        case 'SURVEY':       return <BarChart2 className={cls} />;
+        case 'FEEDBACK_GATE':return <MessageSquare className={cls} />;
+        default:             return <FileText className={cls} />;
+    }
+}
 
 function getDownloadUrl(url: string, filename: string): string {
     if (url.includes('res.cloudinary.com')) {
@@ -94,6 +127,33 @@ function LessonContent({
 }) {
     const [activeTab, setActiveTab] = useState<ContentTab>('description');
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+    const [audioPlaying, setAudioPlaying] = useState(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
+
+    // Survey/Feedback state
+    type SurveyQuestion = { id: string; label: string; type: 'text' | 'star' | 'choice'; required: boolean; options: string[] };
+    const surveyQuestions: SurveyQuestion[] = (() => {
+        try {
+            const rc = lesson.richContent;
+            if (Array.isArray(rc)) return rc as SurveyQuestion[];
+            if (typeof rc === 'string') { const p = JSON.parse(rc); if (Array.isArray(p)) return p as SurveyQuestion[]; }
+        } catch {}
+        return [];
+    })();
+    const [surveyAnswers, setSurveyAnswers] = useState<Record<string, string | number>>({});
+    const [surveySubmitted, setSurveySubmitted] = useState(false);
+    const [surveySubmitting, setSurveySubmitting] = useState(false);
+
+    const handleSurveySubmit = async () => {
+        const missing = surveyQuestions.filter(q => q.required && !surveyAnswers[q.id]);
+        if (missing.length > 0) { toast.error('Please answer all required questions'); return; }
+        setSurveySubmitting(true);
+        // Store responses locally (no separate API endpoint needed — just mark complete)
+        await onMarkComplete(lesson.id);
+        setSurveySubmitted(true);
+        setSurveySubmitting(false);
+        toast.success('Response submitted!');
+    };
 
     const images = lesson.attachments.filter(a => a.type === 'FILE' && a.filePath && IMAGE_EXT.test(a.filePath));
     const docs = lesson.attachments.filter(a => a.type === 'FILE' && a.filePath && !IMAGE_EXT.test(a.filePath));
@@ -127,30 +187,289 @@ function LessonContent({
         return () => window.removeEventListener('keydown', handler);
     }, [lightboxIndex, images.length]);
 
-    const idx = course.lessons.findIndex(l => l.id === lesson.id);
-    const prev = course.lessons[idx - 1];
-    const next = course.lessons[idx + 1];
+    const allLessons = [...(course.sections ?? []).flatMap(s => s.lessons), ...course.lessons];
+    const idx = allLessons.findIndex(l => l.id === lesson.id);
+    const prev = allLessons[idx - 1];
+    const next = allLessons[idx + 1];
     const isCompleted = completedIds.has(lesson.id);
+
+    // Derive checklist items from richContent for ASSIGNMENT
+    const checklistItems: string[] = (() => {
+        try {
+            const rc = lesson.richContent;
+            if (Array.isArray(rc)) return rc as string[];
+            if (typeof rc === 'string') { const p = JSON.parse(rc); if (Array.isArray(p)) return p as string[]; }
+        } catch {}
+        return [];
+    })();
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 flex flex-col gap-6">
-            {/* Video player */}
-            {lesson.videoStatus === 'READY' && lesson.videoUrl ? (
+
+            {/* ── VIDEO ────────────────────────────────────────────────────── */}
+            {lesson.type === 'VIDEO' && lesson.videoStatus === 'READY' && lesson.videoUrl && (
                 <VideoPlayer src={lesson.videoUrl} poster={lesson.thumbnailUrl ?? undefined} title={lesson.title} timestamps={lesson.timestamps ?? undefined} className="w-full shadow-lg" />
-            ) : lesson.videoStatus === 'PROCESSING' ? (
+            )}
+            {lesson.type === 'VIDEO' && lesson.videoStatus === 'PROCESSING' && (
                 <div className="aspect-video rounded-xl bg-muted flex flex-col items-center justify-center gap-3 text-muted-foreground">
                     <Loader2 className="size-8 animate-spin text-amber-500" />
                     <p className="text-sm font-medium">Video is being processed</p>
                     <p className="text-xs">Check back in a few minutes</p>
                 </div>
-            ) : null}
+            )}
 
-            {/* Image lesson */}
-            {lesson.type === 'IMAGE' && lesson.filePath && (
+            {/* ── ARTICLE ─────────────────────────────────────────────────── */}
+            {lesson.type === 'ARTICLE' && lesson.richContent && (
+                <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed" dangerouslySetInnerHTML={{ __html: lesson.richContent as string }} />
+            )}
+
+            {/* ── PDF ─────────────────────────────────────────────────────── */}
+            {lesson.type === 'PDF' && lesson.filePath && (
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3 p-4 border rounded-xl bg-muted/30">
+                        <FileText className="size-8 text-red-500 shrink-0" />
+                        <span className="flex-1 font-medium text-sm truncate">{lesson.title}</span>
+                        <a href={lesson.filePath} target="_blank" rel="noopener noreferrer">
+                            <Button size="sm" variant="outline"><ExternalLink className="size-3.5 mr-1" />Open PDF</Button>
+                        </a>
+                        {lesson.allowDownload && (
+                            <a href={getDownloadUrl(lesson.filePath, lesson.title)} download={lesson.title} target="_blank" rel="noopener noreferrer">
+                                <Button size="sm" variant="outline"><Download className="size-3.5 mr-1" />Download</Button>
+                            </a>
+                        )}
+                    </div>
+                    <iframe src={lesson.filePath} className="w-full rounded-xl border h-[75vh]" title={lesson.title} />
+                </div>
+            )}
+
+            {/* ── IMAGE ───────────────────────────────────────────────────── */}
+            {(lesson.type === 'IMAGE') && lesson.filePath && (
                 <img src={lesson.filePath} alt={lesson.title} className="w-full rounded-xl object-contain max-h-125 border" />
             )}
 
-            {/* Document lesson */}
+            {/* ── AUDIO ───────────────────────────────────────────────────── */}
+            {lesson.type === 'AUDIO' && lesson.filePath && (
+                <div className="flex flex-col gap-4 p-5 border rounded-xl bg-muted/20">
+                    {/* Header row */}
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-pink-500/10">
+                            <FileAudio className="size-5 text-pink-500 shrink-0" />
+                        </div>
+                        <span className="flex-1 font-semibold truncate">{lesson.title}</span>
+                        {lesson.allowDownload && (
+                            <a href={getDownloadUrl(lesson.filePath, lesson.title)} download={lesson.title}>
+                                <Button size="sm" variant="outline" className="shrink-0">
+                                    <Download className="size-3.5 mr-1" />Download
+                                </Button>
+                            </a>
+                        )}
+                    </div>
+
+                    {/* Waveform visualizer */}
+                    <LiveWaveform
+                        active={audioPlaying}
+                        mode="scrolling"
+                        height={56}
+                        barColor="rgb(236, 72, 153)"
+                        barWidth={3}
+                        barGap={1.5}
+                        barHeight={5}
+                        sensitivity={1.4}
+                        fadeEdges
+                        className="rounded-lg"
+                    />
+
+                    {/* Native audio (hidden controls, we control play state) */}
+                    <audio
+                        ref={audioRef}
+                        src={lesson.filePath}
+                        className="w-full"
+                        controls
+                        onPlay={() => setAudioPlaying(true)}
+                        onPause={() => setAudioPlaying(false)}
+                        onEnded={() => setAudioPlaying(false)}
+                    />
+                </div>
+            )}
+
+            {/* ── LINK_BLOCK ──────────────────────────────────────────────── */}
+            {lesson.type === 'LINK_BLOCK' && lesson.description && (
+                <a href={lesson.description} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-5 border rounded-xl bg-card hover:bg-muted/40 transition-colors group">
+                    <div className="size-10 rounded-lg bg-cyan-500/10 flex items-center justify-center shrink-0">
+                        <Link2 className="size-5 text-cyan-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm">{lesson.title}</p>
+                        <p className="text-xs text-muted-foreground truncate">{lesson.description}</p>
+                    </div>
+                    <ExternalLink className="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                </a>
+            )}
+
+            {/* ── IFRAME ──────────────────────────────────────────────────── */}
+            {lesson.type === 'IFRAME' && lesson.iframeUrl && (() => {
+                const raw = lesson.iframeUrl;
+                const match = raw.match(/<iframe[\s\S]*?\bsrc=["']([^"']+)["']/i);
+                const src = match ? match[1] : raw;
+                return (
+                    <div className="flex flex-col gap-2">
+                        <iframe src={src} className="w-full rounded-xl border h-[75vh]" title={lesson.title} allow="fullscreen" />
+                        <a href={src} target="_blank" rel="noopener noreferrer" className="self-end text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
+                            <ExternalLink className="size-3" /> Open in new tab
+                        </a>
+                    </div>
+                );
+            })()}
+
+            {/* ── QUIZ_BLOCK ──────────────────────────────────────────────── */}
+            {lesson.type === 'QUIZ_BLOCK' && lesson.quizBlockId && (
+                <Link href={`/courses/${course.id}/quiz/${lesson.quizBlockId}`}
+                    className="flex items-center gap-4 p-5 border rounded-xl bg-card hover:bg-muted/40 transition-colors group">
+                    <div className="size-10 rounded-lg bg-orange-500/10 flex items-center justify-center shrink-0">
+                        <ClipboardList className="size-5 text-orange-500" />
+                    </div>
+                    <div className="flex-1">
+                        <p className="font-semibold text-sm">{lesson.title}</p>
+                        <p className="text-xs text-muted-foreground">Take this quiz to test your knowledge</p>
+                    </div>
+                    <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                </Link>
+            )}
+
+            {/* ── ASSIGNMENT ──────────────────────────────────────────────── */}
+            {lesson.type === 'ASSIGNMENT' && (
+                <div className="flex flex-col gap-4 p-5 border rounded-xl bg-muted/20">
+                    <div className="flex items-center gap-3">
+                        <CheckSquare className="size-5 text-teal-500" />
+                        <h3 className="font-semibold text-sm">Assignment Checklist</h3>
+                    </div>
+                    {lesson.description && <p className="text-sm text-muted-foreground">{lesson.description}</p>}
+                    {checklistItems.length > 0 ? (
+                        <ol className="flex flex-col gap-2">
+                            {checklistItems.map((item, idx) => (
+                                <li key={idx} className="flex items-start gap-3 text-sm">
+                                    <span className="mt-0.5 size-5 rounded-full border-2 border-muted-foreground/30 shrink-0 flex items-center justify-center text-[10px] font-bold text-muted-foreground">{idx + 1}</span>
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ol>
+                    ) : (
+                        <p className="text-sm text-muted-foreground italic">No checklist items.</p>
+                    )}
+                </div>
+            )}
+
+            {/* ── SURVEY / FEEDBACK_GATE ──────────────────────────────────── */}
+            {(lesson.type === 'SURVEY' || lesson.type === 'FEEDBACK_GATE') && (
+                <div className="flex flex-col gap-5 p-5 border rounded-xl bg-muted/20">
+                    {/* Header */}
+                    <div className="flex items-center gap-3">
+                        <div className={cn('p-2 rounded-lg', lesson.type === 'SURVEY' ? 'bg-lime-500/10' : 'bg-fuchsia-500/10')}>
+                            {lesson.type === 'SURVEY'
+                                ? <BarChart2 className="size-5 text-lime-600" />
+                                : <MessageSquare className="size-5 text-fuchsia-500" />}
+                        </div>
+                        <div>
+                            <p className="font-semibold text-sm">{lesson.title}</p>
+                            {lesson.type === 'FEEDBACK_GATE' && (
+                                <p className="text-[11px] text-fuchsia-600 dark:text-fuchsia-400">Complete to unlock the next lesson</p>
+                            )}
+                        </div>
+                    </div>
+
+                    {lesson.description && (
+                        <p className="text-sm text-muted-foreground">{lesson.description}</p>
+                    )}
+
+                    {surveySubmitted ? (
+                        <div className="flex flex-col items-center gap-2 py-6 text-center">
+                            <CheckCircle className="size-10 text-emerald-500" />
+                            <p className="font-semibold text-sm">Thank you for your response!</p>
+                            <p className="text-xs text-muted-foreground">Your feedback has been recorded.</p>
+                        </div>
+                    ) : surveyQuestions.length === 0 ? (
+                        <div className="py-6 text-center text-sm text-muted-foreground italic">No questions configured for this block.</div>
+                    ) : (
+                        <div className="flex flex-col gap-5">
+                            {surveyQuestions.map((q, qi) => (
+                                <div key={q.id} className="flex flex-col gap-2">
+                                    <label className="text-sm font-medium">
+                                        {qi + 1}. {q.label}
+                                        {q.required && <span className="text-destructive ml-1">*</span>}
+                                    </label>
+
+                                    {q.type === 'text' && (
+                                        <textarea
+                                            value={(surveyAnswers[q.id] as string) ?? ''}
+                                            onChange={e => setSurveyAnswers(prev => ({ ...prev, [q.id]: e.target.value }))}
+                                            placeholder="Your answer..."
+                                            rows={3}
+                                            className="w-full rounded-lg border bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+                                        />
+                                    )}
+
+                                    {q.type === 'star' && (
+                                        <div className="flex items-center gap-1">
+                                            {[1, 2, 3, 4, 5].map(s => (
+                                                <button
+                                                    key={s}
+                                                    type="button"
+                                                    aria-label={`${s} star`}
+                                                    onClick={() => setSurveyAnswers(prev => ({ ...prev, [q.id]: s }))}
+                                                    className="transition-transform hover:scale-110"
+                                                >
+                                                    <Star className={cn('size-7', (surveyAnswers[q.id] as number) >= s ? 'text-amber-400 fill-amber-400' : 'text-muted-foreground/30')} />
+                                                </button>
+                                            ))}
+                                            {surveyAnswers[q.id] && (
+                                                <span className="text-xs text-muted-foreground ml-2">{surveyAnswers[q.id]} / 5</span>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {q.type === 'choice' && (
+                                        <div className="flex flex-col gap-1.5">
+                                            {q.options.filter(Boolean).map((opt, oi) => (
+                                                <label key={oi} className="flex items-center gap-2.5 cursor-pointer group">
+                                                    <span className={cn(
+                                                        'size-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors',
+                                                        surveyAnswers[q.id] === opt
+                                                            ? 'border-primary bg-primary'
+                                                            : 'border-muted-foreground/40 group-hover:border-primary/60'
+                                                    )}>
+                                                        {surveyAnswers[q.id] === opt && <span className="size-1.5 rounded-full bg-primary-foreground" />}
+                                                    </span>
+                                                    <input
+                                                        type="radio"
+                                                        name={`survey-${q.id}`}
+                                                        value={opt}
+                                                        checked={surveyAnswers[q.id] === opt}
+                                                        onChange={() => setSurveyAnswers(prev => ({ ...prev, [q.id]: opt }))}
+                                                        className="sr-only"
+                                                    />
+                                                    <span className="text-sm">{opt}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+
+                            <Button
+                                onClick={handleSurveySubmit}
+                                disabled={surveySubmitting}
+                                className="self-start"
+                            >
+                                {surveySubmitting && <Loader2 className="size-4 mr-2 animate-spin" />}
+                                Submit Response
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* ── DOCUMENT (legacy) ────────────────────────────────────────── */}
             {lesson.type === 'DOCUMENT' && lesson.filePath && (
                 <div className="flex items-center gap-3 p-4 border rounded-xl bg-muted/30">
                     <FileText className="size-8 text-muted-foreground shrink-0" />
@@ -296,7 +615,7 @@ function LessonContent({
                     <Button onClick={() => setLightboxIndex(null)} className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10"><X className="size-5" /></Button>
                     <span className="absolute top-5 left-1/2 -translate-x-1/2 text-white/60 text-sm font-mono">{lightboxIndex + 1} / {images.length}</span>
                     {lesson.allowDownload && (
-                        <a href={getDownloadUrl(images[lightboxIndex].filePath!, images[lightboxIndex].label)} download={images[lightboxIndex].label} onClick={e => e.stopPropagation()} className="absolute top-4 right-16 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
+                        <a href={getDownloadUrl(images[lightboxIndex].filePath!, images[lightboxIndex].label)} download={images[lightboxIndex].label} onClick={e => e.stopPropagation()} aria-label={`Download ${images[lightboxIndex].label}`} className="absolute top-4 right-16 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white z-10">
                             <Download className="size-5" />
                         </a>
                     )}
@@ -375,8 +694,9 @@ export default function CourseDetailPage() {
             setQuizzes(Array.isArray(quizData) ? quizData : (quizData.quizzes ?? []));
             const ids = new Set<number>(c.completedLessonIds ?? []);
             setCompletedIds(ids);
-            if (c.lessons.length > 0 && !activeLessonId) {
-                const first = c.lessons.find(l => !ids.has(l.id)) ?? c.lessons[0];
+            const allLessons = [...(c.sections ?? []).flatMap(s => s.lessons), ...c.lessons];
+            if (allLessons.length > 0 && !activeLessonId) {
+                const first = allLessons.find(l => !ids.has(l.id)) ?? allLessons[0];
                 setActiveLessonId(first.id);
             }
         } catch { /* non-fatal */ }
@@ -450,9 +770,12 @@ export default function CourseDetailPage() {
 
     const isEnrolled = !!overviewData?.enrollment;
     const enrollment = overviewData?.enrollment;
-    const totalDuration = courseView?.lessons.reduce((s, l) => s + (l.duration ?? 0), 0) ?? 0;
-    const progressPct = courseView && courseView.lessons.length > 0
-        ? Math.round((completedIds.size / courseView.lessons.length) * 100)
+    const allCourseLessons = courseView
+        ? [...(courseView.sections ?? []).flatMap(s => s.lessons), ...courseView.lessons]
+        : [];
+    const totalDuration = allCourseLessons.reduce((s, l) => s + (l.duration ?? 0), 0);
+    const progressPct = allCourseLessons.length > 0
+        ? Math.round((completedIds.size / allCourseLessons.length) * 100)
         : 0;
 
     const renderCTA = () => {
@@ -530,17 +853,17 @@ export default function CourseDetailPage() {
                             <h1 className="font-semibold text-sm leading-snug line-clamp-2 mb-1">{overviewData.title}</h1>
                             {overviewData.instructor?.name && <p className="text-xs text-muted-foreground mb-3">by {overviewData.instructor.name}</p>}
                             <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                                <span className="inline-flex items-center gap-1"><BookOpen className="size-3" />{courseView?.lessons.length ?? 0} lessons</span>
+                                <span className="inline-flex items-center gap-1"><BookOpen className="size-3" />{allCourseLessons.length} lessons</span>
                                 {totalDuration > 0 && <span className="inline-flex items-center gap-1"><Clock className="size-3" />{formatDuration(totalDuration)}</span>}
                             </div>
-                            {(courseView?.lessons.length ?? 0) > 0 && (
+                            {allCourseLessons.length > 0 && (
                                 <div className="mt-4">
                                     <div className="flex items-center justify-between text-xs mb-1.5">
                                         <span className="text-muted-foreground">Progress</span>
-                                        <span className="font-medium tabular-nums">{completedIds.size}/{courseView?.lessons.length}</span>
+                                        <span className="font-medium tabular-nums">{completedIds.size}/{allCourseLessons.length}</span>
                                     </div>
                                     <div className="h-2 bg-muted rounded-full overflow-hidden">
-                                        <div className={cn('h-full rounded-full transition-all duration-500', progressPct >= 100 ? 'bg-green-500' : 'bg-primary')} style={{ width: `${progressPct}%` }} />
+                                        <div className={cn('h-full rounded-full transition-all duration-500', progressPct >= 100 ? 'bg-green-500' : 'bg-primary')} style={{ width: `${progressPct}%` }} /> {/* dynamic width requires inline style */}
                                     </div>
                                     {progressPct >= 100 && (
                                         <div className="flex items-center gap-1.5 mt-2 text-xs text-green-600 dark:text-green-400 font-medium">
@@ -583,33 +906,63 @@ export default function CourseDetailPage() {
                         </div>
 
                         <nav className="flex-1 py-2">
-                            {courseView?.lessons.map((l, index) => {
-                                const isActive = l.id === activeLessonId;
-                                const isProcessing = l.type === 'VIDEO' && l.videoStatus === 'PROCESSING';
-                                const isDone = completedIds.has(l.id);
+                            {(() => {
+                                const indexMap = new Map<number, number>();
+                                let idx = 1;
+                                for (const s of (courseView?.sections ?? [])) for (const l of s.lessons) indexMap.set(l.id, idx++);
+                                for (const l of (courseView?.lessons ?? [])) indexMap.set(l.id, idx++);
+
+                                const renderLesson = (l: LessonMeta) => {
+                                    const isActive = l.id === activeLessonId;
+                                    const isProcessing = l.type === 'VIDEO' && l.videoStatus === 'PROCESSING';
+                                    const isDone = completedIds.has(l.id);
+                                    return (
+                                        <button key={l.id} type="button" onClick={() => setActiveLessonId(l.id)} disabled={isProcessing}
+                                            className={cn(
+                                                'w-full flex items-start gap-3 px-5 py-3 text-left transition-colors text-sm border-b border-border/50',
+                                                isActive ? 'bg-primary/8 border-l-2 border-l-primary' : 'hover:bg-muted/60 border-l-2 border-l-transparent',
+                                                isProcessing && 'opacity-60 cursor-not-allowed',
+                                            )}
+                                        >
+                                            <span className={cn('mt-0.5 shrink-0', isDone ? 'text-green-500' : isActive ? 'text-primary' : 'text-muted-foreground')}>
+                                                {isDone ? <CheckCircle className="size-4" /> : <Circle className="size-4" />}
+                                            </span>
+                                            <span className="flex-1 min-w-0">
+                                                <span className={cn('block truncate font-medium', isDone && !isActive && 'text-muted-foreground line-through decoration-1', isActive && 'text-primary')}>
+                                                    {indexMap.get(l.id)}. {l.title}
+                                                </span>
+                                                <span className="flex items-center gap-1.5 mt-0.5 text-muted-foreground">
+                                                    {lessonTypeIcon(l.type)}
+                                                    {l.duration && <span className="text-[11px]">{formatDuration(l.duration)}</span>}
+                                                    {isProcessing && <span className="text-[10px] text-amber-500 inline-flex items-center gap-0.5"><Loader2 className="size-2.5 animate-spin" /> Processing</span>}
+                                                </span>
+                                            </span>
+                                        </button>
+                                    );
+                                };
+
                                 return (
-                                    <button key={l.id} onClick={() => setActiveLessonId(l.id)} disabled={isProcessing}
-                                        className={cn(
-                                            'w-full flex items-start gap-3 px-5 py-3 text-left transition-colors text-sm border-b border-border/50',
-                                            isActive ? 'bg-primary/8 border-l-2 border-l-primary' : 'hover:bg-muted/60 border-l-2 border-l-transparent',
-                                            isProcessing && 'opacity-60 cursor-not-allowed',
+                                    <>
+                                        {(courseView?.sections ?? []).map(section => (
+                                            <div key={section.id}>
+                                                <div className="flex items-center gap-2 px-5 py-2 bg-muted/30 border-b border-border/50">
+                                                    <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground flex-1 truncate">{section.title}</span>
+                                                    <span className="text-[10px] text-muted-foreground shrink-0">
+                                                        {section.lessons.filter(l => completedIds.has(l.id)).length}/{section.lessons.length}
+                                                    </span>
+                                                </div>
+                                                {section.lessons.map(renderLesson)}
+                                            </div>
+                                        ))}
+                                        {(courseView?.lessons ?? []).length > 0 && (courseView?.sections ?? []).length > 0 && (
+                                            <div className="flex items-center gap-2 px-5 py-2 bg-muted/20 border-b border-border/50">
+                                                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Other</span>
+                                            </div>
                                         )}
-                                    >
-                                        <span className={cn('mt-0.5 shrink-0', isDone ? 'text-green-500' : isActive ? 'text-primary' : 'text-muted-foreground')}>
-                                            {isDone ? <CheckCircle className="size-4" /> : <Circle className="size-4" />}
-                                        </span>
-                                        <span className="flex-1 min-w-0">
-                                            <span className={cn('block truncate font-medium', isDone && !isActive && 'text-muted-foreground line-through decoration-1', isActive && 'text-primary')}>
-                                                {index + 1}. {l.title}
-                                            </span>
-                                            <span className="flex items-center gap-2 mt-0.5">
-                                                {l.duration && <span className="text-[11px] text-muted-foreground">{formatDuration(l.duration)}</span>}
-                                                {isProcessing && <span className="text-[10px] text-amber-500 inline-flex items-center gap-0.5"><Loader2 className="size-2.5 animate-spin" /> Processing</span>}
-                                            </span>
-                                        </span>
-                                    </button>
+                                        {(courseView?.lessons ?? []).map(renderLesson)}
+                                    </>
                                 );
-                            })}
+                            })()}
 
                             {quizzes.length > 0 && (
                                 <>

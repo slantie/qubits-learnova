@@ -2,7 +2,10 @@
 export type Role = 'ADMIN' | 'INSTRUCTOR' | 'LEARNER'
 
 // Lesson types
-export type LessonType = 'VIDEO' | 'DOCUMENT' | 'IMAGE' | 'QUIZ'
+export type LessonType =
+  | 'VIDEO' | 'DOCUMENT' | 'IMAGE' | 'QUIZ'
+  | 'ARTICLE' | 'PDF' | 'AUDIO' | 'QUIZ_BLOCK'
+  | 'ASSIGNMENT' | 'LINK_BLOCK' | 'IFRAME' | 'SURVEY' | 'FEEDBACK_GATE'
 
 // Visibility & Access
 export type Visibility = 'EVERYONE' | 'SIGNED_IN'
@@ -22,6 +25,16 @@ export interface User {
   avatarUrl?: string;
 }
 
+export interface Section {
+  id: number;
+  courseId: number;
+  title: string;
+  order: number;
+  isLocked: boolean;
+  description: string | null;
+  lessons: LessonSummary[];
+}
+
 export interface CourseDetail {
   id: number;
   title: string;
@@ -31,19 +44,16 @@ export interface CourseDetail {
   coverImage: string | null;
   websiteUrl: string | null;
   certificateTemplate: string | null;
+  certThreshold: number | null;
+  expiryDays: number | null;
   visibility: Visibility;
   accessRule: AccessRule;
   instructorId: number;
   courseAdminId: number | null;
   createdAt: string;
   enrollmentCount: number;
-  lessons: {
-    id: number;
-    title: string;
-    type: LessonType;
-    order: number;
-    duration: number | null;
-  }[];
+  sections: Section[];
+  lessons: LessonSummary[]; // unsectioned lessons
   quizzes: { id: number; title: string }[];
 }
 
@@ -56,6 +66,7 @@ export interface VideoTimestamp {
 export interface Lesson {
   id: number;
   courseId: number;
+  sectionId: number | null;
   title: string;
   type: LessonType;
   order: number;
@@ -68,6 +79,9 @@ export interface Lesson {
   description: string | null;
   content: string | null;
   timestamps: VideoTimestamp[] | null;
+  richContent: unknown | null;
+  iframeUrl: string | null;
+  quizBlockId: number | null;
   attachmentsCount: number;
 }
 
@@ -123,9 +137,25 @@ export interface LessonSummary {
   title: string;
   type: LessonType;
   order: number;
+  sectionId: number | null;
   duration: number | null;
   thumbnailUrl?: string | null;
   isCompleted?: boolean;
+  iframeUrl?: string | null;
+  richContent?: unknown | null;
+  quizBlockId?: number | null;
+  filePath?: string | null;
+  videoUrl?: string | null;
+  videoStatus?: string | null;
+  description?: string | null;
+}
+
+export interface LearnerSectionSummary {
+  id: number;
+  title: string;
+  order: number;
+  isLocked: boolean;
+  lessons: LessonSummary[];
 }
 
 export interface LearnerCourseDetail {
@@ -138,6 +168,7 @@ export interface LearnerCourseDetail {
   price: string | null;
   visibility: Visibility;
   instructor: { id: number; name: string | null } | null;
+  sections: LearnerSectionSummary[];
   lessons: LessonSummary[];
   quizzes: { id: number; title: string; _count: { questions: number } }[];
   _count: { lessons: number; enrollments: number };
