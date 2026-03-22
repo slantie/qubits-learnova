@@ -1,0 +1,59 @@
+version: '3.9'
+
+services:
+  # ── Redis (internal only) ────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - learnova-internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Main API Server ───────────────────────────────────────────────────────────
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./server/.env.prod
+    environment:
+      # nginx-proxy auto-routing: picks up this container and creates a vhost
+      - VIRTUAL_HOST=apilearnova.harshdodiya.tech
+      - VIRTUAL_PORT=4000
+      - LETSENCRYPT_HOST=apilearnova.harshdodiya.tech
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - learnova-internal
+      - nginx-proxy  # join the existing nginx-proxy network
+
+  # ── Video Service (internal only — calls back to api via internal network) ───
+  video-service:
+    build:
+      context: ./services/video-service
+      dockerfile: Dockerfile
+      target: production
+    restart: unless-stopped
+    env_file:
+      - ./services/video-service/.env.prod
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - learnova-internal  # internal only, no public exposure needed
+
+networks:
+  learnova-internal:
+    driver: bridge
+
+  # Reference to the existing nginx-proxy network (created by ~/n8n/SSL/docker-compose.yml)
+  nginx-proxy:
+    external: true
+    name: ssl_default  # run `docker network ls` to confirm this name on your server
