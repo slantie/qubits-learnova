@@ -502,12 +502,20 @@ export default function ProfilePage() {
           </span>
         </div>
         {badgeList.filter((b) => b.earned).length > 0 ? (
-          <div className="flex flex-wrap gap-4">
-            {badgeList
-              .filter((b) => b.earned)
-              .map((b) => (
-                <BadgeIcon key={b.key} badgeKey={b.key} size="md" showLabel />
-              ))}
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-4">
+              {badgeList
+                .filter((b) => b.earned)
+                .map((b) => (
+                  <BadgeIcon key={b.key} badgeKey={b.key} size="md" showLabel />
+                ))}
+            </div>
+            <a
+              href="/badges"
+              className="inline-text text-xs font-medium text-primary hover:underline transition-colors"
+            >
+              View all badges →
+            </a>
           </div>
         ) : (
           <p className="py-6 text-center text-sm text-muted-foreground">
