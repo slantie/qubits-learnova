@@ -35,7 +35,7 @@ app.use('/uploads', express.static(uploadDir));
 
 // Routes
 app.get('/', (_, res) => {
-  res.json({ message: 'Server is running 🚀', status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ message: 'Server is running 🚀', status: 'everything is okay bro!', timestamp: new Date().toISOString() });
 });
 app.use('/api', router);
 
