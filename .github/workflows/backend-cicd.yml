@@ -30,7 +30,7 @@ jobs:
             set -e
 
             # Navigate to the project directory
-            /home/ubuntu/qubits-learnova
+            cd /home/ubuntu/qubits-learnova
 
             # Pull latest changes
             git pull origin main

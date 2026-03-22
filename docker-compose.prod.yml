@@ -23,7 +23,7 @@ services:
       - ./server/.env.prod
     environment:
       - VIRTUAL_HOST=apilearnova.harshdodiya.tech
-      - VIRTUAL_PORT=3001
+      - VIRTUAL_PORT=4000
       - LETSENCRYPT_HOST=apilearnova.harshdodiya.tech
       - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
     depends_on:

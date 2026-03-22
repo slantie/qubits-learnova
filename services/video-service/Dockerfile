@@ -8,12 +8,18 @@ COPY package.json package-lock.json* ./
 RUN npm install
 
 COPY prisma ./prisma
+
+# Generate Prisma client to src/generated/prisma BEFORE copying src
 RUN npx prisma generate
 
 COPY tsconfig.json ./
 COPY src ./src
 
+# Compile TypeScript
 RUN npm run build
+
+# Copy Prisma generated runtime files into dist so require('../generated/prisma') works
+RUN cp -r src/generated dist/generated
 
 # ─── Production ───────────────────────────────────────────────────────────────
 FROM node:20-alpine AS production
@@ -25,9 +31,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install --omit=dev
 
-COPY prisma ./prisma
-RUN npx prisma generate
-
+# dist already contains generated/ from the base stage
 COPY --from=base /app/dist ./dist
 
 ENV NODE_ENV=production
