@@ -666,7 +666,7 @@ Validation errors (400) include a `details` array with per-field messages from Z
 
 ---
 
-## Contributors
+## Team Details
 
 | Name | GitHub |
 |------|--------|
