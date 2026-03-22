@@ -47,8 +47,8 @@ function CompletionCell({ pct }: { pct: number }) {
     <div className="flex items-center gap-2 min-w-20">
       <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
         <div
-          className="h-full rounded-full bg-primary transition-all"
-          style={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
+          className="h-full w-[calc(var(--pct)*1%)] rounded-full bg-primary transition-all"
+          style={{ '--pct': Math.min(100, Math.max(0, pct)) } as Record<string, number>}
         />
       </div>
       <span className="text-xs tabular-nums w-8 text-right">{pct}%</span>

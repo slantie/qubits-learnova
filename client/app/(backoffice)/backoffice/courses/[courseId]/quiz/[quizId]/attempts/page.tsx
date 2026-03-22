@@ -299,11 +299,11 @@ export default function QuizAttemptsPage() {
                   <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                     <div
                       className={cn(
-                        'h-full rounded-full transition-all',
+                        'h-full rounded-full transition-all w-[calc(var(--pct)*1%)]',
                         q.correctRate >= 80 ? 'bg-primary' :
                         q.correctRate >= 50 ? 'bg-amber-400' : 'bg-red-400',
                       )}
-                      style={{ width: `${q.correctRate}%` }}
+                      style={{ '--pct': q.correctRate } as Record<string, number>}
                     />
                   </div>
 

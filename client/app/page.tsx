@@ -64,7 +64,10 @@ function ProgressBar({ value, className }: { value: number; className?: string; 
         className
       )}
     >
-      <div className="am-progress-bar-fill" style={{ width: `${value}%` }} />
+      <div
+        className="am-progress-bar-fill w-[calc(var(--pct)*1%)]"
+        style={{ '--pct': value } as Record<string, number>}
+      />
     </div>
   )
 }

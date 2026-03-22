@@ -350,7 +350,7 @@ export function LiveWaveform({
     return (
         <div
             className={cn('relative w-full overflow-hidden', className)}
-            style={{ height: heightStyle, ...style }} // dynamic prop — cannot use static Tailwind class
+            style={{ height: heightStyle, ...style } /* dynamic runtime height — cannot use static Tailwind */}
             {...props}
         >
             <canvas

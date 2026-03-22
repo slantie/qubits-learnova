@@ -287,7 +287,7 @@ export const submitAttempt = async (
   data: SubmitAttemptInput,
   userId: number,
 ) => {
-  // Fetch quiz with questions and reward
+  // Step 1: Fetch quiz with questions and reward
   const quiz = await prisma.quiz.findUnique({
     where: { id: quizId },
     include: {
@@ -304,6 +304,7 @@ export const submitAttempt = async (
     throw new AppError(400, 'Quiz has no questions', 'QUIZ_EMPTY');
   }
 
+  // Step 2: Validate answer count
   if (data.answers.length !== quiz.questions.length) {
     throw new AppError(
       400,
@@ -312,7 +313,7 @@ export const submitAttempt = async (
     );
   }
 
-  // Validate all questionIds belong to this quiz and are unique
+  // Step 3: Validate questionIds belong to this quiz and are unique
   const quizQuestionIds = new Set(quiz.questions.map(q => q.id));
   const submittedIds = data.answers.map(a => a.questionId);
   const uniqueSubmitted = new Set(submittedIds);
@@ -327,7 +328,7 @@ export const submitAttempt = async (
     }
   }
 
-  // Score: a question is correct when selected option indices exactly match correctOptions
+  // Step 4: Score — a question is correct when selected option indices exactly match correctOptions
   const questionMap = new Map(quiz.questions.map(q => [q.id, q]));
   let correctCount = 0;
 
@@ -341,31 +342,65 @@ export const submitAttempt = async (
     if (isCorrect) correctCount++;
   }
 
+  // Step 5: scorePct
   const totalQuestions = quiz.questions.length;
-  const scorePercentage = Math.round((correctCount / totalQuestions) * 100);
+  const scorePct = correctCount / totalQuestions;
+  const scorePercent = Math.round(scorePct * 100);
 
-  // Determine attempt number
+  // Step 6: attempt number
   const existingCount = await prisma.quizAttempt.count({ where: { userId, quizId } });
   const attemptNumber = existingCount + 1;
 
-  // Determine points earned from reward tier
-  const reward = quiz.rewards;
-  let pointsEarned = 0;
-  if (reward) {
-    if (attemptNumber === 1) pointsEarned = reward.attempt1Points;
-    else if (attemptNumber === 2) pointsEarned = reward.attempt2Points;
-    else if (attemptNumber === 3) pointsEarned = reward.attempt3Points;
-    else pointsEarned = reward.attempt4PlusPoints;
+  // Step 7: tier max points
+  const tierMax = attemptNumber === 1 ? 15
+    : attemptNumber === 2 ? 10
+    : attemptNumber === 3 ? 7
+    : 4;
+
+  // Steps 8–9: compute snapshot fields
+  let sfSnapshot: number;
+  let tfSnapshot: number;
+  let cfSnapshot: number;
+  let compositeSnapshot: number | null;
+  let pointsEarned: number;
+
+  if (attemptNumber === 1) {
+    sfSnapshot = scorePct;
+    tfSnapshot = 0.5;
+    cfSnapshot = 1.0;
+    compositeSnapshot = null;
+    pointsEarned = Math.round(tierMax * scorePct);
+  } else {
+    // Fetch all previous attempts (already completed, frozen)
+    const prevAttempts = await prisma.quizAttempt.findMany({
+      where: { userId, quizId },
+      orderBy: { completedAt: 'desc' },
+      select: { scorePct: true },
+    });
+
+    const prevScorePct = prevAttempts[0].scorePct;
+    const historicalAvg = prevAttempts.reduce((sum, a) => sum + a.scorePct, 0) / prevAttempts.length;
+
+    sfSnapshot = scorePct;
+    tfSnapshot = Math.max(0, Math.min(1, (scorePct - prevScorePct + 1) / 2));
+    cfSnapshot = Math.max(0, Math.min(1, 1 - Math.abs(scorePct - historicalAvg)));
+    compositeSnapshot = sfSnapshot * 0.55 + tfSnapshot * 0.30 + cfSnapshot * 0.15;
+    pointsEarned = Math.max(1, Math.round(tierMax * compositeSnapshot));
   }
 
-  // Persist attempt — store answers as JSON
+  // Step 10: Create attempt with all snapshot fields
   const attempt = await prisma.quizAttempt.create({
     data: {
       userId,
       quizId,
       attemptNumber,
       pointsEarned,
-      scorePercent: scorePercentage,
+      scorePercent,
+      scorePct,
+      sfSnapshot,
+      tfSnapshot,
+      cfSnapshot,
+      compositeSnapshot,
       answers: data.answers as object,
     },
   });
@@ -378,16 +413,21 @@ export const submitAttempt = async (
     });
   }
 
-  // Evaluate badges (fire-and-forget)
+  // Step 11: Badge check (fire-and-forget)
   evaluateBadges(userId, { quizId }).catch(() => {});
 
+  // Step 12: Return
   return {
     id: attempt.id,
     attemptNumber,
     pointsEarned,
-    scorePercentage,
+    scorePct,
     correctCount,
     totalQuestions,
+    sfSnapshot,
+    tfSnapshot,
+    cfSnapshot,
+    compositeSnapshot,
     completedAt: attempt.completedAt,
   };
 };
@@ -409,6 +449,11 @@ export const getMyAttempts = async (
       id: true,
       attemptNumber: true,
       pointsEarned: true,
+      scorePct: true,
+      sfSnapshot: true,
+      tfSnapshot: true,
+      cfSnapshot: true,
+      compositeSnapshot: true,
       completedAt: true,
     },
   });

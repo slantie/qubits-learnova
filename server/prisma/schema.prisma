@@ -259,7 +259,7 @@ model LessonProgress {
   enrollmentId Int
   enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   lessonId     Int
-  lesson       Lesson     @relation(fields: [lessonId], references: [id])
+  lesson       Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   userId       Int
   user         User       @relation(fields: [userId], references: [id])
   isCompleted  Boolean    @default(false)
@@ -269,16 +269,21 @@ model LessonProgress {
 }
 
 model QuizAttempt {
-  id            Int      @id @default(autoincrement())
-  userId        Int
-  user          User     @relation(fields: [userId], references: [id])
-  quizId        Int
-  quiz          Quiz     @relation(fields: [quizId], references: [id])
-  attemptNumber Int
-  answers       Json
-  pointsEarned  Int      @default(0)
-  scorePercent  Int      @default(0)
-  completedAt   DateTime @default(now())
+  id                Int      @id @default(autoincrement())
+  userId            Int
+  user              User     @relation(fields: [userId], references: [id])
+  quizId            Int
+  quiz              Quiz     @relation(fields: [quizId], references: [id])
+  attemptNumber     Int
+  answers           Json
+  pointsEarned      Int      @default(0)
+  scorePercent      Int      @default(0)
+  scorePct          Float    @default(0)
+  sfSnapshot        Float    @default(0)
+  tfSnapshot        Float    @default(0.5)
+  cfSnapshot        Float    @default(1)
+  compositeSnapshot Float?
+  completedAt       DateTime @default(now())
 
   @@index([userId, quizId])
 }
