@@ -35,7 +35,7 @@ export const getMe = async (userId: number) => {
     where: { id: userId },
     select: {
       id: true, name: true, email: true, role: true,
-      totalPoints: true, currentBadge: true, createdAt: true,
+      totalPoints: true, currentBadge: true, createdAt: true, avatarUrl: true,
     },
   });
   if (!user) throw new AppError(404, 'User not found', 'USER_NOT_FOUND');

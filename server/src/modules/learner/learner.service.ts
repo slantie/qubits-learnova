@@ -423,7 +423,7 @@ export const deleteReview = async (userId: number, courseId: number) => {
 export const getProfile = async (userId: number) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true, totalPoints: true, currentBadge: true },
+    select: { id: true, name: true, email: true, totalPoints: true, currentBadge: true, avatarUrl: true, bio: true, profilePublic: true },
   });
   if (!user) {
     throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
@@ -446,6 +446,9 @@ export const getProfile = async (userId: number) => {
       id: user.id,
       name: user.name,
       email: user.email,
+      avatarUrl: user.avatarUrl,
+      bio: user.bio,
+      profilePublic: user.profilePublic,
     },
     totalPoints: user.totalPoints,
     currentBadge: user.currentBadge,
@@ -460,10 +463,15 @@ export const getProfile = async (userId: number) => {
 export const getPublicProfile = async (userId: number) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, totalPoints: true, currentBadge: true, createdAt: true },
+    select: { id: true, name: true, totalPoints: true, currentBadge: true, createdAt: true, avatarUrl: true, bio: true, profilePublic: true },
   });
   if (!user) {
     throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
+  }
+
+  // Respect visibility setting
+  if (!user.profilePublic) {
+    throw new AppError(404, 'Profile not found', 'PROFILE_NOT_FOUND');
   }
 
   const enrollmentCount = await prisma.enrollment.count({ where: { userId } });
@@ -482,6 +490,8 @@ export const getPublicProfile = async (userId: number) => {
       id: user.id,
       name: user.name,
       createdAt: user.createdAt.toISOString(),
+      avatarUrl: user.avatarUrl,
+      bio: user.bio,
     },
     totalPoints: user.totalPoints,
     currentBadge: user.currentBadge,

@@ -34,6 +34,9 @@ router.post('/', ...adminOrInstructor, validate(createCourseSchema), ctrl.create
 router.delete('/:id', ...adminOrInstructor, ctrl.remove);
 router.post('/:id/share-link', ...adminOrInstructor, ctrl.shareLink);
 
+// ─── Admin: all courses with instructor (must be before /:id) ─────────────────
+router.get('/admin/with-instructor', authenticate, authorize('ADMIN'), ctrl.listWithInstructor);
+
 // ─── Course form (A2) ─────────────────────────────────────────────────────────
 router.get('/:id', ...adminOrInstructor, ctrl.getDetail);
 router.patch('/:id', ...adminOrInstructor, validate(updateCourseSchema), ctrl.update);
@@ -41,5 +44,6 @@ router.patch('/:id/publish', ...adminOrInstructor, validate(publishCourseSchema)
 router.post('/:id/cover', ...adminOrInstructor, uploadCover.single('file'), ctrl.uploadCoverImage);
 router.post('/:id/attendees', ...adminOrInstructor, validate(addAttendeesSchema), ctrl.addAttendees);
 router.post('/:id/contact', ...adminOrInstructor, validate(contactAttendeesSchema), ctrl.contactAttendees);
+router.patch('/:id/instructor', authenticate, authorize('ADMIN'), ctrl.reassignInstructor);
 
 export default router;

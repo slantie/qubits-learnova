@@ -85,10 +85,13 @@ model User {
   role         Role     @default(LEARNER)
   totalPoints  Int      @default(0)
   currentBadge String?
-  otpHash      String?
-  otpExpiry    DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  otpHash       String?
+  otpExpiry     DateTime?
+  avatarUrl     String?
+  bio           String?
+  profilePublic Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   ownedCourses     Course[]         @relation("CourseInstructor")
   adminCourses     Course[]         @relation("CourseAdmin")

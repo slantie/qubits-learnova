@@ -1,171 +1,229 @@
-'use client';
+"use client"
 
-import { ReactNode, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { PageLoader } from '@/components/ui/page-loader';
-import Image from 'next/image';
+import { ReactNode, useEffect } from "react"
+import { useRouter, usePathname } from "next/navigation"
+import { useAuth } from "@/hooks/useAuth"
+import { Button } from "@/components/ui/button"
+import { PageLoader } from "@/components/ui/page-loader"
+import Image from "next/image"
 import {
-    SignOut, BookOpen, ChartBar, SquaresFour,
-    Users, GearSix, CaretRight, GraduationCap, Tag,
-} from '@phosphor-icons/react';
-import Link from 'next/link';
-import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
+  SignOut,
+  BookOpen,
+  ChartBar,
+  SquaresFour,
+  Users,
+  GearSix,
+  CaretRight,
+  GraduationCap,
+  Tag,
+} from "@phosphor-icons/react"
+import Link from "next/link"
+import { api } from "@/lib/api"
+import { cn } from "@/lib/utils"
 
 interface NavItem {
-    href: string;
-    label: string;
-    icon: React.ComponentType<{ className?: string }>;
-    adminOnly?: boolean;
-    badge?: string;
+  href: string
+  label: string
+  icon: React.ComponentType<{ className?: string }>
+  adminOnly?: boolean
+  badge?: string
 }
 
 const NAV_ITEMS: NavItem[] = [
-    { href: '/backoffice', label: 'Dashboard', icon: SquaresFour },
-    { href: '/backoffice/courses', label: 'Courses', icon: BookOpen },
-    { href: '/backoffice/reporting', label: 'Reporting', icon: ChartBar, adminOnly: true },
-    { href: '/backoffice/coupons', label: 'Coupons', icon: Tag, adminOnly: true },
-    { href: '/backoffice/users', label: 'Users', icon: Users, adminOnly: true, badge: 'Soon' },
-    { href: '/backoffice/settings', label: 'Settings', icon: GearSix, adminOnly: true, badge: 'Soon' },
-];
+  { href: "/backoffice", label: "Dashboard", icon: SquaresFour },
+  { href: "/backoffice/courses", label: "Courses", icon: BookOpen },
+  {
+    href: "/backoffice/reporting",
+    label: "Reporting",
+    icon: ChartBar,
+    adminOnly: true,
+  },
+  { href: "/backoffice/coupons", label: "Coupons", icon: Tag, adminOnly: true },
+  { href: "/backoffice/users", label: "Users", icon: Users, adminOnly: true },
+  {
+    href: "/backoffice/settings",
+    label: "Settings",
+    icon: GearSix,
+    adminOnly: true,
+  },
+]
 
 function NavLink({ item, isActive }: { item: NavItem; isActive: boolean }) {
-    const Icon = item.icon;
-    return (
-        <Link
-            href={item.href}
-            className={cn(
-                'group flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-normal transition-all',
-                isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-            )}
-        >
-            <Icon className={cn('size-4 shrink-0', isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground')} />
-            <span className="flex-1">{item.label}</span>
-            {item.badge && (
-                <span className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-normal text-muted-foreground shadow-xs">
-                    {item.badge}
-                </span>
-            )}
-            {isActive && <CaretRight className="size-3 text-primary" />}
-        </Link>
-    );
+  const Icon = item.icon
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        "group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal transition-all",
+        isActive
+          ? "bg-primary/10 text-primary"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      )}
+    >
+      <Icon
+        className={cn(
+          "size-4 shrink-0",
+          isActive
+            ? "text-primary"
+            : "text-muted-foreground group-hover:text-foreground"
+        )}
+      />
+      <span className="flex-1">{item.label}</span>
+      {item.badge && (
+        <span className="inline-flex items-center rounded-full border border-border bg-muted px-2 py-0.5 text-[10px] font-normal text-muted-foreground shadow-xs">
+          {item.badge}
+        </span>
+      )}
+      {isActive && <CaretRight className="size-3 text-primary" />}
+    </Link>
+  )
 }
 
-export default function BackofficeLayout({ children }: { children: ReactNode }) {
-    const { user, isLoading, role, logout } = useAuth();
-    const router = useRouter();
-    const pathname = usePathname();
+export default function BackofficeLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
+  const { user, isLoading, role, logout } = useAuth()
+  const router = useRouter()
+  const pathname = usePathname()
 
-    const handleLogout = () => {
-        api.post('/auth/logout').catch(() => { });
-        logout();
-        router.push('/login');
-    };
+  const handleLogout = () => {
+    api.post("/auth/logout").catch(() => {})
+    logout()
+    router.push("/login")
+  }
 
-    useEffect(() => {
-        if (!isLoading && (!user || (role !== 'ADMIN' && role !== 'INSTRUCTOR'))) {
-            router.push('/login');
-        }
-    }, [user, isLoading, role, router]);
-
-    useEffect(() => {
-        const handleUnauthorized = () => router.push('/login');
-        window.addEventListener('auth:unauthorized', handleUnauthorized);
-        return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
-    }, [router]);
-
-    if (isLoading) {
-        return <PageLoader label="Loading your panel…" />;
+  useEffect(() => {
+    if (!isLoading && (!user || (role !== "ADMIN" && role !== "INSTRUCTOR"))) {
+      router.push("/login")
     }
+  }, [user, isLoading, role, router])
 
-    if (!user || (role !== 'ADMIN' && role !== 'INSTRUCTOR')) return null;
+  useEffect(() => {
+    const handleUnauthorized = () => router.push("/login")
+    window.addEventListener("auth:unauthorized", handleUnauthorized)
+    return () =>
+      window.removeEventListener("auth:unauthorized", handleUnauthorized)
+  }, [router])
 
-    const visibleNav = NAV_ITEMS.filter(item => !item.adminOnly || role === 'ADMIN');
-    const initials = user.name
-        ? user.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
-        : (user.email?.[0] ?? 'U').toUpperCase();
+  if (isLoading) {
+    return <PageLoader label="Loading your panel…" />
+  }
 
-    return (
-        <div className="flex min-h-screen bg-background">
-            {/* ── Sidebar ─────────────────────────────────────────────────── */}
-            <aside className="hidden md:flex w-60 flex-col border-r bg-sidebar shrink-0">
-                {/* Brand */}
-                <div className="flex items-center gap-2.5 px-4 h-16 border-b border-sidebar-border shrink-0">
-                    <Image src="/learnova.svg" alt="Learnova" width={36} height={36} className="size-9 object-contain shrink-0" />
-                    <div>
-                        <p className="text-sm font-normal text-foreground leading-none">Learnova</p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5 capitalize">
-                            {role?.toLowerCase()} panel
-                        </p>
-                    </div>
-                </div>
+  if (!user || (role !== "ADMIN" && role !== "INSTRUCTOR")) return null
 
-                {/* Nav */}
-                <nav className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
-                    {visibleNav.map(item => {
-                        const isActive = item.href === '/backoffice'
-                            ? pathname === '/backoffice'
-                            : pathname.startsWith(item.href);
-                        return <NavLink key={item.href} item={item} isActive={isActive} />;
-                    })}
+  const visibleNav = NAV_ITEMS.filter(
+    (item) => !item.adminOnly || role === "ADMIN"
+  )
+  const initials = user.name
+    ? user.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : (user.email?.[0] ?? "U").toUpperCase()
 
-                    <div className="mt-4 pt-4 border-t border-sidebar-border">
-                        <p className="px-3 text-[10px] font-normal uppercase tracking-widest text-sidebar-foreground/40 mb-2">
-                            Learner View
-                        </p>
-                        <Link
-                            href="/courses"
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-normal text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
-                        >
-                            <GraduationCap className="size-4 shrink-0" />
-                            View as Learner
-                        </Link>
-                    </div>
-                </nav>
-
-                {/* User footer */}
-                <div className="p-3 border-t border-sidebar-border">
-                    <div className="flex items-center gap-3 px-2 py-1.5">
-                        <div className="size-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold shrink-0">
-                            {initials}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-normal truncate">{user.name || 'User'}</p>
-                            <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                        </div>
-                        <button
-                            type="button"
-                            onClick={handleLogout}
-                            className="text-muted-foreground hover:text-destructive transition-colors p-1 rounded"
-                            title="Log out"
-                        >
-                            <SignOut className="size-4" />
-                        </button>
-                    </div>
-                </div>
-            </aside>
-
-            {/* ── Main area ───────────────────────────────────────────────── */}
-            <div className="flex flex-1 flex-col overflow-hidden">
-                {/* Mobile topbar */}
-                <header className="md:hidden h-14 border-b bg-background flex items-center px-4 justify-between shrink-0">
-                    <div className="flex items-center gap-2">
-                        <Image src="/learnova.svg" alt="Learnova" width={32} height={32} className="size-8 object-contain" />
-                        <span className="font-normal text-sm">Learnova</span>
-                    </div>
-                    <Button variant="ghost" size="sm" onClick={handleLogout} className="text-muted-foreground">
-                        <SignOut className="size-4" />
-                    </Button>
-                </header>
-
-                <main className="flex-1 overflow-auto flex flex-col">
-                    {children}
-                </main>
-            </div>
+  return (
+    <div className="flex min-h-screen bg-background">
+      {/* ── Sidebar ─────────────────────────────────────────────────── */}
+      <aside className="hidden w-60 shrink-0 flex-col border-r bg-sidebar md:flex">
+        {/* Brand */}
+        <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-sidebar-border px-4">
+          <Image
+            src="/learnova.svg"
+            alt="Learnova"
+            width={36}
+            height={36}
+            className="size-9 shrink-0 object-contain"
+          />
+          <div>
+            <p className="text-sm leading-none font-normal text-foreground">
+              Learnova
+            </p>
+            <p className="mt-0.5 text-[10px] text-muted-foreground capitalize">
+              {role?.toLowerCase()} panel
+            </p>
+          </div>
         </div>
-    );
+
+        {/* Nav */}
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4">
+          {visibleNav.map((item) => {
+            const isActive =
+              item.href === "/backoffice"
+                ? pathname === "/backoffice"
+                : pathname.startsWith(item.href)
+            return <NavLink key={item.href} item={item} isActive={isActive} />
+          })}
+
+          <div className="mt-4 border-t border-sidebar-border pt-4">
+            <p className="mb-2 px-3 text-[10px] font-normal tracking-widest text-sidebar-foreground/40 uppercase">
+              Learner View
+            </p>
+            <Link
+              href="/courses"
+              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-normal text-muted-foreground transition-all hover:bg-muted hover:text-foreground"
+            >
+              <GraduationCap className="size-4 shrink-0" />
+              View as Learner
+            </Link>
+          </div>
+        </nav>
+
+        {/* User footer */}
+        <div className="border-t border-sidebar-border p-3">
+          <div className="flex items-center gap-3 px-2 py-1.5">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-bold text-primary">
+              {initials}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-normal">
+                {user.name || "User"}
+              </p>
+              <p className="truncate text-xs text-muted-foreground">
+                {user.email}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
+              title="Log out"
+            >
+              <SignOut className="size-4" />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* ── Main area ───────────────────────────────────────────────── */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Mobile topbar */}
+        <header className="flex h-14 shrink-0 items-center justify-between border-b bg-background px-4 md:hidden">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/learnova.svg"
+              alt="Learnova"
+              width={32}
+              height={32}
+              className="size-8 object-contain"
+            />
+            <span className="text-sm font-normal">Learnova</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            className="text-muted-foreground"
+          >
+            <SignOut className="size-4" />
+          </Button>
+        </header>
+
+        <main className="flex flex-1 flex-col overflow-auto">{children}</main>
+      </div>
+    </div>
+  )
 }

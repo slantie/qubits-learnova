@@ -74,6 +74,16 @@ export const fetchPublicProfile = async (userId: number): Promise<PublicProfile>
   return api.get(`/learner/users/${userId}/profile`);
 };
 
+export const updateMyProfile = async (data: { name?: string; bio?: string; profilePublic?: boolean }) => {
+  return api.patch('/users/me/profile', data);
+};
+
+export const uploadMyAvatar = async (file: File): Promise<{ avatarUrl: string }> => {
+  const form = new FormData();
+  form.append('avatar', file);
+  return api.post('/users/me/avatar', form);
+};
+
 // ─── Payment ──────────────────────────────────────────────────────────────────
 
 export const mockPayment = async (courseId: number) => {

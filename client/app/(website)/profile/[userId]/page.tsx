@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { use } from 'react';
+import Image from 'next/image';
 import { PublicProfile } from '@/types';
 import { fetchPublicProfile } from '@/lib/api/learner';
 import { BadgeIcon } from '@/components/badges/BadgeIcon';
@@ -89,17 +90,29 @@ export default function PublicProfilePage({ params }: { params: Promise<{ userId
       <div className="rounded-2xl border bg-card overflow-hidden">
         <div className="h-28 bg-gradient-to-br from-primary/20 via-primary/10 to-transparent" />
         <div className="px-6 pb-6 -mt-10">
-          <div className="size-20 rounded-full bg-primary/15 ring-4 ring-card flex items-center justify-center text-primary font-bold text-2xl mb-3">
-            {initials}
+          <div className="size-20 rounded-full bg-primary/15 ring-4 ring-card overflow-hidden mb-3 flex items-center justify-center text-primary font-bold text-2xl">
+            {profile.user.avatarUrl ? (
+              <Image
+                src={profile.user.avatarUrl}
+                alt={profile.user.name ?? 'Avatar'}
+                width={80}
+                height={80}
+                unoptimized
+                className="object-cover size-full"
+              />
+            ) : initials}
           </div>
           <div className="flex items-start justify-between gap-3 flex-wrap">
-            <h1 className="text-xl ">{profile.user.name ?? 'Learner'}</h1>
+            <h1 className="text-xl">{profile.user.name ?? 'Learner'}</h1>
             {profile.currentBadge && (
               <span className="text-xs font-normal px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
                 {profile.currentBadge}
               </span>
             )}
           </div>
+          {profile.user.bio && (
+            <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{profile.user.bio}</p>
+          )}
           {memberSince && (
             <div className="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
               <CalendarDots className="size-3.5" />

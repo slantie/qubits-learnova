@@ -149,3 +149,17 @@ export const contactAttendees = async (req: Request, res: Response, next: NextFu
     res.json(result);
   } catch (err) { next(err); }
 };
+
+export const listWithInstructor = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const courses = await coursesService.listCoursesWithInstructor();
+    res.json({ courses });
+  } catch (err) { next(err); }
+};
+
+export const reassignInstructor = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await coursesService.reassignInstructor(Number(req.params.id), req.body.instructorId);
+    res.json(result);
+  } catch (err) { next(err); }
+};

@@ -474,3 +474,40 @@ export const contactAttendees = async (
   await sendMail({ to: emails, subject: data.subject, html: data.body });
   return { sent: emails.length };
 };
+
+// ─── List all courses with instructor (admin only) ────────────────────────────
+
+export const listCoursesWithInstructor = async () => {
+  const courses = await prisma.course.findMany({
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      title: true,
+      instructor: { select: { id: true, name: true, email: true } },
+    },
+  });
+  return courses;
+};
+
+// ─── Reassign instructor (admin only) ────────────────────────────────────────
+
+export const reassignInstructor = async (courseId: number, instructorId: number) => {
+  const course = await prisma.course.findUnique({ where: { id: courseId } });
+  if (!course) throw new AppError(404, 'Course not found', 'COURSE_NOT_FOUND');
+
+  const instructor = await prisma.user.findUnique({
+    where: { id: instructorId },
+    select: { id: true, name: true, role: true },
+  });
+  if (!instructor) throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
+  if (instructor.role !== 'INSTRUCTOR' && instructor.role !== 'ADMIN') {
+    throw new AppError(400, 'Target user must be an INSTRUCTOR or ADMIN', 'INVALID_ROLE');
+  }
+
+  const updated = await prisma.course.update({
+    where: { id: courseId },
+    data: { instructorId },
+    select: { id: true, title: true, instructorId: true, instructor: { select: { id: true, name: true, email: true } } },
+  });
+  return { course: updated };
+};

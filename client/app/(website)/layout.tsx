@@ -36,8 +36,17 @@ function UserMenu({ user, role, onLogout }: { user: any; role: string | null; on
                 onClick={() => setOpen(v => !v)}
                 className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-muted transition-colors"
             >
-                <div className="size-7 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold">
-                    {initials}
+                <div className="size-7 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xs font-bold overflow-hidden">
+                    {user?.avatarUrl ? (
+                        <Image
+                            src={user.avatarUrl}
+                            alt={user.name ?? 'Avatar'}
+                            width={28}
+                            height={28}
+                            unoptimized
+                            className="object-cover size-full"
+                        />
+                    ) : initials}
                 </div>
                 <span className="hidden sm:block text-sm font-medium max-w-30 truncate">
                     {user?.name?.split(' ')[0] ?? 'You'}

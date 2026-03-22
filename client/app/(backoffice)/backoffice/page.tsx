@@ -117,7 +117,7 @@ export default function BackofficeDashboard() {
                     <p className="text-sm text-muted-foreground">{greeting()},</p>
                     <h1 className="text-2xl mt-0.5">{firstName}</h1>
                     <p className="text-sm text-muted-foreground mt-1">
-                        Here's what's happening with your platform today.
+                        Here&apos;s what&apos;s happening with your platform today.
                     </p>
                 </div>
                 <Link href="/backoffice/courses">
@@ -247,7 +247,7 @@ export default function BackofficeDashboard() {
                             href="/backoffice/users"
                             icon={Users}
                             label="Manage Users"
-                            desc="Coming soon"
+                            desc=""
                         />
                     </div>
                 </div>
