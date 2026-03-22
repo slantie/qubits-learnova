@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # ── Redis (internal only) ────────────────────────────────────────────────────
   redis:
@@ -20,7 +18,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     env_file:
-      - ./server/.env.prod
+      - ./server/.env
     environment:
       - VIRTUAL_HOST=apilearnova.harshdodiya.tech
       - VIRTUAL_PORT=4000
@@ -41,7 +39,7 @@ services:
       target: production
     restart: unless-stopped
     env_file:
-      - ./services/video-service/.env.prod
+      - ./services/video-service/.env
     environment:
       - VIRTUAL_HOST=video.apilearnova.harshdodiya.tech
       - VIRTUAL_PORT=4001
