@@ -54,7 +54,7 @@ interface LessonDetail {
     allowDownloadSimple: boolean;
     duration: number | null;
     timestamps: LessonTimestamp[] | null;
-    richContent: unknown | null;
+    richContent: string | Record<string, unknown> | unknown[] | null;
     iframeUrl: string | null;
     quizBlockId: number | null;
     attachments: { id: number; type: 'FILE' | 'LINK'; label: string; filePath: string | null; externalUrl: string | null }[];

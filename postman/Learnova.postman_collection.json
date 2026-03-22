@@ -1,0 +1,1116 @@
+{
+  "info": {
+    "name": "Learnova API",
+    "description": "Comprehensive API collection for Learnova LMS platform.\n\n## Setup\n1. Set environment variables:\n   - `base_url` → `http://localhost:4000/api`\n   - `video_url` → `http://localhost:4001/api`\n   - `token` → (auto-filled after login)\n   - `service_token` → (from /videos/token endpoint)\n\n## Auth Flow\nRun **POST /auth/login** → the `token` variable is auto-set via the test script.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",      "value": "http://localhost:4000/api", "type": "string" },
+    { "key": "video_url",     "value": "http://localhost:4001/api", "type": "string" },
+    { "key": "token",         "value": "", "type": "string" },
+    { "key": "service_token", "value": "", "type": "string" },
+    { "key": "course_id",     "value": "1", "type": "string" },
+    { "key": "lesson_id",     "value": "1", "type": "string" },
+    { "key": "quiz_id",       "value": "1", "type": "string" },
+    { "key": "video_id",      "value": "", "type": "string" },
+    { "key": "cert_uid",      "value": "", "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "🏥 Health",
+      "item": [
+        {
+          "name": "Server Health",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"] },
+            "description": "Check main server + database connectivity."
+          }
+        },
+        {
+          "name": "Video Service Health",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{video_url}}/health", "host": ["{{video_url}}"], "path": ["health"] },
+            "description": "Check video service health (database, redis, MinIO storage)."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🔐 Auth",
+      "item": [
+        {
+          "name": "Sign Up",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/signup", "host": ["{{base_url}}"], "path": ["auth","signup"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "description": "Register a new user. name: min 2 chars, password: min 8 chars."
+          }
+        },
+        {
+          "name": "Login",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "if (res.token) {",
+                "  pm.collectionVariables.set('token', res.token);",
+                "  console.log('✔ token saved');",
+                "}"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "description": "Login and auto-save token to collection variable.\n\nUses {{admin_email}} / {{admin_password}} from the active environment.\n\nLocal test accounts (set in local env):\n- admin@learnova.dev / admin123\n- instructor@learnova.dev / inst123\n- alice@learnova.dev / alice123\n- bob@learnova.dev / bob123\n- sarah@learnova.dev / sarah123"
+          }
+        },
+        {
+          "name": "Get Current User (me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/auth/me", "host": ["{{base_url}}"], "path": ["auth","me"] },
+            "description": "Get authenticated user profile."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/auth/logout", "host": ["{{base_url}}"], "path": ["auth","logout"] },
+            "description": "Stateless logout (client drops token)."
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/forgot-password", "host": ["{{base_url}}"], "path": ["auth","forgot-password"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            },
+            "description": "Request a password reset OTP via email."
+          }
+        },
+        {
+          "name": "Verify OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/verify-otp", "host": ["{{base_url}}"], "path": ["auth","verify-otp"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"otp\": \"123456\"\n}"
+            },
+            "description": "Verify 6-character OTP sent to email."
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/auth/reset-password", "host": ["{{base_url}}"], "path": ["auth","reset-password"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\",\n  \"otp\": \"123456\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "description": "Reset password using verified OTP. newPassword: min 8 chars."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📚 Courses (Admin/Instructor)",
+      "item": [
+        {
+          "name": "List Courses",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/courses?search=",
+              "host": ["{{base_url}}"], "path": ["courses"],
+              "query": [{ "key": "search", "value": "", "description": "Optional search string" }]
+            },
+            "description": "List all courses for admin/instructor dashboard."
+          }
+        },
+        {
+          "name": "Create Course",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "if (res.id) pm.collectionVariables.set('course_id', String(res.id));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses", "host": ["{{base_url}}"], "path": ["courses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"My New Course\"\n}"
+            },
+            "description": "Create a new course. Auto-saves course_id variable."
+          }
+        },
+        {
+          "name": "Get Course Detail (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}"] },
+            "description": "Get full course detail for editing (admin/instructor view)."
+          }
+        },
+        {
+          "name": "Update Course",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Course Title\",\n  \"description\": \"Full course description here.\",\n  \"tags\": [\"javascript\", \"web\"],\n  \"visibility\": \"PUBLIC\",\n  \"accessRule\": \"OPEN\",\n  \"price\": null\n}"
+            },
+            "description": "Update course metadata.\n\nvisibility: PUBLIC | PRIVATE\naccessRule: OPEN | SIGNED_IN | ON_PAYMENT\nprice: number (required if ON_PAYMENT)"
+          }
+        },
+        {
+          "name": "Publish / Unpublish Course",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/publish", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","publish"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isPublished\": true\n}"
+            },
+            "description": "Toggle course publish state."
+          }
+        },
+        {
+          "name": "Upload Course Cover Image",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/cover", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","cover"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "description": "Image file (jpg, png, webp)" }]
+            },
+            "description": "Upload cover image for a course (multipart/form-data, field: file)."
+          }
+        },
+        {
+          "name": "Delete Course",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}"] },
+            "description": "Permanently delete a course and all its content."
+          }
+        },
+        {
+          "name": "Generate Share Link",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/share-link", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","share-link"] },
+            "description": "Generate a shareable enrollment link for the course."
+          }
+        },
+        {
+          "name": "Add Attendees by Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/attendees", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","attendees"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"emails\": [\"alice@learnova.dev\", \"bob@learnova.dev\"]\n}"
+            },
+            "description": "Enroll users by email address (admin bulk enrollment)."
+          }
+        },
+        {
+          "name": "Send Message to Attendees",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/contact", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","contact"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subject\": \"Course Update\",\n  \"body\": \"Hello everyone! We have added new lessons.\"\n}"
+            },
+            "description": "Send an email/message to all enrolled attendees."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📖 Lessons (Admin/Instructor)",
+      "item": [
+        {
+          "name": "List Lessons",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons"] },
+            "description": "List all lessons for a course (admin view)."
+          }
+        },
+        {
+          "name": "Create Lesson",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "if (res.id) pm.collectionVariables.set('lesson_id', String(res.id));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Introduction\",\n  \"type\": \"VIDEO\",\n  \"order\": 1\n}"
+            },
+            "description": "Create a new lesson.\n\ntype: VIDEO | DOCUMENT | IMAGE | QUIZ"
+          }
+        },
+        {
+          "name": "Get Lesson Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}"] },
+            "description": "Get full lesson detail for editing."
+          }
+        },
+        {
+          "name": "Update Lesson",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Lesson Title\",\n  \"description\": \"Lesson description\",\n  \"duration\": 1800,\n  \"allowDownload\": false,\n  \"timestamps\": [\n    { \"time\": 0, \"label\": \"Introduction\" },\n    { \"time\": 300, \"label\": \"Core Concepts\" }\n  ]\n}"
+            },
+            "description": "Update lesson metadata.\n\nduration: seconds\ntimestamps: [{time: seconds, label: string}]"
+          }
+        },
+        {
+          "name": "Delete Lesson",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}"] },
+            "description": "Delete a lesson permanently."
+          }
+        },
+        {
+          "name": "Reorder Lessons",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/reorder", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","reorder"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"lessonIds\": [3, 1, 2]\n}"
+            },
+            "description": "Reorder lessons by providing IDs in desired order."
+          }
+        },
+        {
+          "name": "Upload Lesson File",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/file", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","file"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "description": "PDF, image, or document file" }]
+            },
+            "description": "Upload a file attachment to a lesson. Auto-uploads to Cloudinary."
+          }
+        },
+        {
+          "name": "List Attachments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/attachments", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","attachments"] },
+            "description": "List all attachments for a lesson."
+          }
+        },
+        {
+          "name": "Add Link Attachment",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/attachments", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","attachments"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"MDN Web Docs\",\n  \"externalUrl\": \"https://developer.mozilla.org\"\n}"
+            },
+            "description": "Add an external link as a lesson attachment."
+          }
+        },
+        {
+          "name": "Add File Attachment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/attachments", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","attachments"] },
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "description": "PDF or document file" }]
+            },
+            "description": "Upload a file as a lesson attachment (multipart)."
+          }
+        },
+        {
+          "name": "Delete Attachment",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/attachments/:attachmentId", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","attachments",":attachmentId"] },
+            "description": "Delete a specific lesson attachment."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🧠 Quizzes",
+      "item": [
+        {
+          "name": "— Admin / Instructor",
+          "item": [
+            {
+              "name": "List Quizzes",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes"] },
+                "description": "List all quizzes for a course."
+              }
+            },
+            {
+              "name": "Create Quiz",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "const res = pm.response.json();",
+                    "if (res.id) pm.collectionVariables.set('quiz_id', String(res.id));"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes"] },
+                "body": { "mode": "raw", "raw": "{\n  \"title\": \"Module 1 Quiz\"\n}" },
+                "description": "Create a new quiz for a course."
+              }
+            },
+            {
+              "name": "Get Quiz Detail",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}"] }
+              }
+            },
+            {
+              "name": "Update Quiz",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}"] },
+                "body": { "mode": "raw", "raw": "{\n  \"title\": \"Updated Quiz Title\"\n}" }
+              }
+            },
+            {
+              "name": "Delete Quiz",
+              "request": {
+                "method": "DELETE",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}"] }
+              }
+            },
+            {
+              "name": "Add Question",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/questions", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","questions"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"text\": \"What does HTML stand for?\",\n  \"options\": [\n    \"HyperText Markup Language\",\n    \"High Text Machine Language\",\n    \"HyperText Machine Language\",\n    \"Hyper Transfer Markup Language\"\n  ],\n  \"correctOptions\": [0]\n}"
+                },
+                "description": "Add a question to a quiz.\n\ncorrectOptions: array of option indices (0-based)\nSupports multiple correct answers."
+              }
+            },
+            {
+              "name": "Update Question",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/questions/:questionId", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","questions",":questionId"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"text\": \"Updated question text?\",\n  \"options\": [\"Option A\", \"Option B\", \"Option C\"],\n  \"correctOptions\": [1]\n}"
+                }
+              }
+            },
+            {
+              "name": "Delete Question",
+              "request": {
+                "method": "DELETE",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/questions/:questionId", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","questions",":questionId"] }
+              }
+            },
+            {
+              "name": "Reorder Questions",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/questions/reorder", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","questions","reorder"] },
+                "body": { "mode": "raw", "raw": "{\n  \"questionIds\": [3, 1, 2]\n}" }
+              }
+            },
+            {
+              "name": "Set Quiz Reward Points",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/reward", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","reward"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"attempt1Points\": 100,\n  \"attempt2Points\": 75,\n  \"attempt3Points\": 50,\n  \"attempt4PlusPoints\": 25\n}"
+                },
+                "description": "Set decreasing point rewards per attempt number."
+              }
+            },
+            {
+              "name": "Get All Attempts (Admin)",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/all-attempts", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","all-attempts"] },
+                "description": "Get all learner attempts for analytics."
+              }
+            },
+            {
+              "name": "Quiz Analytics",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/analytics", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","analytics"] },
+                "description": "Get analytics: pass rate, average score, question-level breakdown."
+              }
+            }
+          ]
+        },
+        {
+          "name": "— Learner",
+          "item": [
+            {
+              "name": "Submit Quiz Attempt",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/attempt", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","attempt"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"answers\": [\n    { \"questionId\": 1, \"selectedOptions\": [0] },\n    { \"questionId\": 2, \"selectedOptions\": [2] }\n  ]\n}"
+                },
+                "description": "Submit a quiz attempt. Returns score and points earned."
+              }
+            },
+            {
+              "name": "My Quiz Attempts",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/courses/{{course_id}}/quizzes/{{quiz_id}}/attempts", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","quizzes","{{quiz_id}}","attempts"] },
+                "description": "Get the authenticated learner's past attempts for this quiz."
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "name": "🎓 Learner Portal",
+      "item": [
+        {
+          "name": "Browse Courses (Public)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/learner?search=",
+              "host": ["{{base_url}}"], "path": ["learner"],
+              "query": [{ "key": "search", "value": "", "description": "Optional search string" }]
+            },
+            "description": "List all published courses. No auth required. If token is provided, includes enrollment status."
+          }
+        },
+        {
+          "name": "Get Course Detail (Learner)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}"] },
+            "description": "Get course overview: lessons, quizzes, instructor info, enrollment status. Auth optional."
+          }
+        },
+        {
+          "name": "My Enrolled Courses",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/my-courses", "host": ["{{base_url}}"], "path": ["learner","my-courses"] },
+            "description": "Get all courses the authenticated learner is enrolled in, with progress."
+          }
+        },
+        {
+          "name": "Enroll in Course",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/enroll", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","enroll"] },
+            "description": "Enroll the authenticated user into a course (OPEN or SIGNED_IN access)."
+          }
+        },
+        {
+          "name": "Mock Payment & Enroll",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/payment/mock", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","payment","mock"] },
+            "description": "Mock payment for ON_PAYMENT courses (dev/test only). Enrolls the user."
+          }
+        },
+        {
+          "name": "Get Course Progress",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/progress", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","progress"] },
+            "description": "Get the learner's progress: completedLessonIds, progressPct, status."
+          }
+        },
+        {
+          "name": "Mark Lesson Complete",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/lessons/{{lesson_id}}/complete", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","lessons","{{lesson_id}}","complete"] },
+            "description": "Mark a lesson as completed. Updates enrollment progress percentage."
+          }
+        },
+        {
+          "name": "Get Course Reviews",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/reviews", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","reviews"] },
+            "description": "Get paginated reviews for a course. Public endpoint."
+          }
+        },
+        {
+          "name": "Submit Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/reviews", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","reviews"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"reviewText\": \"Excellent course! Very well structured.\"\n}"
+            },
+            "description": "Submit a review for a course. rating: 1-5 (integer)."
+          }
+        },
+        {
+          "name": "Update Review",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/reviews", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","reviews"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"reviewText\": \"Updated review text.\"\n}"
+            },
+            "description": "Update the authenticated user's existing review."
+          }
+        },
+        {
+          "name": "Delete Review",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/courses/{{course_id}}/reviews", "host": ["{{base_url}}"], "path": ["learner","courses","{{course_id}}","reviews"] },
+            "description": "Delete the authenticated user's review."
+          }
+        },
+        {
+          "name": "Learner Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/learner/profile", "host": ["{{base_url}}"], "path": ["learner","profile"] },
+            "description": "Get learner profile: totalPoints, currentBadge, enrollmentCount, completedCount."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "👀 Course Viewer (Learner)",
+      "item": [
+        {
+          "name": "Get Public Course List",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/courses/public?search=", "host": ["{{base_url}}"], "path": ["courses","public"], "query": [{ "key": "search", "value": "" }] },
+            "description": "List all published courses. No auth required."
+          }
+        },
+        {
+          "name": "Get Course View (Player)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/view", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","view"] },
+            "description": "Get full course data for the learner player (lessons, quizzes, progress)."
+          }
+        },
+        {
+          "name": "Get Lesson View",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/view", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","view"] },
+            "description": "Get individual lesson content for the player view."
+          }
+        },
+        {
+          "name": "Mark Lesson Complete",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/complete", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","complete"] },
+            "description": "Mark a lesson as completed (updates progress)."
+          }
+        },
+        {
+          "name": "Mark Lesson Incomplete",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/courses/{{course_id}}/lessons/{{lesson_id}}/complete", "host": ["{{base_url}}"], "path": ["courses","{{course_id}}","lessons","{{lesson_id}}","complete"] },
+            "description": "Undo lesson completion."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📊 Reporting (Admin)",
+      "item": [
+        {
+          "name": "Summary Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/reporting/summary?courseId=",
+              "host": ["{{base_url}}"], "path": ["reporting","summary"],
+              "query": [{ "key": "courseId", "value": "", "description": "Optional: filter by course ID" }]
+            },
+            "description": "Get high-level reporting stats: total enrollments, completions, avg progress."
+          }
+        },
+        {
+          "name": "Reporting Table",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/reporting/table?page=1&limit=20&courseId=&status=",
+              "host": ["{{base_url}}"], "path": ["reporting","table"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "courseId", "value": "", "description": "Optional filter" },
+                { "key": "status", "value": "", "description": "Optional: NOT_STARTED | IN_PROGRESS | COMPLETED" }
+              ]
+            },
+            "description": "Get paginated learner progress table."
+          }
+        },
+        {
+          "name": "Course Cards",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/reporting/courses", "host": ["{{base_url}}"], "path": ["reporting","courses"] },
+            "description": "Get all courses with enrollment counts for reporting overview cards."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "👤 Users (Admin)",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{base_url}}/users?role=",
+              "host": ["{{base_url}}"], "path": ["users"],
+              "query": [{ "key": "role", "value": "", "description": "Optional: ADMIN,INSTRUCTOR,LEARNER (comma-separated)" }]
+            },
+            "description": "List all users. Filter by role(s) using comma-separated values."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏆 Certificates",
+      "item": [
+        {
+          "name": "List Templates",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/certificates/templates", "host": ["{{base_url}}"], "path": ["certificates","templates"] },
+            "description": "List all available certificate templates. Public endpoint."
+          }
+        },
+        {
+          "name": "Preview Template",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/certificates/templates/:templateKey/preview", "host": ["{{base_url}}"], "path": ["certificates","templates",":templateKey","preview"] },
+            "description": "Preview a certificate template as HTML. Public endpoint.\n\nExample templateKey: classic-gold"
+          }
+        },
+        {
+          "name": "My Certificates",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/certificates/my", "host": ["{{base_url}}"], "path": ["certificates","my"] },
+            "description": "Get all certificates earned by the authenticated user."
+          }
+        },
+        {
+          "name": "Get Certificate for Course",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{base_url}}/certificates/course/{{course_id}}", "host": ["{{base_url}}"], "path": ["certificates","course","{{course_id}}"] },
+            "description": "Get the authenticated user's certificate for a specific course."
+          }
+        },
+        {
+          "name": "Issue Certificate",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "const res = pm.response.json();",
+                "if (res.uid) pm.collectionVariables.set('cert_uid', res.uid);"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/certificates/course/{{course_id}}/issue", "host": ["{{base_url}}"], "path": ["certificates","course","{{course_id}}","issue"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templateKey\": \"classic-gold\"\n}"
+            },
+            "description": "Issue a certificate for a completed course. Course must be 100% complete."
+          }
+        },
+        {
+          "name": "View Certificate (Public)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/certificates/view/{{cert_uid}}", "host": ["{{base_url}}"], "path": ["certificates","view","{{cert_uid}}"] },
+            "description": "View a certificate as rendered HTML. Public, shareable URL."
+          }
+        },
+        {
+          "name": "Verify Certificate (Public)",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{base_url}}/certificates/verify/{{cert_uid}}", "host": ["{{base_url}}"], "path": ["certificates","verify","{{cert_uid}}"] },
+            "description": "Verify certificate authenticity. Returns JSON or HTML based on Accept header."
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🎬 Video Service",
+      "item": [
+        {
+          "name": "— Upload & Management",
+          "item": [
+            {
+              "name": "Get Upload Token",
+              "event": [{
+                "listen": "test",
+                "script": {
+                  "exec": [
+                    "const res = pm.response.json();",
+                    "if (res.token) pm.collectionVariables.set('service_token', res.token);"
+                  ]
+                }
+              }],
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+                "url": { "raw": "{{base_url}}/videos/token", "host": ["{{base_url}}"], "path": ["videos","token"] },
+                "description": "Get a short-lived JWT to authorize direct browser uploads to the video service. Auto-saves service_token."
+              }
+            },
+            {
+              "name": "Upload Video (Direct)",
+              "request": {
+                "method": "POST",
+                "header": [{ "key": "Authorization", "value": "Bearer {{service_token}}" }],
+                "url": { "raw": "{{video_url}}/videos/upload", "host": ["{{video_url}}"], "path": ["videos","upload"] },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    { "key": "video", "type": "file", "description": "Video file (mp4, mov, avi, mkv, webm — max 5GB)" },
+                    { "key": "callbackUrl", "value": "http://localhost:4000/api/webhooks/video", "type": "text", "description": "Webhook URL for processing status" },
+                    { "key": "autoProcess", "value": "true", "type": "text" }
+                  ]
+                },
+                "description": "Upload a video file directly. Triggers transcoding to HLS (360p–1080p).\n\nRequires service_token from GET /videos/token."
+              }
+            },
+            {
+              "name": "Get Presigned Upload URL",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{service_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{video_url}}/videos/upload-url", "host": ["{{video_url}}"], "path": ["videos","upload-url"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"originalName\": \"lecture.mp4\",\n  \"mimeType\": \"video/mp4\",\n  \"fileSize\": 104857600,\n  \"callbackUrl\": \"http://localhost:4000/api/webhooks/video\"\n}"
+                },
+                "description": "Get a presigned MinIO URL for client-side direct upload. mimeType must be an allowed video MIME type."
+              }
+            },
+            {
+              "name": "Trigger Video Processing",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{service_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{video_url}}/videos/{{video_id}}/process", "host": ["{{video_url}}"], "path": ["videos","{{video_id}}","process"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"callbackUrl\": \"http://localhost:4000/api/webhooks/video\"\n}"
+                },
+                "description": "Manually trigger transcoding for an already-uploaded video."
+              }
+            },
+            {
+              "name": "Get Video Metadata",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{service_token}}" }],
+                "url": { "raw": "{{video_url}}/videos/{{video_id}}", "host": ["{{video_url}}"], "path": ["videos","{{video_id}}"] },
+                "description": "Get video metadata: status, streamUrl, thumbnailUrl, duration."
+              }
+            },
+            {
+              "name": "List Videos",
+              "request": {
+                "method": "GET",
+                "header": [{ "key": "Authorization", "value": "Bearer {{service_token}}" }],
+                "url": {
+                  "raw": "{{video_url}}/videos?page=1&limit=20&status=",
+                  "host": ["{{video_url}}"], "path": ["videos"],
+                  "query": [
+                    { "key": "page", "value": "1" },
+                    { "key": "limit", "value": "20" },
+                    { "key": "status", "value": "", "description": "PENDING | PROCESSING | READY | FAILED" }
+                  ]
+                },
+                "description": "List all videos with pagination and optional status filter."
+              }
+            },
+            {
+              "name": "Delete Video",
+              "request": {
+                "method": "DELETE",
+                "header": [{ "key": "Authorization", "value": "Bearer {{service_token}}" }],
+                "url": { "raw": "{{video_url}}/videos/{{video_id}}", "host": ["{{video_url}}"], "path": ["videos","{{video_id}}"] },
+                "description": "Delete a video and all its transcoded HLS segments from MinIO."
+              }
+            }
+          ]
+        },
+        {
+          "name": "— Streaming (Public)",
+          "item": [
+            {
+              "name": "Stream HLS Master Playlist",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{video_url}}/stream/{{video_id}}/hls/master.m3u8", "host": ["{{video_url}}"], "path": ["stream","{{video_id}}","hls","master.m3u8"] },
+                "description": "Fetch the HLS master playlist. Used by HLS.js / video players."
+              }
+            },
+            {
+              "name": "Stream Quality Playlist (720p)",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{video_url}}/stream/{{video_id}}/hls/720p/index.m3u8", "host": ["{{video_url}}"], "path": ["stream","{{video_id}}","hls","720p","index.m3u8"] },
+                "description": "Fetch a specific quality playlist. Available: 360p, 480p, 720p, 1080p."
+              }
+            },
+            {
+              "name": "Get Video Thumbnail",
+              "request": {
+                "method": "GET",
+                "url": { "raw": "{{video_url}}/stream/{{video_id}}/thumbnail.jpg", "host": ["{{video_url}}"], "path": ["stream","{{video_id}}","thumbnail.jpg"] },
+                "description": "Fetch the auto-generated video thumbnail."
+              }
+            }
+          ]
+        },
+        {
+          "name": "— Webhook (Internal)",
+          "item": [
+            {
+              "name": "Video Processing Webhook",
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Authorization", "value": "Bearer {{service_token}}" },
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "url": { "raw": "{{base_url}}/webhooks/video", "host": ["{{base_url}}"], "path": ["webhooks","video"] },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"event\": \"video.ready\",\n  \"videoId\": \"{{video_id}}\",\n  \"status\": \"READY\",\n  \"duration\": 3600,\n  \"streamUrl\": \"http://localhost:4001/api/stream/{{video_id}}/hls/master.m3u8\",\n  \"thumbnailUrl\": \"http://localhost:4001/api/stream/{{video_id}}/thumbnail.jpg\"\n}"
+                },
+                "description": "Called by the video service when processing completes.\n\nevents: video.ready | video.failed\nDo not call manually in production — this is service-to-service."
+              }
+            }
+          ]
+        }
+      ]
+    }
+
+  ]
+}

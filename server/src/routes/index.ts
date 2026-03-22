@@ -11,6 +11,8 @@ import webhooksRouter from '../modules/webhooks/webhooks.routes';
 import learnerRouter from '../modules/learner/learner.routes';
 import certificateRouter from '../modules/certificates/certificate.routes';
 import badgesRouter from '../modules/badges/badge.routes';
+import paymentsRouter from '../modules/payments/payments.routes';
+import couponsRouter from '../modules/coupons/coupons.routes';
 
 const router = Router();
 
@@ -28,5 +30,7 @@ router.use('/certificates', certificateRouter);
 router.use('/videos', webhooksRouter);
 router.use('/webhooks', webhooksRouter);
 router.use('/badges', badgesRouter);
+router.use('/payments', paymentsRouter);
+router.use('/admin/coupons', couponsRouter);
 
 export default router;

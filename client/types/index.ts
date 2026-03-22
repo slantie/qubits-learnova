@@ -46,6 +46,10 @@ export interface CourseDetail {
   certificateTemplate: string | null;
   certThreshold: number | null;
   expiryDays: number | null;
+  price: string | null;
+  earlyBirdPrice: string | null;
+  earlyBirdLimit: number | null;
+  earlyBirdEnrolledCount: number;
   visibility: Visibility;
   accessRule: AccessRule;
   instructorId: number;
@@ -79,7 +83,7 @@ export interface Lesson {
   description: string | null;
   content: string | null;
   timestamps: VideoTimestamp[] | null;
-  richContent: unknown | null;
+  richContent: string | null;
   iframeUrl: string | null;
   quizBlockId: number | null;
   attachmentsCount: number;

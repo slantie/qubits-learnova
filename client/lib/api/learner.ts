@@ -79,3 +79,25 @@ export const fetchPublicProfile = async (userId: number): Promise<PublicProfile>
 export const mockPayment = async (courseId: number) => {
   return api.post(`/learner/courses/${courseId}/payment/mock`);
 };
+
+export const getCoursePricing = async (courseId: number) => {
+  return api.get(`/payments/courses/${courseId}/pricing`);
+};
+
+export const validateCoupon = async (code: string, courseId: number) => {
+  return api.post('/payments/coupons/validate', { code, courseId });
+};
+
+export const createOrder = async (courseId: number, couponCode?: string) => {
+  return api.post('/payments/create-order', { courseId, couponCode });
+};
+
+export const verifyPayment = async (data: {
+  razorpayOrderId: string;
+  razorpayPaymentId: string;
+  razorpaySignature: string;
+  courseId: number;
+  couponCode?: string;
+}) => {
+  return api.post('/payments/verify', data);
+};

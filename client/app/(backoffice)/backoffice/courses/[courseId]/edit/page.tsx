@@ -44,6 +44,8 @@ export default function CourseEditPage() {
     const [visibility, setVisibility] = useState<Visibility>('EVERYONE');
     const [accessRule, setAccessRule] = useState<AccessRule>('OPEN');
     const [price, setPrice] = useState('');
+    const [earlyBirdPrice, setEarlyBirdPrice] = useState('');
+    const [earlyBirdLimit, setEarlyBirdLimit] = useState('');
     const [optionsSaving, setOptionsSaving] = useState(false);
 
     // Description tab state
@@ -76,6 +78,9 @@ export default function CourseEditPage() {
             setWebsiteUrl(c.websiteUrl ?? '');
             setVisibility(c.visibility ?? 'EVERYONE');
             setAccessRule(c.accessRule ?? 'OPEN');
+            setPrice(c.price ? String(c.price) : '');
+            setEarlyBirdPrice(c.earlyBirdPrice ? String(c.earlyBirdPrice) : '');
+            setEarlyBirdLimit(c.earlyBirdLimit ? String(c.earlyBirdLimit) : '');
             setDescription(c.description ?? '');
         } catch {
             toast.error('Failed to load course');
@@ -189,6 +194,11 @@ export default function CourseEditPage() {
             const fields: Record<string, unknown> = { visibility, accessRule };
             if (accessRule === 'ON_PAYMENT') {
                 fields.price = parseFloat(price);
+                fields.earlyBirdPrice = earlyBirdPrice ? parseFloat(earlyBirdPrice) : null;
+                fields.earlyBirdLimit = earlyBirdLimit ? parseInt(earlyBirdLimit) : null;
+            } else {
+                fields.earlyBirdPrice = null;
+                fields.earlyBirdLimit = null;
             }
             await patchCourse(fields);
             toast.success('Options saved');
@@ -473,19 +483,57 @@ export default function CourseEditPage() {
                             </div>
 
                             {accessRule === 'ON_PAYMENT' && (
-                                <div className="flex flex-col gap-1.5 mt-2">
-                                    <label className="text-sm font-medium">Price</label>
-                                    <div className="relative w-40">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">$</span>
-                                        <Input
-                                            type="number"
-                                            min="0"
-                                            step="0.01"
-                                            value={price}
-                                            onChange={(e) => setPrice(e.target.value)}
-                                            className="pl-7"
-                                            placeholder="0.00"
-                                        />
+                                <div className="flex flex-col gap-4 mt-2">
+                                    <div className="flex flex-col gap-1.5">
+                                        <label className="text-sm font-medium">Base Price (₹)</label>
+                                        <div className="relative w-40">
+                                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">₹</span>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                step="0.01"
+                                                value={price}
+                                                onChange={(e) => setPrice(e.target.value)}
+                                                className="pl-7"
+                                                placeholder="0.00"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="rounded-lg border border-dashed p-4 space-y-3">
+                                        <div>
+                                            <p className="text-sm font-medium">Early Bird Pricing <span className="text-xs font-normal text-muted-foreground">(optional)</span></p>
+                                            <p className="text-xs text-muted-foreground">Offer a discounted price for the first N students</p>
+                                        </div>
+                                        <div className="flex gap-4 flex-wrap">
+                                            <div className="flex flex-col gap-1.5">
+                                                <label className="text-xs font-medium text-muted-foreground">Early Bird Price (₹)</label>
+                                                <div className="relative w-36">
+                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">₹</span>
+                                                    <Input
+                                                        type="number"
+                                                        min="0"
+                                                        step="0.01"
+                                                        value={earlyBirdPrice}
+                                                        onChange={(e) => setEarlyBirdPrice(e.target.value)}
+                                                        className="pl-7"
+                                                        placeholder="0.00"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col gap-1.5">
+                                                <label className="text-xs font-medium text-muted-foreground">Spots Available</label>
+                                                <Input
+                                                    type="number"
+                                                    min="1"
+                                                    step="1"
+                                                    value={earlyBirdLimit}
+                                                    onChange={(e) => setEarlyBirdLimit(e.target.value)}
+                                                    className="w-28"
+                                                    placeholder="e.g. 50"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             )}

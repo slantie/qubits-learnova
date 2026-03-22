@@ -98,6 +98,7 @@ model User {
   lessonProgresses LessonProgress[]
   certificates     Certificate[]
   badges           UserBadge[]
+  payments         Payment[]
 }
 
 model Course {
@@ -116,6 +117,11 @@ model Course {
   certThreshold       Int?     // min quiz score % needed for cert (null = no threshold)
   expiryDays          Int?     // days from enrollment before access expires (null = no expiry)
 
+  // Early bird pricing
+  earlyBirdPrice         Decimal? @db.Decimal(10, 2)
+  earlyBirdLimit         Int?
+  earlyBirdEnrolledCount Int      @default(0)
+
   instructorId  Int
   instructor    User  @relation("CourseInstructor", fields: [instructorId], references: [id])
   courseAdminId Int?
@@ -130,6 +136,8 @@ model Course {
   enrollments  Enrollment[]
   reviews      Review[]
   certificates Certificate[]
+  coupons      Coupon[]
+  payments     Payment[]
 }
 
 model Section {
@@ -312,6 +320,43 @@ model UserBadge {
   earnedAt DateTime      @default(now())
 
   @@unique([userId, badgeKey])
+}
+
+// ─── Payments & Coupons ───────────────────────────────────────────────────────
+
+model Coupon {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique
+  courseId      Int?     // null = applies to all paid courses
+  course        Course?  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  discountAmount Decimal  @db.Decimal(10, 2)
+  expiresAt     DateTime
+  isActive      Boolean  @default(true)
+  usageLimit    Int?     // null = unlimited
+  usedCount     Int      @default(0)
+  createdBy     Int      // admin user id
+  createdAt     DateTime @default(now())
+
+  payments Payment[]
+}
+
+model Payment {
+  id                String   @id @default(uuid())
+  userId            Int
+  courseId          Int
+  razorpayOrderId   String   @unique
+  razorpayPaymentId String?
+  amount            Int      // final charged amount in paise
+  couponCode        String?
+  status            String   @default("pending") // pending | success | failed
+  createdAt         DateTime @default(now())
+
+  user     User    @relation(fields: [userId], references: [id])
+  course   Course  @relation(fields: [courseId], references: [id])
+  coupon   Coupon? @relation(fields: [couponCode], references: [code])
+
+  @@index([userId])
+  @@index([courseId])
 }
 
 // ─── Video Service ─────────────────────────────────────────────────────────────

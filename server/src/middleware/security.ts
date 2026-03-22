@@ -32,7 +32,7 @@ export const compressionMiddleware = compression();
 
 export const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 10000, // Adjust as needed
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: 'Too many requests, please try again later.', code: 'RATE_LIMITED' },

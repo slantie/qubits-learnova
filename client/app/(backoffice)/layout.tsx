@@ -8,7 +8,7 @@ import { PageLoader } from '@/components/ui/page-loader';
 import Image from 'next/image';
 import {
     SignOut, BookOpen, ChartBar, SquaresFour,
-    Users, GearSix, CaretRight, GraduationCap,
+    Users, GearSix, CaretRight, GraduationCap, Tag,
 } from '@phosphor-icons/react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
@@ -26,6 +26,7 @@ const NAV_ITEMS: NavItem[] = [
     { href: '/backoffice', label: 'Dashboard', icon: SquaresFour },
     { href: '/backoffice/courses', label: 'Courses', icon: BookOpen },
     { href: '/backoffice/reporting', label: 'Reporting', icon: ChartBar, adminOnly: true },
+    { href: '/backoffice/coupons', label: 'Coupons', icon: Tag, adminOnly: true },
     { href: '/backoffice/users', label: 'Users', icon: Users, adminOnly: true, badge: 'Soon' },
     { href: '/backoffice/settings', label: 'Settings', icon: GearSix, adminOnly: true, badge: 'Soon' },
 ];
