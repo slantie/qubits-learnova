@@ -13,6 +13,7 @@ import certificateRouter from '../modules/certificates/certificate.routes';
 import badgesRouter from '../modules/badges/badge.routes';
 import paymentsRouter from '../modules/payments/payments.routes';
 import couponsRouter from '../modules/coupons/coupons.routes';
+import leaderboardRouter from '../modules/leaderboard/leaderboard.routes';
 
 const router = Router();
 
@@ -32,5 +33,6 @@ router.use('/webhooks', webhooksRouter);
 router.use('/badges', badgesRouter);
 router.use('/payments', paymentsRouter);
 router.use('/admin/coupons', couponsRouter);
+router.use('/leaderboard', leaderboardRouter);
 
 export default router;
