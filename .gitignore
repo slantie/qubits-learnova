@@ -40,8 +40,15 @@ tmp/
 
 # Dev startup logs
 logs/
-.claude/settings.json
 
-.agent
-.agents
-.claude
+# AI agent / IDE agent files
+.claude/
+.agent/
+.agents/
+.cursor/
+.superpowers/
+.aider*
+.continue/
+TASKS/
+agent.md
+skills-lock.json
