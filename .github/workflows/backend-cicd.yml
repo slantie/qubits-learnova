@@ -36,7 +36,7 @@ jobs:
             git pull origin main
 
             # Rebuild and restart all backend services
-            docker compose --env-file .env.compose -f docker-compose.prod.yml up --build -d --remove-orphans
+            docker compose --env-file .env -f docker-compose.prod.yml up --build -d --remove-orphans
 
             # Remove dangling images to free space
             docker image prune -f

@@ -41,3 +41,7 @@ tmp/
 # Dev startup logs
 logs/
 .claude/settings.json
+
+.agent
+.agents
+.claude
