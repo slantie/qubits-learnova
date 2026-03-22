@@ -423,7 +423,7 @@ export const deleteReview = async (userId: number, courseId: number) => {
 export const getProfile = async (userId: number) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true, totalPoints: true, currentBadge: true, avatarUrl: true, bio: true, profilePublic: true },
+    select: { id: true, name: true, email: true, totalPoints: true, currentBadge: true, createdAt: true, avatarUrl: true, bio: true, profilePublic: true },
   });
   if (!user) {
     throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
@@ -446,6 +446,7 @@ export const getProfile = async (userId: number) => {
       id: user.id,
       name: user.name,
       email: user.email,
+      createdAt: user.createdAt.toISOString(),
       avatarUrl: user.avatarUrl,
       bio: user.bio,
       profilePublic: user.profilePublic,
