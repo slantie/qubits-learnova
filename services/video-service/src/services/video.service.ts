@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../lib/prisma';
+import type { Video } from '../generated/prisma';
 import { minioClient, getPresignedPutUrl, getPublicUrl, getStreamUrl } from '../lib/minio';
 import { transcodeQueue } from '../lib/queue';
 import { env } from '../config/env';
@@ -221,7 +222,7 @@ export async function listVideos(
 
   return {
     total,
-    videos: videos.map((v) => ({
+    videos: videos.map((v: Video) => ({
       videoId: v.id,
       status: v.status,
       storageProvider: v.storageProvider,

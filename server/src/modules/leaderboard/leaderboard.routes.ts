@@ -16,7 +16,7 @@ router.get('/quizzes', async (_req: Request, res: Response) => {
 });
 
 // GET /leaderboard/quiz/:quizId — quiz-specific leaderboard
-router.get('/quiz/:quizId', async (req: Request, res: Response) => {
+router.get('/quiz/:quizId', async (req: Request<{ quizId: string }>, res: Response) => {
   const quizId = parseInt(req.params.quizId, 10);
   if (isNaN(quizId)) {
     res.status(400).json({ message: 'Invalid quiz id' });
