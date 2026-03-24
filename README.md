@@ -6,9 +6,16 @@ A full-stack eLearning platform built with Next.js, Express, and PostgreSQL. Lea
 
 ## Project Demo
 
-> **Walkthrough video** — _link will be updated as the project progresses_
->
-> 📹 **Demo:** [Watch on YouTube / Drive](#) _(coming soon)_
+<p align="center">
+  <a href="https://drive.google.com/open?id=1UXyZZ9xxBkg1xnn-FX9Pn4_bIH3RMtVa" target="_blank">
+    <video width="100%" height="auto" controls>
+      <source src="https://drive.google.com/uc?export=download&id=1UXyZZ9xxBkg1xnn-FX9Pn4_bIH3RMtVa" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </a>
+  <br>
+  <em>Click video to view on Google Drive</em>
+</p>
 
 ---
 
